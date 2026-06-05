@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, inquiries, portfolioProjects, testimonials, InsertInquiry } from "../drizzle/schema";
+import { InsertUser, users, inquiries, portfolioProjects, testimonials, InsertInquiry, nichePackages, customerSubscriptions, InsertNichePackage, InsertCustomerSubscription } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -112,6 +112,36 @@ export async function getTestimonials() {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   return await db.select().from(testimonials).orderBy(testimonials.createdAt);
+}
+
+export async function getNichePackages() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.select().from(nichePackages).where(eq(nichePackages.active, 1));
+}
+
+export async function createNichePackage(data: InsertNichePackage) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.insert(nichePackages).values(data);
+}
+
+export async function getCustomerSubscriptions(customerId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.select().from(customerSubscriptions).where(eq(customerSubscriptions.customerId, customerId));
+}
+
+export async function createCustomerSubscription(data: InsertCustomerSubscription) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.insert(customerSubscriptions).values(data);
+}
+
+export async function cancelCustomerSubscription(subscriptionId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.update(customerSubscriptions).set({ active: 0, endDate: new Date() }).where(eq(customerSubscriptions.id, subscriptionId));
 }
 
 

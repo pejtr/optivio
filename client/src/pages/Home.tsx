@@ -140,6 +140,7 @@ export default function Home() {
             <a href="#pricing" className="text-slate-600 hover:text-blue-600 transition">Ceny</a>
             <a href="#process" className="text-slate-600 hover:text-blue-600 transition">Jak to funguje</a>
             <a href="#portfolio" className="text-slate-600 hover:text-blue-600 transition">Portfolio</a>
+            <a href="#niche" className="text-slate-600 hover:text-blue-600 transition">Balíčky</a>
             <a href="#leados" className="text-slate-600 hover:text-blue-600 transition">LeadOS</a>
             <a href="#faq" className="text-slate-600 hover:text-blue-600 transition">FAQ</a>
             <a href="#contact" className="text-slate-600 hover:text-blue-600 transition">Kontakt</a>
@@ -154,15 +155,16 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+          {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-t border-slate-200">
             <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
-              <a href="#pricing" className="text-slate-600 hover:text-blue-600 transition" onClick={() => setMobileMenuOpen(false)}>Ceny</a>
-              <a href="#process" className="text-slate-600 hover:text-blue-600 transition" onClick={() => setMobileMenuOpen(false)}>Jak to funguje</a>
-              <a href="#portfolio" className="text-slate-600 hover:text-blue-600 transition" onClick={() => setMobileMenuOpen(false)}>Portfolio</a>
-              <a href="#leados" className="text-slate-600 hover:text-blue-600 transition" onClick={() => setMobileMenuOpen(false)}>LeadOS</a>
-              <a href="#faq" className="text-slate-600 hover:text-blue-600 transition" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
+              <a href="#pricing" className="text-slate-600 hover:text-blue-600 transition">Ceny</a>
+              <a href="#process" className="text-slate-600 hover:text-blue-600 transition">Jak to funguje</a>
+              <a href="#portfolio" className="text-slate-600 hover:text-blue-600 transition">Portfolio</a>
+              <a href="#niche" className="text-slate-600 hover:text-blue-600 transition">Balíčky</a>
+              <a href="#leados" className="text-slate-600 hover:text-blue-600 transition">LeadOS</a>
+              <a href="#faq" className="text-slate-600 hover:text-blue-600 transition">FAQ</a>
               <a href="#contact" className="text-slate-600 hover:text-blue-600 transition" onClick={() => setMobileMenuOpen(false)}>Kontakt</a>
             </div>
           </div>
@@ -437,6 +439,53 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Niche Packages Section */}
+      <section id="niche" className="bg-gradient-to-b from-slate-50 to-white py-16 md:py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-slate-900">Niche Balíčky — Zaměřené na váš obor</h2>
+          <p className="text-center text-slate-600 mb-12 text-lg">Přidejte si automatizaci speciálně pro váš typ podnikání. Od rezervací přes lead management až po faktury.</p>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {[
+              { name: "Café Pro", price: "1 290 Kč", niche: "Kavárny & Restaurace", features: ["Online rezervace", "Instagram auto-posting", "Google Reviews", "WhatsApp notifikace"] },
+              { name: "Lead Elektro", price: "1 490 Kč", niche: "Elektrikáři", features: ["Lead capture", "WhatsApp notifikace", "Invoice generátor", "Kanban board"] },
+              { name: "Beauty Booking", price: "990 Kč", niche: "Kadeřnice & Holič", features: ["Online booking", "SMS reminders", "Loyalty program", "Instagram Stories"] },
+              { name: "Commerce Automation", price: "1 890 Kč", niche: "E-shopy", features: ["Inventory sync", "Abandoned cart", "Email marketing", "AI recommendations"] },
+              { name: "Service Manager", price: "1 390 Kč", niche: "Služby", features: ["Online kalkulátor", "Automatická nabídka", "Invoice + platby", "WhatsApp komunikace"] },
+              { name: "Gym Pro", price: "1 190 Kč", niche: "Fitness & Wellness", features: ["Membership management", "SMS reminders", "Booking tréninků", "Newsletter"] },
+              { name: "Real Estate Pro", price: "1 790 Kč", niche: "Realitní kanceláře", features: ["Lead capture", "Virtuální prohlídka", "Automatické follow-up", "CRM"] },
+              { name: "Medical Pro", price: "1 590 Kč", niche: "Lékaři & Zubaři", features: ["Online rezervace", "SMS reminders", "GDPR komunikace", "Recenze management"] },
+              { name: "Coach Pro", price: "1 290 Kč", niche: "Školitel & Koučing", features: ["Kurzy booking", "Automatické emaily", "Certifikáty", "Feedback formuláře"] },
+            ].map((pkg, idx) => (
+              <Card key={idx} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <CardTitle className="text-lg text-slate-900">{pkg.name}</CardTitle>
+                  <CardDescription className="text-sm text-slate-500">{pkg.niche}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-blue-600 mb-4">{pkg.price}/měsíc</div>
+                  <ul className="space-y-2">
+                    {pkg.features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-slate-600">
+                        <Check className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-slate-600 mb-6">Kombinujte balíčky podle potřeby. Všechny fungují s vaším webem bez dalších nákladů.</p>
+            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
+              Vybrat balíček
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* LeadOS Section */}
       <section id="leados" className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 md:py-20">
         <div className="container mx-auto px-4">
@@ -451,9 +500,9 @@ export default function Home() {
 
             <div className="grid md:grid-cols-3 gap-6">
               {[
-                { tier: "Starter", price: "49 USD", features: ["100 leads/měsíc", "Email enrichment", "Základní CRM"] },
-                { tier: "Growth", price: "99 USD", features: ["500 leads/měsíc", "Pokročilé enrichment", "Email sequences", "Webhook integrace"] },
-                { tier: "Pro", price: "199 USD", features: ["Unlimited leads", "Všechny funkce", "AI SDR Agent", "Prioritní support"] },
+                { tier: "Starter", price: "990 Kč", features: ["100 leads/měsíc", "Email enrichment", "Základní CRM"] },
+                { tier: "Growth", price: "1 990 Kč", features: ["500 leads/měsíc", "Pokročilé enrichment", "Email sequences", "Webhook integrace"] },
+                { tier: "Pro", price: "3 990 Kč", features: ["Unlimited leads", "Všechny funkce", "AI SDR Agent", "Prioritní support"] },
               ].map((plan, idx) => (
                 <div key={idx} className="bg-white/10 backdrop-blur rounded-lg p-6 border border-white/20">
                   <h3 className="text-2xl font-bold mb-2">{plan.tier}</h3>
@@ -468,6 +517,87 @@ export default function Home() {
                   </ul>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Monthly Pricing Model Section */}
+      <section className="bg-gradient-to-b from-white to-slate-50 py-16 md:py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-slate-900">Měsíční provoz a podpora</h2>
+          <p className="text-center text-slate-600 mb-12 text-lg">Po spuštění webu si můžete přidat měsíční služby pro automatizaci a správu.</p>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Basic Maintenance */}
+              <Card className="border-2 border-slate-200">
+                <CardHeader>
+                  <CardTitle className="text-2xl text-slate-900">Základní správa</CardTitle>
+                  <CardDescription>Ideální pro malé weby</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-blue-600 mb-6">199 Kč/měsíc</div>
+                  <ul className="space-y-3">
+                    <li className="flex items-center gap-2 text-slate-600">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                      Monitoring webu 24/7
+                    </li>
+                    <li className="flex items-center gap-2 text-slate-600">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                      Bezpečnostní updaty
+                    </li>
+                    <li className="flex items-center gap-2 text-slate-600">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                      Backup dat
+                    </li>
+                    <li className="flex items-center gap-2 text-slate-600">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                      Email podpora
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Automation & Management */}
+              <Card className="border-2 border-blue-600 relative">
+                <div className="absolute -top-3 left-6 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">Populární</div>
+                <CardHeader>
+                  <CardTitle className="text-2xl text-slate-900">Automatizace & správa</CardTitle>
+                  <CardDescription>Nejčastěji volená možnost</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-blue-600 mb-6">1 000 Kč/měsíc</div>
+                  <ul className="space-y-3">
+                    <li className="flex items-center gap-2 text-slate-600">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                      Vše z Základní správy
+                    </li>
+                    <li className="flex items-center gap-2 text-slate-600">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                      Email automatizace
+                    </li>
+                    <li className="flex items-center gap-2 text-slate-600">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                      Lead management
+                    </li>
+                    <li className="flex items-center gap-2 text-slate-600">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                      WhatsApp notifikace
+                    </li>
+                    <li className="flex items-center gap-2 text-slate-600">
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                      Telefonní podpora
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="mt-12 bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Niche balíčky</h3>
+              <p className="text-slate-600 mb-6">Máte specifické potřeby? Nabízíme i speciální balíčky pro jednotlivé obory — od online rezervací přes invoice generátor až po AI chatboty. Ceny od 990 Kč/měsíc.</p>
+              <a href="#niche" className="text-blue-600 font-semibold hover:text-blue-700 transition">Prohlédnout niche balíčky →</a>
             </div>
           </div>
         </div>

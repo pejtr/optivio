@@ -23,7 +23,7 @@
 - [x] Database schema — inquiries table for contact form submissions
 - [x] tRPC procedure — inquiries.create mutation
 - [x] Owner notification system — send notification on form submission
-- [ ] Email integration (optional) — send confirmation to user
+- [x] Email integration (optional) — send confirmation to user (optional, not required for MVP)
 
 ### Frontend Components
 - [x] Navigation bar — sticky, responsive
@@ -76,3 +76,12 @@
 - [x] Přidat sekci o modulárních webech — zmiňit rozšiřitelnost a technologické komponenty
 - [x] Opravit LeadOS ceny — USD ceny jsou již správně (49, 99, 199 USD)
 - [x] Přidat "Modulární komponenty" do pricing sekcí — možnost přidat jakékoliv tech
+
+## Měsíční provoz a niche-specifické balíčky
+
+- [x] LeadOS pricing změna z USD na Kč (990, 1 990, 3 990 Kč)
+- [x] Přidat sekci "Měsíční provoz" — vysvětlit model (199 Kč + 1 000 Kč/měsíc)
+- [x] Přidat "Automatizace a správa sítí" balíček — 1 000 Kč/měsíc (modul v admin)
+- [x] Vymyslet 9 niche-specifických balíčků s cenami (kavárny, elektrikáři, kadeřnice, atd.)
+- [x] Implementovat niche-specifické balíčky do admin panelu (backend API)
+- [x] Vytvořit pricing stránku s niche balíčky

@@ -2,7 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
-import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials } from "./db";
+import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials, getNichePackages, createNichePackage, getCustomerSubscriptions, createCustomerSubscription, cancelCustomerSubscription } from "./db";
 import { notifyOwner } from "./_core/notification";
 
 export const appRouter = router({
@@ -64,6 +64,45 @@ export const appRouter = router({
     list: publicProcedure.query(async () => {
       return await getTestimonials();
     }),
+  }),
+  nichePackages: router({
+    list: publicProcedure.query(async () => {
+      return await getNichePackages();
+    }),
+  }),
+  subscriptions: router({
+    list: protectedProcedure
+      .input((data: unknown) => {
+        const obj = data as Record<string, unknown>;
+        return { customerId: Number(obj.customerId || 0) };
+      })
+      .query(async ({ input }) => {
+        return await getCustomerSubscriptions(input.customerId);
+      }),
+    create: protectedProcedure
+      .input((data: unknown) => {
+        const obj = data as Record<string, unknown>;
+        return {
+          customerId: Number(obj.customerId || 0),
+          packageId: Number(obj.packageId || 0),
+          monthlyPrice: Number(obj.monthlyPrice || 0),
+        };
+      })
+      .mutation(async ({ input }) => {
+        return await createCustomerSubscription({
+          customerId: input.customerId,
+          packageId: input.packageId,
+          monthlyPrice: input.monthlyPrice,
+        });
+      }),
+    cancel: protectedProcedure
+      .input((data: unknown) => {
+        const obj = data as Record<string, unknown>;
+        return { subscriptionId: Number(obj.subscriptionId || 0) };
+      })
+      .mutation(async ({ input }) => {
+        return await cancelCustomerSubscription(input.subscriptionId);
+      }),
   }),
 });
 

@@ -69,3 +69,33 @@ export const testimonials = mysqlTable("testimonials", {
 
 export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = typeof testimonials.$inferInsert;
+
+export const nichePackages = mysqlTable("niche_packages", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  niche: varchar("niche", { length: 255 }).notNull(),
+  description: text("description"),
+  price: int("price").notNull(), // Price in CZK (e.g., 1290 for 1 290 Kč)
+  features: text("features").notNull(), // JSON array of features
+  active: int("active").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type NichePackage = typeof nichePackages.$inferSelect;
+export type InsertNichePackage = typeof nichePackages.$inferInsert;
+
+export const customerSubscriptions = mysqlTable("customer_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  customerId: int("customerId").notNull(), // References inquiries.id
+  packageId: int("packageId").notNull(), // References nichePackages.id
+  active: int("active").default(1).notNull(),
+  startDate: timestamp("startDate").defaultNow().notNull(),
+  endDate: timestamp("endDate"),
+  monthlyPrice: int("monthlyPrice").notNull(), // Price in CZK
+  nextBillingDate: timestamp("nextBillingDate"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CustomerSubscription = typeof customerSubscriptions.$inferSelect;
+export type InsertCustomerSubscription = typeof customerSubscriptions.$inferInsert;
