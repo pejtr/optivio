@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, inquiries, portfolioProjects, testimonials, InsertInquiry } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,29 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function createInquiry(data: InsertInquiry) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(inquiries).values(data);
+  return result;
+}
+
+export async function listInquiries() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.select().from(inquiries).orderBy(inquiries.createdAt);
+}
+
+export async function getPortfolioProjects() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.select().from(portfolioProjects).orderBy(portfolioProjects.createdAt);
+}
+
+export async function getTestimonials() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.select().from(testimonials).orderBy(testimonials.createdAt);
+}
+
+

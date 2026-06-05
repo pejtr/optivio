@@ -1,10 +1,11 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials } from "./db";
+import { notifyOwner } from "./_core/notification";
 
 export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -17,12 +18,53 @@ export const appRouter = router({
     }),
   }),
 
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
+  inquiries: router({
+    create: publicProcedure
+      .input((data: unknown) => {
+        const obj = data as Record<string, unknown>;
+        return {
+          name: String(obj.name || ""),
+          email: String(obj.email || ""),
+          phone: obj.phone ? String(obj.phone) : undefined,
+          businessDescription: obj.businessDescription ? String(obj.businessDescription) : undefined,
+          packageType: obj.packageType ? String(obj.packageType) : undefined,
+        };
+      })
+      .mutation(async ({ input, ctx }) => {
+        const inquiry = await createInquiry({
+          name: input.name,
+          email: input.email,
+          phone: input.phone,
+          businessDescription: input.businessDescription,
+          packageType: input.packageType,
+        });
+
+        // Notify owner of new inquiry
+        try {
+          await notifyOwner({
+            title: "Nová poptávka z webu",
+            content: `Nová poptávka od ${input.name} (${input.email}, ${input.phone || "bez telefonu"})\n\nBalíček: ${input.packageType || "neuvedeno"}\nPopis: ${input.businessDescription || "neuvedeno"}`,
+          });
+        } catch (error) {
+          console.error("Failed to notify owner:", error);
+        }
+
+        return { success: true, id: (inquiry as any).insertId || 0 };
+      }),
+    list: protectedProcedure.query(async () => {
+      return await listInquiries();
+    }),
+  }),
+  portfolio: router({
+    list: publicProcedure.query(async () => {
+      return await getPortfolioProjects();
+    }),
+  }),
+  testimonials: router({
+    list: publicProcedure.query(async () => {
+      return await getTestimonials();
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

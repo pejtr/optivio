@@ -25,4 +25,47 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+export const inquiries = mysqlTable("inquiries", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 20 }),
+  businessDescription: text("businessDescription"),
+  packageType: varchar("packageType", { length: 50 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  status: mysqlEnum("status", ["new", "contacted", "converted"]).default("new").notNull(),
+  notes: text("notes"),
+});
+
+export type Inquiry = typeof inquiries.$inferSelect;
+export type InsertInquiry = typeof inquiries.$inferInsert;
+
+export const portfolioProjects = mysqlTable("portfolio_projects", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }),
+  imageUrl: varchar("imageUrl", { length: 500 }),
+  testimonialAuthor: varchar("testimonialAuthor", { length: 255 }),
+  testimonialText: text("testimonialText"),
+  testimonialRating: int("testimonialRating"),
+  results: text("results"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PortfolioProject = typeof portfolioProjects.$inferSelect;
+export type InsertPortfolioProject = typeof portfolioProjects.$inferInsert;
+
+export const testimonials = mysqlTable("testimonials", {
+  id: int("id").autoincrement().primaryKey(),
+  author: varchar("author", { length: 255 }).notNull(),
+  role: varchar("role", { length: 255 }),
+  company: varchar("company", { length: 255 }),
+  text: text("text").notNull(),
+  rating: int("rating"),
+  imageUrl: varchar("imageUrl", { length: 500 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Testimonial = typeof testimonials.$inferSelect;
+export type InsertTestimonial = typeof testimonials.$inferInsert;
