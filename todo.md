@@ -85,3 +85,13 @@
 - [x] Vymyslet 9 niche-specifických balíčků s cenami (kavárny, elektrikáři, kadeřnice, atd.)
 - [x] Implementovat niche-specifické balíčky do admin panelu (backend API)
 - [x] Vytvořit pricing stránku s niche balíčky
+
+
+## Admin Panel
+
+- [x] Vytvořit admin dashboard layout s navigácí
+- [x] Niche packages management — list, create, edit, delete
+- [x] Customer subscriptions management — list, view, cancel
+- [x] Dashboard statistiky — počet balíčků, aktivních subscriptions, měsíční příjem
+- [x] Responsive design pro admin
+- [x] Vitest testy pro admin API (12/12 passing)

@@ -120,16 +120,40 @@ export async function getNichePackages() {
   return await db.select().from(nichePackages).where(eq(nichePackages.active, 1));
 }
 
+export async function getAllNichePackages() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.select().from(nichePackages).orderBy(nichePackages.createdAt);
+}
+
 export async function createNichePackage(data: InsertNichePackage) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   return await db.insert(nichePackages).values(data);
 }
 
+export async function updateNichePackage(id: number, data: Partial<InsertNichePackage>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.update(nichePackages).set(data).where(eq(nichePackages.id, id));
+}
+
+export async function deactivateNichePackage(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.update(nichePackages).set({ active: 0 }).where(eq(nichePackages.id, id));
+}
+
 export async function getCustomerSubscriptions(customerId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   return await db.select().from(customerSubscriptions).where(eq(customerSubscriptions.customerId, customerId));
+}
+
+export async function getAllSubscriptions() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.select().from(customerSubscriptions).orderBy(customerSubscriptions.createdAt);
 }
 
 export async function createCustomerSubscription(data: InsertCustomerSubscription) {

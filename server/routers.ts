@@ -2,7 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
-import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials, getNichePackages, createNichePackage, getCustomerSubscriptions, createCustomerSubscription, cancelCustomerSubscription } from "./db";
+import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials, getNichePackages, createNichePackage, getCustomerSubscriptions, createCustomerSubscription, cancelCustomerSubscription, getAllNichePackages, updateNichePackage, deactivateNichePackage, getAllSubscriptions } from "./db";
 import { notifyOwner } from "./_core/notification";
 
 export const appRouter = router({
@@ -69,6 +69,53 @@ export const appRouter = router({
     list: publicProcedure.query(async () => {
       return await getNichePackages();
     }),
+    admin: router({
+      list: protectedProcedure.query(async ({ ctx }) => {
+        if (ctx.user?.role !== 'admin') throw new Error('Unauthorized');
+        return await getAllNichePackages();
+      }),
+      create: protectedProcedure
+        .input((data: unknown) => {
+          const obj = data as Record<string, unknown>;
+          return {
+            name: String(obj.name || ""),
+            niche: String(obj.niche || ""),
+            description: obj.description ? String(obj.description) : null,
+            price: Number(obj.price || 0),
+            features: String(obj.features || ""),
+          };
+        })
+        .mutation(async ({ input, ctx }) => {
+          if (ctx.user?.role !== 'admin') throw new Error('Unauthorized');
+          return await createNichePackage(input as any);
+        }),
+      update: protectedProcedure
+        .input((data: unknown) => {
+          const obj = data as Record<string, unknown>;
+          return {
+            id: Number(obj.id || 0),
+            name: String(obj.name || ""),
+            niche: String(obj.niche || ""),
+            description: obj.description ? String(obj.description) : null,
+            price: Number(obj.price || 0),
+            features: String(obj.features || ""),
+          };
+        })
+        .mutation(async ({ input, ctx }) => {
+          if (ctx.user?.role !== 'admin') throw new Error('Unauthorized');
+          const { id, ...data } = input;
+          return await updateNichePackage(id, data as any);
+        }),
+      deactivate: protectedProcedure
+        .input((data: unknown) => {
+          const obj = data as Record<string, unknown>;
+          return { id: Number(obj.id || 0) };
+        })
+        .mutation(async ({ input, ctx }) => {
+          if (ctx.user?.role !== 'admin') throw new Error('Unauthorized');
+          return await deactivateNichePackage(input.id);
+        }),
+    }),
   }),
   subscriptions: router({
     list: protectedProcedure
@@ -77,6 +124,9 @@ export const appRouter = router({
         return { customerId: Number(obj.customerId || 0) };
       })
       .query(async ({ input }) => {
+        if (input.customerId === 0) {
+          return await getAllSubscriptions();
+        }
         return await getCustomerSubscriptions(input.customerId);
       }),
     create: protectedProcedure
@@ -100,7 +150,8 @@ export const appRouter = router({
         const obj = data as Record<string, unknown>;
         return { subscriptionId: Number(obj.subscriptionId || 0) };
       })
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user?.role !== 'admin') throw new Error('Unauthorized');
         return await cancelCustomerSubscription(input.subscriptionId);
       }),
   }),
