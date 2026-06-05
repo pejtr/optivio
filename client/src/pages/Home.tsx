@@ -236,7 +236,8 @@ export default function Home() {
       <section id="pricing" className="bg-slate-900 text-white py-16 md:py-20">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Naše balíčky</h2>
-          <p className="text-center text-slate-300 mb-12 text-lg">Vyberte si balíček, který vyhovuje vaší firmě</p>
+          <p className="text-center text-slate-300 mb-4 text-lg">Vyberte si balíček, který vyhovuje vaší firmě</p>
+          <p className="text-center text-slate-400 mb-12 text-sm">Vše jsou modulární — kdykoliv můžete přidat libovolné technologické komponenty (API, e-shop, chatbot, CRM, atd.)</p>
 
           <div className="grid md:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto">
             {/* Lite Web */}
@@ -419,13 +420,30 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Modulární Weby Section */}
+      <section className="container mx-auto px-4 py-16 md:py-20">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-slate-900">Modulární weby — rozšiřitelné bez limitů</h2>
+        <div className="max-w-4xl mx-auto">
+          <p className="text-lg text-slate-600 text-center mb-8">
+            Všechny naše weby jsou postaveny na modulární architektuře. To znamená, že můžete kdykoliv přidat jakýkoliv technologický komponent — API integraci, AI chatbot, payment gateway, CRM, e-shop, nebo cokoliv dalšího. Bez nutnosti přepisovat web od nuly.
+          </p>
+          <div className="grid md:grid-cols-4 gap-4">
+            {["API Integrace", "E-shop", "AI Chatbot", "CRM", "Payment Gateway", "Email Automation", "Social Media", "Analytics"].map((component, idx) => (
+              <div key={idx} className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                <p className="text-sm font-semibold text-slate-900">{component}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* LeadOS Section */}
       <section id="leados" className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 md:py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Chcete vlastní lead generation systém?</h2>
             <p className="text-lg md:text-xl mb-8 text-blue-100">
-              LeadOS je AI platforma pro generování leads, email automatizaci a CRM. Používáme ji interně, teď ji nabízíme i ostatním.
+              LeadOS je AI platforma pro generování leads, email automatizaci a CRM. Modulární architektura umožňuje integraci s jakýmkoliv systémem. Používáme ji interně, teď ji nabízíme i ostatním.
             </p>
             <Button size="lg" className="bg-white text-blue-600 hover:bg-slate-100 mb-12">
               Vyzkoušet LeadOS zdarma

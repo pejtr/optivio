@@ -59,8 +59,8 @@
 ### Deployment & Launch
 - [x] Final checkpoint
 - [x] Publish to Manus
-- [ ] Domain setup (if needed)
-- [ ] Analytics setup (if needed)
+- [x] Domain setup (if needed)
+- [x] Analytics setup (if needed)
 
 ## Notes
 
@@ -70,3 +70,9 @@
 - LeadOS: B2B SaaS product (Starter 49 USD, Growth 99 USD, Pro 199 USD)
 - Contact form → Owner notification on every submission
 - Elegant, professional, premium feel
+
+## Nové úpravy
+
+- [x] Přidat sekci o modulárních webech — zmiňit rozšiřitelnost a technologické komponenty
+- [x] Opravit LeadOS ceny — USD ceny jsou již správně (49, 99, 199 USD)
+- [x] Přidat "Modulární komponenty" do pricing sekcí — možnost přidat jakékoliv tech
