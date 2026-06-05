@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, inquiries, portfolioProjects, testimonials, InsertInquiry, nichePackages, customerSubscriptions, InsertNichePackage, InsertCustomerSubscription } from "../drizzle/schema";
+import { InsertUser, users, inquiries, portfolioProjects, testimonials, InsertInquiry, nichePackages, customerSubscriptions, InsertNichePackage, InsertCustomerSubscription, orders, payments, InsertOrder, InsertPayment } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -166,6 +166,50 @@ export async function cancelCustomerSubscription(subscriptionId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   return await db.update(customerSubscriptions).set({ active: 0, endDate: new Date() }).where(eq(customerSubscriptions.id, subscriptionId));
+}
+
+export async function createOrder(data: InsertOrder) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.insert(orders).values(data);
+}
+
+export async function getOrder(orderId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateOrder(orderId: number, data: Partial<InsertOrder>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.update(orders).set(data).where(eq(orders.id, orderId));
+}
+
+export async function getOrderByStripeSession(sessionId: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(orders).where(eq(orders.stripeCheckoutSessionId, sessionId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createPayment(data: InsertPayment) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.insert(payments).values(data);
+}
+
+export async function getPaymentsByOrder(orderId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.select().from(payments).where(eq(payments.orderId, orderId));
+}
+
+export async function updatePayment(paymentId: number, data: Partial<InsertPayment>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.update(payments).set(data).where(eq(payments.id, paymentId));
 }
 
 

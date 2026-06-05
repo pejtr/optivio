@@ -95,3 +95,38 @@
 - [x] Dashboard statistiky — počet balíčků, aktivních subscriptions, měsíční příjem
 - [x] Responsive design pro admin
 - [x] Vitest testy pro admin API (12/12 passing)
+
+
+## Autonomní Systém — 3 Iterace (1-2 týdny)
+
+### Iterace 1: Stripe + Záloha
+- [ ] Přidat Stripe feature do projektu
+- [ ] Vytvořit database schema pro orders/payments
+- [ ] Aktualizovat pricing tabulku — přidat "Záloha" řádek (30-50%)
+- [ ] Kontaktní formulář → Stripe checkout
+- [ ] Invoice generation s zálohou
+- [ ] Email notifikace po zaplacení
+- [ ] Vitest testy pro payment flow
+
+### Iterace 2: Client Dashboard
+- [ ] Vytvořit client login (bez admin role)
+- [ ] Dashboard s project status (Čekání → V přípravě → Hotovo)
+- [ ] Zobrazit: zaplacená záloha, zbývající platba, timeline
+- [ ] Progress tracker (% hotovosti)
+- [ ] File upload pro client feedback
+- [ ] Notifikace o změně statusu
+
+### Iterace 3: Automatizace & Monitoring
+- [ ] SOP dokumentace (standardní postupy)
+- [ ] Auto-notifikace (email, SMS, Slack)
+- [ ] KPI dashboard (response time, conversion rate, revenue)
+- [ ] Anomaly detection (neplatící klienti, pozdní projekty)
+- [ ] Self-healing alerts
+- [ ] Heartbeat jobs pro automatizaci
+
+### Testování & Optimalizace
+- [ ] End-to-end testy pro payment flow
+- [ ] Responsive design na mobilech
+- [ ] Performance optimization
+- [ ] Security audit (Stripe, data)
+- [ ] Final checkpoint

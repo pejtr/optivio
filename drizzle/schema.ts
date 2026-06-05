@@ -99,3 +99,36 @@ export const customerSubscriptions = mysqlTable("customer_subscriptions", {
 
 export type CustomerSubscription = typeof customerSubscriptions.$inferSelect;
 export type InsertCustomerSubscription = typeof customerSubscriptions.$inferInsert;
+
+export const orders = mysqlTable("orders", {
+  id: int("id").autoincrement().primaryKey(),
+  inquiryId: int("inquiryId").notNull(),
+  packageType: varchar("packageType", { length: 100 }).notNull(),
+  totalPrice: int("totalPrice").notNull(),
+  depositPercentage: int("depositPercentage").default(30).notNull(),
+  depositAmount: int("depositAmount").notNull(),
+  remainingAmount: int("remainingAmount").notNull(),
+  status: mysqlEnum("status", ["pending", "deposit_paid", "completed", "cancelled"]).default("pending").notNull(),
+  stripeCheckoutSessionId: varchar("stripeCheckoutSessionId", { length: 255 }),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Order = typeof orders.$inferSelect;
+export type InsertOrder = typeof orders.$inferInsert;
+
+export const payments = mysqlTable("payments", {
+  id: int("id").autoincrement().primaryKey(),
+  orderId: int("orderId").notNull(),
+  amount: int("amount").notNull(),
+  type: mysqlEnum("type", ["deposit", "final", "refund"]).notNull(),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }).unique(),
+  status: mysqlEnum("status", ["pending", "succeeded", "failed", "refunded"]).default("pending").notNull(),
+  invoiceUrl: varchar("invoiceUrl", { length: 500 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Payment = typeof payments.$inferSelect;
+export type InsertPayment = typeof payments.$inferInsert;
