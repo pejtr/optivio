@@ -132,3 +132,16 @@ export const payments = mysqlTable("payments", {
 
 export type Payment = typeof payments.$inferSelect;
 export type InsertPayment = typeof payments.$inferInsert;
+
+export const manusTaskLogs = mysqlTable("manus_task_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  taskId: varchar("taskId", { length: 100 }).notNull(),
+  eventType: varchar("eventType", { length: 50 }).notNull(),
+  agentStatus: varchar("agentStatus", { length: 30 }),
+  content: text("content"),
+  rawEvent: text("rawEvent"), // JSON string
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ManusTaskLog = typeof manusTaskLogs.$inferSelect;
+export type InsertManusTaskLog = typeof manusTaskLogs.$inferInsert;
