@@ -100,13 +100,13 @@
 ## Autonomní Systém — 3 Iterace (1-2 týdny)
 
 ### Iterace 1: Stripe + Záloha
-- [ ] Přidat Stripe feature do projektu
-- [ ] Vytvořit database schema pro orders/payments
-- [ ] Aktualizovat pricing tabulku — přidat "Záloha" řádek (30-50%)
-- [ ] Kontaktní formulář → Stripe checkout
-- [ ] Invoice generation s zálohou
-- [ ] Email notifikace po zaplacení
-- [ ] Vitest testy pro payment flow
+- [x] Přidat Stripe feature do projektu
+- [x] Vytvořit database schema pro orders/payments
+- [x] Aktualizovat pricing tabulku — přidat "Záloha" řádek (30-50%)
+- [x] Kontaktní formulář → Stripe checkout
+- [x] Invoice generation s zálohou
+- [x] Email notifikace po zaplacení
+- [x] Vitest testy pro payment flow
 
 ### Iterace 2: Client Dashboard
 - [ ] Vytvořit client login (bez admin role)
@@ -130,3 +130,26 @@
 - [ ] Performance optimization
 - [ ] Security audit (Stripe, data)
 - [ ] Final checkpoint
+
+## Fáze 3 — Email Notifikace (HOTOVO)
+
+- [x] Email service s šablonami
+- [x] Potvrzovací email po objednávce
+- [x] Email po zaplacení
+- [x] Email po dokončení projektu
+- [x] Integrováno do order creation flow
+
+## Zbývající práce — Fáze 4 & 5
+
+### Fáze 4: LeadOS Orchestrace
+- [ ] Vytvořit tRPC router pro Manus API v2
+- [ ] Katastr-style control interface
+- [ ] Orchestrace projektů přes LeadOS
+- [ ] Webhook handling pro project updates
+
+### Fáze 5: Heartbeat Jobs
+- [ ] Autonomní monitoring projektů
+- [ ] Self-healing alerts
+- [ ] KPI dashboard
+- [ ] Anomaly detection
+

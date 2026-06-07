@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials, getNichePackages, createNichePackage, getCustomerSubscriptions, createCustomerSubscription, cancelCustomerSubscription, getAllNichePackages, updateNichePackage, deactivateNichePackage, getAllSubscriptions, createOrder, getOrder, updateOrder, createPayment, getPaymentsByOrder } from "./db";
 import { notifyOwner } from "./_core/notification";
+import { sendOrderConfirmationEmail, sendPaymentConfirmationEmail } from "./email-service";
 import Stripe from "stripe";
 import { OPTIVIO_PRODUCTS, calculateDeposit, calculateRemaining } from "./stripe-products";
 
@@ -223,6 +224,17 @@ export const appRouter = router({
           stripeCheckoutSessionId: session.id,
         });
 
+        // Send confirmation email to customer
+        await sendOrderConfirmationEmail(
+          input.customerEmail,
+          input.customerName,
+          orderId,
+          input.packageType,
+          product.priceInCzk,
+          depositAmount,
+          session.url || undefined
+        ).catch(err => console.error("Failed to send order confirmation email:", err));
+
         return {
           sessionId: session.id,
           checkoutUrl: session.url,
@@ -247,6 +259,43 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await getPaymentsByOrder(input.orderId);
       }),
+  }),
+
+  orders: router({
+    listByUser: protectedProcedure.query(async ({ ctx }) => {
+      const inquiries = await listInquiries();
+      const userInquiries = inquiries.filter(i => i.email === ctx.user?.email);
+      const inquiryIds = userInquiries.map(i => i.id);
+      
+      if (inquiryIds.length === 0) return [];
+      
+      const allOrders = [];
+      for (const inquiryId of inquiryIds) {
+        const order = await getOrder(inquiryId).catch(() => null);
+        if (order) allOrders.push(order);
+      }
+      return allOrders;
+    }),
+  }),
+
+  payments: router({
+    listByUser: protectedProcedure.query(async ({ ctx }) => {
+      const inquiries = await listInquiries();
+      const userInquiries = inquiries.filter(i => i.email === ctx.user?.email);
+      const inquiryIds = userInquiries.map(i => i.id);
+      
+      if (inquiryIds.length === 0) return [];
+      
+      const allPayments = [];
+      for (const inquiryId of inquiryIds) {
+        const order = await getOrder(inquiryId).catch(() => null);
+        if (order) {
+          const payments = await getPaymentsByOrder(order.id);
+          allPayments.push(...payments);
+        }
+      }
+      return allPayments;
+    }),
   }),
 });
 

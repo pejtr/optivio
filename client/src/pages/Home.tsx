@@ -210,7 +210,7 @@ export default function Home() {
                 </tr>
                 <tr className="border-b border-slate-100 hover:bg-slate-50">
                   <td className="py-4 px-2 md:px-4 text-slate-900 font-medium">Doba realizace</td>
-                  <td className="text-center py-4 px-2 md:px-4"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                  <td className="text-center py-4 px-2 md:px-4 text-blue-600 font-bold">1–2 týdny</td>
                   <td className="text-center py-4 px-2 md:px-4 text-slate-600">1–3 měsíce</td>
                 </tr>
                 <tr className="border-b border-slate-100 hover:bg-slate-50">
