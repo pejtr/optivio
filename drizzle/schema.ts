@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { bigint, int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -145,3 +145,54 @@ export const manusTaskLogs = mysqlTable("manus_task_logs", {
 
 export type ManusTaskLog = typeof manusTaskLogs.$inferSelect;
 export type InsertManusTaskLog = typeof manusTaskLogs.$inferInsert;
+
+// LeadOS Projects — orchestrated via Manus API v2
+export const projects = mysqlTable("projects", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  orderId: int("orderId").notNull().references(() => orders.id),
+  leadsOsProjectId: varchar("leadsOsProjectId", { length: 255 }), // Manus API project ID
+  status: mysqlEnum("status", ["pending", "in_progress", "completed", "failed"]).default("pending").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  packageType: varchar("packageType", { length: 50 }).notNull(), // lite, basic, lead_gen, automation
+  assignedTo: varchar("assignedTo", { length: 255 }), // Team member email
+  deadline: bigint("deadline", { mode: "number" }), // Unix timestamp (ms)
+  completionPercentage: int("completionPercentage").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Project = typeof projects.$inferSelect;
+export type InsertProject = typeof projects.$inferInsert;
+
+// Project Milestones — track progress within a project
+export const projectMilestones = mysqlTable("project_milestones", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  projectId: varchar("projectId", { length: 64 }).notNull().references(() => projects.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  status: mysqlEnum("status", ["pending", "in_progress", "completed"]).default("pending").notNull(),
+  dueDate: bigint("dueDate", { mode: "number" }), // Unix timestamp (ms)
+  completedAt: bigint("completedAt", { mode: "number" }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ProjectMilestone = typeof projectMilestones.$inferSelect;
+export type InsertProjectMilestone = typeof projectMilestones.$inferInsert;
+
+// Heartbeat Job Tracking — autonomous monitoring and healing
+export const heartbeatJobs = mysqlTable("heartbeat_jobs", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  taskUid: varchar("taskUid", { length: 255 }).notNull().unique(),
+  projectId: varchar("projectId", { length: 64 }).references(() => projects.id),
+  jobType: varchar("jobType", { length: 50 }).notNull(), // monitoring, alert, healing
+  name: varchar("name", { length: 255 }).notNull(),
+  cronExpression: varchar("cronExpression", { length: 50 }).notNull(),
+  isActive: int("isActive").default(1),
+  lastExecutedAt: bigint("lastExecutedAt", { mode: "number" }),
+  nextExecutionAt: bigint("nextExecutionAt", { mode: "number" }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type HeartbeatJob = typeof heartbeatJobs.$inferSelect;
+export type InsertHeartbeatJob = typeof heartbeatJobs.$inferInsert;

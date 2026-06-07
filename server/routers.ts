@@ -297,6 +297,125 @@ export const appRouter = router({
       return allPayments;
     }),
   }),
+
+  leados: router({
+    createProject: protectedProcedure
+      .input((data: unknown) => {
+        const obj = data as Record<string, unknown>;
+        return {
+          orderId: Number(obj.orderId || 0),
+          title: String(obj.title || ""),
+          description: obj.description ? String(obj.description) : undefined,
+          packageType: String(obj.packageType || ""),
+        };
+      })
+      .mutation(async ({ input }) => {
+        // Verify order exists
+        const order = await getOrder(input.orderId).catch(() => null);
+        if (!order) {
+          throw new Error("Order not found");
+        }
+
+        // Create project in database
+        const db = await require("./db").getDb();
+        if (!db) {
+          throw new Error("Database not available");
+        }
+
+        const { projects } = await import("../drizzle/schema");
+        const projectId = Math.random().toString(36).substring(2, 10);
+        const deadline = Date.now() + 14 * 24 * 60 * 60 * 1000; // 2 weeks
+
+        await db.insert(projects).values({
+          id: projectId,
+          orderId: input.orderId,
+          status: "pending",
+          title: input.title,
+          description: input.description,
+          packageType: input.packageType,
+          deadline,
+        });
+
+        // Notify owner
+        await notifyOwner({
+          title: `🚀 Nový projekt: ${input.title}`,
+          content: `Projekt vytvořen pro objednávku #${input.orderId}. Termín: ${new Date(deadline).toLocaleDateString()}`,
+        });
+
+        return { projectId, deadline };
+      }),
+
+    getProject: protectedProcedure
+      .input((data: unknown) => {
+        const obj = data as Record<string, unknown>;
+        return { projectId: String(obj.projectId || "") };
+      })
+      .query(async ({ input }) => {
+        const db = await require("./db").getDb();
+        if (!db) {
+          throw new Error("Database not available");
+        }
+
+        const { projects, projectMilestones } = await import("../drizzle/schema");
+        const { eq } = await import("drizzle-orm");
+
+        const project = await db
+          .select()
+          .from(projects)
+          .where(eq(projects.id, input.projectId))
+          .limit(1);
+
+        if (!project[0]) {
+          throw new Error("Project not found");
+        }
+
+        const milestones = await db
+          .select()
+          .from(projectMilestones)
+          .where(eq(projectMilestones.projectId, input.projectId));
+
+        return {
+          ...project[0],
+          milestones,
+          timeRemaining: project[0].deadline ? project[0].deadline - Date.now() : null,
+        };
+      }),
+
+    updateProjectStatus: protectedProcedure
+      .input((data: unknown) => {
+        const obj = data as Record<string, unknown>;
+        return {
+          projectId: String(obj.projectId || ""),
+          status: String(obj.status || "pending"),
+          completionPercentage: Number(obj.completionPercentage || 0),
+        };
+      })
+      .mutation(async ({ input }) => {
+        const db = await require("./db").getDb();
+        if (!db) {
+          throw new Error("Database not available");
+        }
+
+        const { projects } = await import("../drizzle/schema");
+        const { eq } = await import("drizzle-orm");
+
+        await db
+          .update(projects)
+          .set({
+            status: input.status,
+            completionPercentage: input.completionPercentage,
+            updatedAt: new Date(),
+          })
+          .where(eq(projects.id, input.projectId));
+
+        await notifyOwner({
+          title: `📊 Aktualizace projektu`,
+          content: `Projekt ${input.projectId} změnil status na: ${input.status} (${input.completionPercentage}%)`,
+        });
+
+        return { ok: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

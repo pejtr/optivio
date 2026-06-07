@@ -153,3 +153,23 @@
 - [ ] KPI dashboard
 - [ ] Anomaly detection
 
+
+## Redesign — Inspirace davame.com
+
+- [x] Redesign landing page — tmavé fialové/navy pozadí (jako davame.com)
+- [x] Hero sekce — velký headline, stats (počet projektů, roky zkušeností, spokojenost)
+- [x] Niche solutions grid — karty pro různé obory (kavárny, elektrikáři, kadeřnice...)
+- [x] Case studies sekce — reálné příběhy s výsledky
+- [x] Testimonials — citáty klientů s fotkami
+- [x] CTA sekce — "Domluvit konzultaci" + "14 dní zdarma" dual CTA
+- [x] FAQ sekce — accordion styl
+- [x] Footer — tmavý, přehledný
+- [x] Sticky navigace — průhledná → tmavá při scrollu
+- [x] Mock dashboard v hero, pricing toggle (roční/měsíční)
+- [x] Services grid s badge cenami
+- [x] Why Us sekce s dark background a stats grid
+
+## Poznámky k obsahu
+- [ ] Case studies jsou ukázkové (demo) — nahradit reálnými klientskými příběhy po získání souhlasu
+- [ ] Testimonials jsou šablonové — doplnit reálnými citáty klientů s jejich souhlasem
+- [ ] Kontaktní údaje (tel, email) — doplnit reálnými hodnotami

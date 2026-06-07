@@ -44,6 +44,52 @@ async function startServer() {
       createContext,
     })
   );
+  // Heartbeat Monitoring Callback
+  app.post("/api/scheduled/monitor-project", async (req, res) => {
+    try {
+      const { sdk } = await import("./sdk");
+      const user = await sdk.authenticateRequest(req);
+      if (!user.isCron || !user.taskUid) {
+        return res.status(403).json({ error: "cron-only" });
+      }
+
+      const { projectId } = req.body;
+      const { monitorProjectHealth } = await import("../heartbeat-monitoring");
+      const result = await monitorProjectHealth(projectId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({
+        error: (err as Error).message,
+        stack: (err as Error).stack,
+        context: { url: req.url, taskUid: req.body.projectId },
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
+
+  // Heartbeat Self-Healing Callback
+  app.post("/api/scheduled/heal-project", async (req, res) => {
+    try {
+      const { sdk } = await import("./sdk");
+      const user = await sdk.authenticateRequest(req);
+      if (!user.isCron || !user.taskUid) {
+        return res.status(403).json({ error: "cron-only" });
+      }
+
+      const { projectId } = req.body;
+      const { selfHealingCheck } = await import("../heartbeat-healing");
+      const result = await selfHealingCheck(projectId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({
+        error: (err as Error).message,
+        stack: (err as Error).stack,
+        context: { url: req.url, taskUid: req.body.projectId },
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
+
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
