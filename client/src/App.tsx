@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import HomeVariantB from "./pages/HomeVariantB";
 import AdminDashboard from "./pages/AdminDashboard";
 import ClientDashboard from "./pages/ClientDashboard";
+import AgentsHub from "./pages/AgentsHub";
 import { useEffect, useState } from "react";
 import { getVariant } from "./lib/ab-test";
 
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/" component={HomeComponent} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/dashboard" component={ClientDashboard} />
+      <Route path="/agents" component={AgentsHub} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

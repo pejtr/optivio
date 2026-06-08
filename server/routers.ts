@@ -2,9 +2,11 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
-import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials, getNichePackages, createNichePackage, getCustomerSubscriptions, createCustomerSubscription, cancelCustomerSubscription, getAllNichePackages, updateNichePackage, deactivateNichePackage, getAllSubscriptions, createOrder, getOrder, updateOrder, createPayment, getPaymentsByOrder } from "./db";
+import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials, getNichePackages, createNichePackage, getCustomerSubscriptions, createCustomerSubscription, cancelCustomerSubscription, getAllNichePackages, updateNichePackage, deactivateNichePackage, getAllSubscriptions, createOrder, getOrder, updateOrder, createPayment, getPaymentsByOrder, getBrandMemory, upsertBrandMemory, createAgentSession, getAgentSessions, getAgentSession, updateAgentSession, addAgentMessage, getAgentMessages } from "./db";
 import { notifyOwner } from "./_core/notification";
 import { sendOrderConfirmationEmail, sendPaymentConfirmationEmail } from "./email-service";
+import { invokeLLM } from "./_core/llm";
+import { SKILLS, getSkill, buildSystemPrompt } from "./agent-skills";
 import Stripe from "stripe";
 import { z } from "zod";
 import { OPTIVIO_PRODUCTS, calculateDeposit, calculateRemaining } from "./stripe-products";
@@ -422,7 +424,6 @@ export const appRouter = router({
     getVariant: publicProcedure
       .input(z.object({ userId: z.string().optional() }).optional())
       .query(({ input }) => {
-        // Deterministic variant assignment (A/B/C/D)
         const variants = ['A', 'B', 'C', 'D'];
         const userId = input?.userId || 'anonymous';
         const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -437,8 +438,158 @@ export const appRouter = router({
         metadata: z.record(z.string(), z.any()).optional(),
       }))
       .mutation(async ({ input }) => {
-        // Log AB test events
         console.log(`[AB Test] Variant ${input.variant} - Event: ${input.event}`, input.metadata);
+        return { ok: true };
+      }),
+  }),
+
+  // Brand Memory — brand knowledge store for AI agents
+  brandMemory: router({
+    get: protectedProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) throw new Error("Unauthorized");
+      return await getBrandMemory(ctx.user.id);
+    }),
+
+    save: protectedProcedure
+      .input(z.object({
+        companyName: z.string().min(1),
+        tagline: z.string().optional(),
+        industry: z.string().optional(),
+        targetAudience: z.string().optional(),
+        brandVoice: z.string().optional(),
+        uniqueValue: z.string().optional(),
+        products: z.string().optional(),
+        painPoints: z.string().optional(),
+        competitors: z.string().optional(),
+        pastCampaigns: z.string().optional(),
+        website: z.string().optional(),
+        socialLinks: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new Error("Unauthorized");
+        await upsertBrandMemory(ctx.user.id, input);
+        return { ok: true };
+      }),
+  }),
+
+  // AI Agents — skills library + orchestrated chat
+  agents: router({
+    listSkills: protectedProcedure.query(() => {
+      return SKILLS.map(s => ({
+        id: s.id,
+        name: s.name,
+        description: s.description,
+        category: s.category,
+        framework: s.framework,
+        icon: s.icon,
+        suggestedPrompts: s.suggestedPrompts,
+      }));
+    }),
+
+    // Create a new session with a specific agent/skill
+    createSession: protectedProcedure
+      .input(z.object({
+        agentType: z.string(),
+        skillId: z.string().optional(),
+        title: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new Error("Unauthorized");
+        const result = await createAgentSession({
+          userId: ctx.user.id,
+          agentType: input.agentType,
+          skillId: input.skillId,
+          title: input.title || input.agentType,
+        });
+        return { sessionId: (result as any).insertId };
+      }),
+
+    // List user's sessions
+    listSessions: protectedProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) throw new Error("Unauthorized");
+      return await getAgentSessions(ctx.user.id);
+    }),
+
+    // Get session with messages
+    getSession: protectedProcedure
+      .input(z.object({ sessionId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user) throw new Error("Unauthorized");
+        const session = await getAgentSession(input.sessionId);
+        if (!session || session.userId !== ctx.user.id) throw new Error("Not found");
+        const messages = await getAgentMessages(input.sessionId);
+        return { session, messages };
+      }),
+
+    // Send message to agent and get AI response
+    chat: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        message: z.string().min(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new Error("Unauthorized");
+
+        const session = await getAgentSession(input.sessionId);
+        if (!session || session.userId !== ctx.user.id) throw new Error("Not found");
+
+        // Load brand memory for context
+        const brandMemory = await getBrandMemory(ctx.user.id);
+
+        // Get skill system prompt
+        const skill = getSkill(session.skillId || session.agentType);
+        const systemPrompt = skill
+          ? buildSystemPrompt(skill, brandMemory)
+          : buildSystemPrompt({ id: 'custom', name: 'AI Agent', systemPrompt: 'Jsi pomocný AI asistent pro marketing a podnikání.', suggestedPrompts: [], category: '', icon: '🤖', description: '' }, brandMemory);
+
+        // Load conversation history
+        const history = await getAgentMessages(input.sessionId);
+
+        // Save user message
+        await addAgentMessage({
+          sessionId: input.sessionId,
+          role: "user",
+          content: input.message,
+        });
+
+        // Build messages for LLM
+        const llmMessages = [
+          { role: "system" as const, content: systemPrompt },
+          ...history
+            .filter(m => m.role !== "system")
+            .map(m => ({ role: m.role as "user" | "assistant", content: m.content })),
+          { role: "user" as const, content: input.message },
+        ];
+
+        // Invoke LLM
+        const response = await invokeLLM({ messages: llmMessages });
+        const assistantContent = (response as any).choices?.[0]?.message?.content || "Omlouváme se, nepodařilo se vygenerovat odpověď.";
+
+        // Save assistant response
+        await addAgentMessage({
+          sessionId: input.sessionId,
+          role: "assistant",
+          content: assistantContent,
+        });
+
+        // Update session title from first message if not set
+        if (!session.title || session.title === session.agentType) {
+          const shortTitle = input.message.slice(0, 60) + (input.message.length > 60 ? "..." : "");
+          await updateAgentSession(input.sessionId, { title: shortTitle });
+        }
+
+        return { content: assistantContent };
+      }),
+
+    // Delete session
+    deleteSession: protectedProcedure
+      .input(z.object({ sessionId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new Error("Unauthorized");
+        const session = await getAgentSession(input.sessionId);
+        if (!session || session.userId !== ctx.user.id) throw new Error("Not found");
+        // Mark as deleted by clearing title
+        await updateAgentSession(input.sessionId, { title: "[smazáno]" });
         return { ok: true };
       }),
   }),

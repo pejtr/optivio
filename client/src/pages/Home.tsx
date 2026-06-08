@@ -144,6 +144,9 @@ export default function Home() {
               <a key={item} href={`#${item === "Ceny" ? "pricing" : item === "Případové studie" ? "cases" : item === "Řešení" ? "niche" : "contact"}`}
                 className="text-white/80 hover:text-white text-sm font-medium transition-colors">{item}</a>
             ))}
+            <a href="/agents" className="text-violet-300 hover:text-violet-100 text-sm font-medium transition-colors flex items-center gap-1">
+              ✨ AI Agenti
+            </a>
           </div>
           <div className="hidden md:flex items-center gap-3">
             <Button variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10 text-sm" onClick={scrollToContact}>
@@ -164,6 +167,7 @@ export default function Home() {
                 {["Řešení", "Ceny", "Případové studie", "Kontakt"][i]}
               </a>
             ))}
+            <a href="/agents" className="text-violet-300 text-sm font-medium">✨ AI Agenti</a>
             <Button className="bg-[#7c3aed] text-white w-full rounded-full" onClick={() => { setMobileMenuOpen(false); scrollToContact(); }}>
               14 dní zdarma →
             </Button>
@@ -505,6 +509,61 @@ export default function Home() {
             <Button size="lg" variant="ghost" className="text-white/80 hover:text-white border border-white/20 hover:border-white/40 rounded-full" onClick={scrollToContact}>
               14-denní zkušební verze zdarma →
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── AI AGENTS PROMO ── */}
+      <section className="py-20 bg-gradient-to-br from-violet-950 via-[#1a0a3c] to-slate-900 text-white overflow-hidden relative">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-10 left-1/4 w-72 h-72 bg-violet-600/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-1/4 w-56 h-56 bg-indigo-600/20 rounded-full blur-3xl" />
+        </div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full text-sm mb-5">
+              <span>✨</span>
+              <span className="text-violet-200">Nové — AI Marketing Suite</span>
+            </div>
+            <h2 className="text-3xl lg:text-4xl font-extrabold mb-4">
+              Váš tým AI agentů.<br />
+              <span className="text-violet-300">Vždy připravených.</span>
+            </h2>
+            <p className="text-violet-200 text-lg max-w-xl mx-auto">
+              Každý agent nese znalosti nejlepších světových marketérů. Vy říkáte CO — on ví JAK.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+            {[
+              { icon: "🧠", name: "Virtuální CMO", desc: "Orchestruje vše" },
+              { icon: "✍️", name: "Copywriter", desc: "Ogilvy + Halbert styl" },
+              { icon: "📧", name: "Email Sekvence", desc: "Frank Kern přístup" },
+              { icon: "🎯", name: "Landing Page", desc: "Hook-Story-Offer" },
+              { icon: "🔍", name: "SEO Obsah", desc: "E-E-A-T + konverze" },
+              { icon: "📢", name: "Ads Expert", desc: "Meta + Google" },
+              { icon: "🧲", name: "Lead Magnet", desc: "List building" },
+              { icon: "🎙️", name: "Webinar Script", desc: "Perfect Webinar" },
+            ].map(agent => (
+              <div key={agent.name} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center hover:bg-white/10 transition-all">
+                <div className="text-2xl mb-2">{agent.icon}</div>
+                <div className="font-semibold text-sm text-white">{agent.name}</div>
+                <div className="text-violet-300 text-xs mt-0.5">{agent.desc}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 max-w-2xl mx-auto mb-8">
+              <blockquote className="text-violet-100 text-lg italic">
+                „Bez Brand Memory je to jako kdybyste každé ráno přišli do agentury a museli novému stážistovi vysvětlovat, co děláte, komu prodáváte a jak mluvíte. S Brand Memory přijdete — a tým už VÍ."
+              </blockquote>
+            </div>
+            <a href="/agents">
+              <Button className="bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-semibold px-8 py-4 text-base rounded-full shadow-lg shadow-violet-900/40">
+                Vyzkoušet AI Agenty zdarma →
+              </Button>
+            </a>
           </div>
         </div>
       </section>
