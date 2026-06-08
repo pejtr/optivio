@@ -5,13 +5,30 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import HomeVariantB from "./pages/HomeVariantB";
 import AdminDashboard from "./pages/AdminDashboard";
 import ClientDashboard from "./pages/ClientDashboard";
+import { useEffect, useState } from "react";
+import { getVariant } from "./lib/ab-test";
 
 function Router() {
+  const [variant, setVariant] = useState<'A' | 'B' | 'C' | 'D'>('A');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getVariant().then((v) => {
+      setVariant(v);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center">Loading...</div>;
+
+  const HomeComponent = variant === 'B' ? HomeVariantB : Home;
+
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={HomeComponent} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/dashboard" component={ClientDashboard} />
       <Route path="/404" component={NotFound} />

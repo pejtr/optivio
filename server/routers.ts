@@ -6,6 +6,7 @@ import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials, ge
 import { notifyOwner } from "./_core/notification";
 import { sendOrderConfirmationEmail, sendPaymentConfirmationEmail } from "./email-service";
 import Stripe from "stripe";
+import { z } from "zod";
 import { OPTIVIO_PRODUCTS, calculateDeposit, calculateRemaining } from "./stripe-products";
 
 export const appRouter = router({
@@ -413,6 +414,31 @@ export const appRouter = router({
           content: `Projekt ${input.projectId} změnil status na: ${input.status} (${input.completionPercentage}%)`,
         });
 
+        return { ok: true };
+      }),
+  }),
+
+  ab: router({
+    getVariant: publicProcedure
+      .input(z.object({ userId: z.string().optional() }).optional())
+      .query(({ input }) => {
+        // Deterministic variant assignment (A/B/C/D)
+        const variants = ['A', 'B', 'C', 'D'];
+        const userId = input?.userId || 'anonymous';
+        const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const variant = variants[hash % 4];
+        return { variant };
+      }),
+
+    trackConversion: publicProcedure
+      .input(z.object({
+        variant: z.enum(['A', 'B', 'C', 'D']),
+        event: z.string(),
+        metadata: z.record(z.string(), z.any()).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        // Log AB test events
+        console.log(`[AB Test] Variant ${input.variant} - Event: ${input.event}`, input.metadata);
         return { ok: true };
       }),
   }),

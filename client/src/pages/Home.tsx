@@ -614,7 +614,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 mb-10">
             <div>
-              <div className="text-xl font-extrabold text-white mb-3">OPTIVIO</div>
+              <div className="flex items-center gap-2">
+            <img src="/manus-storage/optivio-logo_d4a4757c.png" alt="OPTIVIO" className="h-8" />
+          </div>
               <p className="text-sm leading-relaxed">Webová agentura zaměřená na české firmy a živnostníky. Weby, automatizace, LeadOS.</p>
               <div className="flex gap-3 mt-4">
                 {["LinkedIn", "Facebook", "Instagram"].map(s => (

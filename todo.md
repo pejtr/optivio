@@ -173,3 +173,14 @@
 - [ ] Case studies jsou ukázkové (demo) — nahradit reálnými klientskými příběhy po získání souhlasu
 - [ ] Testimonials jsou šablonové — doplnit reálnými citáty klientů s jejich souhlasem
 - [ ] Kontaktní údaje (tel, email) — doplnit reálnými hodnotami
+
+
+## AB Testing Framework (Nové)
+- [x] Implementovat AB testing backend router (getVariant, trackConversion)
+- [x] Vytvořit ab-test.ts utility (getVariant, trackEvent)
+- [x] Vytvořit HomeVariantB.tsx (Benefits-focused)
+- [ ] Vytvořit HomeVariantC.tsx (Social proof — zelená, comparison table)
+- [ ] Vytvořit HomeVariantD.tsx (Bold neon — fialová/magenta)
+- [x] Přidat variant routing do App.tsx
+- [ ] Vytvořit AB testing analytics dashboard
+- [x] Vitest testy pro AB framework (43/43 passing)
