@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Clock, AlertCircle, Download, ChevronDown, ChevronUp, Target, Calendar } from "lucide-react";
+import { CheckCircle, Clock, AlertCircle, Download, ChevronDown, ChevronUp, Target, Calendar, Brain, LayoutDashboard } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { TechSupportWidget } from "@/components/TechSupportWidget";
 
 export default function ClientDashboard() {
   const { user } = useAuth();
@@ -85,15 +86,23 @@ export default function ClientDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-4 py-6">
+      <div className="bg-white border-b border-slate-200 px-4 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Můj Dashboard</h1>
-            <p className="text-slate-500 text-sm mt-0.5">Přehled vašich projektů a plateb</p>
+          <div className="flex items-center gap-3">
+            <a href="/" className="text-xl font-extrabold text-violet-700 tracking-tight hover:text-violet-900 transition-colors">OPTIVIO</a>
+            <span className="text-slate-300">|</span>
+            <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+              <LayoutDashboard className="w-4 h-4 text-violet-600" /> ADMIN
+            </div>
           </div>
-          <div className="text-right hidden md:block">
-            <p className="text-sm font-medium text-slate-900">{user.name || user.email}</p>
-            <p className="text-xs text-slate-500">{user.email}</p>
+          <div className="flex items-center gap-3">
+            <a href="/agents" className="text-xs text-violet-600 hover:text-violet-800 font-medium flex items-center gap-1">
+              <Brain className="w-3.5 h-3.5" /> AI Agenti
+            </a>
+            <div className="text-right hidden md:block">
+              <p className="text-sm font-medium text-slate-900">{user.name || user.email}</p>
+              <p className="text-xs text-slate-500">{user.email}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -337,6 +346,7 @@ export default function ClientDashboard() {
           </TabsContent>
         </Tabs>
       </div>
+      <TechSupportWidget />
     </div>
   );
 }

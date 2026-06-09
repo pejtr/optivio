@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Check, ArrowRight, Menu, X, ChevronDown, Star, Zap, Globe, BarChart3, Shield, TrendingUp, MessageSquare } from "lucide-react";
+import { Check, ArrowRight, Menu, X, ChevronDown, Star, Zap, Globe, BarChart3, Shield, TrendingUp, MessageSquare, LayoutDashboard } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { SalesChatWidget } from "@/components/SalesChatWidget";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -100,6 +101,7 @@ const packages = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function Home() {
+  const { user, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", businessDescription: "", packageType: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -150,12 +152,21 @@ export default function Home() {
             </a>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10 text-sm" onClick={scrollToContact}>
-              Domluvit konzultaci
-            </Button>
-            <Button className="bg-[#7c3aed] hover:bg-[#6d28d9] text-white text-sm font-semibold px-5 rounded-full" onClick={scrollToContact}>
-              14 dní zdarma →
-            </Button>
+            {isAuthenticated ? (
+              <a href={user?.role === "admin" ? "/admin" : "/dashboard"}
+                className="flex items-center gap-1.5 text-sm font-semibold text-white bg-violet-600/80 hover:bg-violet-600 px-4 py-2 rounded-full transition-colors border border-violet-400/30">
+                <LayoutDashboard className="w-4 h-4" /> ADMIN
+              </a>
+            ) : (
+              <>
+                <Button variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10 text-sm" onClick={scrollToContact}>
+                  Domluvit konzultaci
+                </Button>
+                <Button className="bg-[#7c3aed] hover:bg-[#6d28d9] text-white text-sm font-semibold px-5 rounded-full" onClick={scrollToContact}>
+                  14 dní zdarma →
+                </Button>
+              </>
+            )}
           </div>
           <button className="md:hidden text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -169,9 +180,15 @@ export default function Home() {
               </a>
             ))}
             <a href="/agents" className="text-violet-300 text-sm font-medium">✨ AI Agenti</a>
-            <Button className="bg-[#7c3aed] text-white w-full rounded-full" onClick={() => { setMobileMenuOpen(false); scrollToContact(); }}>
-              14 dní zdarma →
-            </Button>
+            {isAuthenticated ? (
+              <a href={user?.role === "admin" ? "/admin" : "/dashboard"} className="flex items-center gap-1.5 text-sm font-semibold text-white bg-violet-600 px-4 py-2 rounded-full w-full justify-center">
+                <LayoutDashboard className="w-4 h-4" /> ADMIN
+              </a>
+            ) : (
+              <Button className="bg-[#7c3aed] text-white w-full rounded-full" onClick={() => { setMobileMenuOpen(false); scrollToContact(); }}>
+                14 dní zdarma →
+              </Button>
+            )}
           </div>
         )}
       </nav>
@@ -703,7 +720,7 @@ export default function Home() {
             <div>
               <h4 className="text-white font-semibold mb-4 text-sm">Kontakt</h4>
               <ul className="space-y-2 text-sm">
-                <li>info@optivio.cz</li>
+                <li>poptavka@optivio.cz</li>
                 <li>+420 XXX XXX XXX</li>
                 <li><a href="#" className="hover:text-white transition-colors">Případové studie</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>

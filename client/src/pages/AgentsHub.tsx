@@ -18,7 +18,20 @@ import { toast } from "sonner";
 import { Streamdown } from "streamdown";
 import BrandMemorySetup from "./BrandMemorySetup";
 
-type View = "hub" | "skill" | "chat" | "brand-setup" | "brand-edit";
+type View = "hub" | "skill" | "chat" | "brand-setup" | "brand-edit" | "persona-chat";
+
+type PersonaInfo = {
+  id: string;
+  name: string;
+  title: string;
+  description: string;
+  category: string;
+  icon: string;
+  accent: string;
+  tier: "free" | "gold" | "diamond";
+  featured: boolean;
+  suggestedPrompts: string[];
+};
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
   orchestrace: Brain,
@@ -48,10 +61,14 @@ export default function AgentsHub() {
   const [message, setMessage] = useState("");
   const [localMessages, setLocalMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [isSending, setIsSending] = useState(false);
+  const [activePersonaId, setActivePersonaId] = useState<string | null>(null);
+  const [personaMessages, setPersonaMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { data: skills } = trpc.agents.listSkills.useQuery(undefined, { enabled: isAuthenticated });
+  const { data: personas } = trpc.personas.list.useQuery();
+  const personaChatMutation = trpc.personas.chat.useMutation();
   const { data: brandMemory, refetch: refetchBrand } = trpc.brandMemory.get.useQuery(undefined, { enabled: isAuthenticated });
   const { data: sessions, refetch: refetchSessions } = trpc.agents.listSessions.useQuery(undefined, { enabled: isAuthenticated });
   const { data: sessionData } = trpc.agents.getSession.useQuery(
@@ -126,6 +143,43 @@ export default function AgentsHub() {
   const handleSuggestedPrompt = (prompt: string) => {
     setMessage(prompt);
     textareaRef.current?.focus();
+  };
+
+  const activePersona = personas?.find(p => p.id === activePersonaId) as PersonaInfo | undefined;
+
+  const handleStartPersona = (personaId: string) => {
+    setActivePersonaId(personaId);
+    setPersonaMessages([]);
+    setMessage("");
+    setView("persona-chat");
+  };
+
+  const handleSendPersona = async () => {
+    if (!message.trim() || !activePersonaId || isSending) return;
+    const msg = message.trim();
+    setMessage("");
+    const updated = [...personaMessages, { role: "user" as const, content: msg }];
+    setPersonaMessages(updated);
+    setIsSending(true);
+    try {
+      const response = await personaChatMutation.mutateAsync({
+        personaId: activePersonaId,
+        messages: updated,
+      });
+      setPersonaMessages(prev => [...prev, { role: "assistant", content: response.content }]);
+    } catch {
+      toast.error("Chyba při komunikaci s koučem");
+      setPersonaMessages(prev => prev.slice(0, -1));
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handlePersonaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendPersona();
+    }
   };
 
   if (loading) {
@@ -310,6 +364,110 @@ export default function AgentsHub() {
     );
   }
 
+  // Persona chat view (sales coaches — stateless, Brand Memory aware)
+  if (view === "persona-chat" && activePersona) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col">
+        <div className="bg-white border-b px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
+          <Button variant="ghost" size="icon" onClick={() => { setView("hub"); setActivePersonaId(null); }}>
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg" style={{ backgroundColor: `${activePersona.accent}1a` }}>
+            {activePersona.icon}
+          </div>
+          <div>
+            <div className="font-semibold text-slate-900">{activePersona.name}</div>
+            <div className="text-xs text-slate-400">{activePersona.title}</div>
+          </div>
+          {brandMemory && (
+            <Badge className="ml-auto bg-violet-100 text-violet-700 border-violet-200 text-xs">
+              <Brain className="w-3 h-3 mr-1" />
+              Brand Memory aktivní
+            </Badge>
+          )}
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 max-w-3xl w-full mx-auto" ref={scrollRef}>
+          {personaMessages.length === 0 ? (
+            <div className="text-center py-12 space-y-6">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto" style={{ backgroundColor: `${activePersona.accent}1a` }}>
+                {activePersona.icon}
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-slate-800 mb-1">{activePersona.name}</h3>
+                <p className="text-sm font-medium mb-2" style={{ color: activePersona.accent }}>{activePersona.title}</p>
+                <p className="text-slate-500 max-w-sm mx-auto">{activePersona.description}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm text-slate-400 font-medium">Zeptejte se:</p>
+                {activePersona.suggestedPrompts.map(p => (
+                  <button key={p} onClick={() => handleSuggestedPrompt(p)}
+                    className="block w-full max-w-sm mx-auto text-left px-4 py-3 rounded-xl bg-white border border-slate-200 hover:border-violet-300 hover:bg-violet-50 text-sm text-slate-700 transition-all">
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {personaMessages.map((msg, i) => (
+                <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                  {msg.role === "assistant" && (
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-base mr-3 flex-shrink-0 mt-1" style={{ backgroundColor: `${activePersona.accent}1a` }}>
+                      {activePersona.icon}
+                    </div>
+                  )}
+                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+                    msg.role === "user" ? "bg-violet-600 text-white rounded-tr-sm" : "bg-white border border-slate-200 text-slate-800 rounded-tl-sm shadow-sm"}`}>
+                    {msg.role === "assistant" ? (
+                      <div className="prose prose-sm max-w-none prose-p:my-1 prose-headings:mb-2">
+                        <Streamdown>{msg.content}</Streamdown>
+                      </div>
+                    ) : (
+                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {isSending && (
+                <div className="flex justify-start">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-base mr-3 flex-shrink-0" style={{ backgroundColor: `${activePersona.accent}1a` }}>
+                    {activePersona.icon}
+                  </div>
+                  <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+                    <div className="flex gap-1">
+                      {[0, 150, 300].map(d => (
+                        <span key={d} className="w-2 h-2 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: `${d}ms` }} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white border-t p-4 sticky bottom-0">
+          <div className="max-w-3xl mx-auto flex gap-3 items-end">
+            <Textarea
+              ref={textareaRef}
+              value={message}
+              onChange={e => setMessage(e.target.value)}
+              onKeyDown={handlePersonaKeyDown}
+              placeholder={`Napište zprávu pro ${activePersona.name}...`}
+              className="resize-none min-h-[52px] max-h-[200px] rounded-xl border-slate-200 focus-visible:ring-violet-500"
+              rows={1}
+            />
+            <Button onClick={handleSendPersona} disabled={!message.trim() || isSending} size="icon"
+              className="w-12 h-12 rounded-xl bg-violet-600 hover:bg-violet-700 flex-shrink-0">
+              <Send className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Main Hub view
   const groupedSkills = skills?.reduce((acc, skill) => {
     if (!acc[skill.category]) acc[skill.category] = [];
@@ -397,6 +555,49 @@ export default function AgentsHub() {
                   </button>
                 );
               })}
+            </div>
+          </section>
+        )}
+
+        {/* Sales Coaches (Personas) */}
+        {personas && personas.length > 0 && (
+          <section>
+            <div className="flex items-center gap-2 mb-4">
+              <Badge className="bg-amber-100 text-amber-700 border-amber-200 border">
+                <Target className="w-3 h-3 mr-1" />
+                Prodejní kouči
+              </Badge>
+              <span className="text-sm text-slate-400">Chatujte s AI verzemi legend prodeje a marketingu</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {personas.filter(p => p.category !== "optivio").map(persona => (
+                <Card
+                  key={persona.id}
+                  className="border border-slate-200 hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
+                  onClick={() => handleStartPersona(persona.id)}
+                  style={{ borderTopColor: persona.accent, borderTopWidth: 3 }}
+                >
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3">
+                      <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl flex-shrink-0" style={{ backgroundColor: `${persona.accent}1a` }}>
+                        {persona.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-slate-900 truncate">{persona.name}</h3>
+                          {persona.tier !== "free" && (
+                            <Badge className={`text-[10px] px-1.5 py-0 ${persona.tier === "gold" ? "bg-amber-100 text-amber-700" : "bg-violet-100 text-violet-700"} border-0 uppercase`}>
+                              {persona.tier}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-xs font-medium mb-1.5" style={{ color: persona.accent }}>{persona.title}</p>
+                        <p className="text-sm text-slate-500 leading-snug line-clamp-2">{persona.description}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </section>
         )}

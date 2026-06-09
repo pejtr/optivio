@@ -35,7 +35,7 @@ export function SalesChatWidget() {
       setMessages((prev) => [...prev, { role: "assistant", content: res.content }]);
     },
     onError: () => {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Omlouvám se, zkuste to prosím znovu nebo nám napište na info@optivio.cz." }]);
+      setMessages((prev) => [...prev, { role: "assistant", content: "Omlouvám se, zkuste to prosím znovu nebo nám napište na poptavka@optivio.cz." }]);
     },
   });
 

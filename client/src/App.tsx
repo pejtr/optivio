@@ -6,6 +6,8 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import HomeVariantB from "./pages/HomeVariantB";
+import HomeVariantC from "./pages/HomeVariantC";
+import HomeVariantD from "./pages/HomeVariantD";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminProjects from "./pages/AdminProjects";
 import ClientDashboard from "./pages/ClientDashboard";
@@ -26,7 +28,7 @@ function Router() {
 
   if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center">Loading...</div>;
 
-  const HomeComponent = variant === 'B' ? HomeVariantB : Home;
+  const HomeComponent = variant === 'B' ? HomeVariantB : variant === 'C' ? HomeVariantC : variant === 'D' ? HomeVariantD : Home;
 
   return (
     <Switch>
