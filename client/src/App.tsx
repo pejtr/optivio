@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import HomeVariantB from "./pages/HomeVariantB";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminProjects from "./pages/AdminProjects";
 import ClientDashboard from "./pages/ClientDashboard";
 import AgentsHub from "./pages/AgentsHub";
 import { useEffect, useState } from "react";
@@ -31,6 +32,7 @@ function Router() {
     <Switch>
       <Route path="/" component={HomeComponent} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/projects" component={AdminProjects} />
       <Route path="/dashboard" component={ClientDashboard} />
       <Route path="/agents" component={AgentsHub} />
       <Route path="/404" component={NotFound} />

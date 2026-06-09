@@ -3,11 +3,12 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Menu, X, LogOut, Package, Users, BarChart3 } from "lucide-react";
+import { Menu, X, LogOut, Package, Users, BarChart3, FolderKanban } from "lucide-react";
 import { useLocation } from "wouter";
 import AdminNichePackages from "./AdminNichePackages";
 import AdminSubscriptions from "./AdminSubscriptions";
 import AdminStats from "./AdminStats";
+import AdminProjects from "./AdminProjects";
 
 export default function AdminDashboard() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -98,35 +99,37 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="stats" className="w-full">
-          <TabsList className="grid w-full md:w-auto grid-cols-3 mb-8">
+          <TabsList className="grid w-full md:w-auto grid-cols-4 mb-8">
             <TabsTrigger value="stats" className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4 hidden sm:inline" />
-              <span className="hidden sm:inline">Přehled</span>
-              <span className="sm:hidden">Přehled</span>
+              Přehled
+            </TabsTrigger>
+            <TabsTrigger value="projects" className="flex items-center gap-2">
+              <FolderKanban className="w-4 h-4 hidden sm:inline" />
+              Projekty
             </TabsTrigger>
             <TabsTrigger value="packages" className="flex items-center gap-2">
               <Package className="w-4 h-4 hidden sm:inline" />
-              <span className="hidden sm:inline">Balíčky</span>
-              <span className="sm:hidden">Balíčky</span>
+              Balíčky
             </TabsTrigger>
             <TabsTrigger value="subscriptions" className="flex items-center gap-2">
               <Users className="w-4 h-4 hidden sm:inline" />
-              <span className="hidden sm:inline">Předplatná</span>
-              <span className="sm:hidden">Předplatná</span>
+              Předplatná
             </TabsTrigger>
           </TabsList>
 
-          {/* Stats Tab */}
           <TabsContent value="stats">
             <AdminStats />
           </TabsContent>
 
-          {/* Packages Tab */}
+          <TabsContent value="projects">
+            <AdminProjects />
+          </TabsContent>
+
           <TabsContent value="packages">
             <AdminNichePackages />
           </TabsContent>
 
-          {/* Subscriptions Tab */}
           <TabsContent value="subscriptions">
             <AdminSubscriptions />
           </TabsContent>

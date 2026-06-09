@@ -9,8 +9,7 @@ const entryPoint = path.join(projectRoot, 'server', '_core', 'index.ts');
 
 const env = {
   ...process.env,
-  NODE_ENV: 'development',
-  // Ensure dotenv looks in project root
+  // Let .env file control NODE_ENV — don't override here
   PWD: projectRoot,
 };
 

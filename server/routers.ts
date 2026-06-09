@@ -2,7 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
-import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials, getNichePackages, createNichePackage, getCustomerSubscriptions, createCustomerSubscription, cancelCustomerSubscription, getAllNichePackages, updateNichePackage, deactivateNichePackage, getAllSubscriptions, createOrder, getOrder, updateOrder, createPayment, getPaymentsByOrder, getBrandMemory, upsertBrandMemory, createAgentSession, getAgentSessions, getAgentSession, updateAgentSession, addAgentMessage, getAgentMessages } from "./db";
+import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials, getNichePackages, createNichePackage, getCustomerSubscriptions, createCustomerSubscription, cancelCustomerSubscription, getAllNichePackages, updateNichePackage, deactivateNichePackage, getAllSubscriptions, createOrder, getOrder, updateOrder, createPayment, getPaymentsByOrder, getBrandMemory, upsertBrandMemory, createAgentSession, getAgentSessions, getAgentSession, updateAgentSession, addAgentMessage, getAgentMessages, getAllProjects, getProjectByOrderId, getProjectsByOrderIds, createProject, updateProject, getProjectMilestones, createMilestone, updateMilestone } from "./db";
 import { notifyOwner } from "./_core/notification";
 import { sendOrderConfirmationEmail, sendPaymentConfirmationEmail } from "./email-service";
 import { invokeLLM } from "./_core/llm";
@@ -418,6 +418,139 @@ export const appRouter = router({
 
         return { ok: true };
       }),
+  }),
+
+  // ─── Projects ───────────────────────────────────────────────────────────────
+  projects: router({
+    // Client: get own projects with milestones
+    myProjects: protectedProcedure.query(async ({ ctx }) => {
+      const allInquiries = await listInquiries();
+      const userInquiries = allInquiries.filter(i => i.email === ctx.user?.email);
+      if (userInquiries.length === 0) return [];
+      const orderIds = userInquiries.map(i => i.id);
+      // find orders linked to those inquiries
+      type OrderRow = NonNullable<Awaited<ReturnType<typeof getOrder>>>;
+      const allOrdersList: OrderRow[] = [];
+      for (const id of orderIds) {
+        const o = await getOrder(id).catch(() => null);
+        if (o) allOrdersList.push(o);
+      }
+      if (allOrdersList.length === 0) return [];
+      const projectList = await getProjectsByOrderIds(allOrdersList.map(o => o.id));
+      const result = await Promise.all(
+        projectList.map(async (p) => {
+          const milestones = await getProjectMilestones(p.id);
+          const order = allOrdersList.find(o => o.id === p.orderId);
+          return { ...p, milestones, order };
+        })
+      );
+      return result;
+    }),
+
+    // Admin: list all projects with milestones
+    admin: router({
+      list: protectedProcedure.query(async ({ ctx }) => {
+        if (ctx.user?.role !== 'admin') throw new Error('Unauthorized');
+        const all = await getAllProjects();
+        return Promise.all(all.map(async (p) => {
+          const milestones = await getProjectMilestones(p.id);
+          const order = await getOrder(p.orderId).catch(() => null);
+          return { ...p, milestones, order };
+        }));
+      }),
+
+      // Create project from an order
+      create: protectedProcedure
+        .input(z.object({
+          orderId: z.number(),
+          title: z.string().min(1),
+          description: z.string().optional(),
+          assignedTo: z.string().optional(),
+          deadlineDays: z.number().default(14),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          if (ctx.user?.role !== 'admin') throw new Error('Unauthorized');
+          const { nanoid } = await import('nanoid');
+          const projectId = nanoid(12);
+          const deadline = Date.now() + input.deadlineDays * 24 * 60 * 60 * 1000;
+          const order = await getOrder(input.orderId);
+          if (!order) throw new Error('Order not found');
+          await createProject({
+            id: projectId,
+            orderId: input.orderId,
+            title: input.title,
+            description: input.description,
+            packageType: order.packageType,
+            assignedTo: input.assignedTo,
+            deadline,
+            status: 'pending',
+            completionPercentage: 0,
+          });
+          await notifyOwner({
+            title: `🚀 Projekt vytvořen: ${input.title}`,
+            content: `Projekt #${projectId} pro objednávku #${input.orderId}. Termín: ${new Date(deadline).toLocaleDateString('cs-CZ')}`,
+          });
+          return { projectId };
+        }),
+
+      // Update project status and progress
+      update: protectedProcedure
+        .input(z.object({
+          projectId: z.string(),
+          status: z.enum(['pending', 'in_progress', 'completed', 'failed']).optional(),
+          completionPercentage: z.number().min(0).max(100).optional(),
+          assignedTo: z.string().optional(),
+          deadlineDays: z.number().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          if (ctx.user?.role !== 'admin') throw new Error('Unauthorized');
+          const { projectId, deadlineDays, ...rest } = input;
+          const data: Record<string, unknown> = { ...rest };
+          if (deadlineDays !== undefined) {
+            data.deadline = Date.now() + deadlineDays * 24 * 60 * 60 * 1000;
+          }
+          await updateProject(projectId, data as any);
+          return { ok: true };
+        }),
+
+      // Add milestone
+      addMilestone: protectedProcedure
+        .input(z.object({
+          projectId: z.string(),
+          title: z.string().min(1),
+          description: z.string().optional(),
+          dueDays: z.number().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          if (ctx.user?.role !== 'admin') throw new Error('Unauthorized');
+          const { nanoid } = await import('nanoid');
+          const id = nanoid(12);
+          await createMilestone({
+            id,
+            projectId: input.projectId,
+            title: input.title,
+            description: input.description,
+            dueDate: input.dueDays ? Date.now() + input.dueDays * 24 * 60 * 60 * 1000 : undefined,
+            status: 'pending',
+          });
+          return { id };
+        }),
+
+      // Update milestone
+      updateMilestone: protectedProcedure
+        .input(z.object({
+          milestoneId: z.string(),
+          status: z.enum(['pending', 'in_progress', 'completed']),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          if (ctx.user?.role !== 'admin') throw new Error('Unauthorized');
+          await updateMilestone(input.milestoneId, {
+            status: input.status,
+            completedAt: input.status === 'completed' ? Date.now() : undefined,
+          });
+          return { ok: true };
+        }),
+    }),
   }),
 
   ab: router({

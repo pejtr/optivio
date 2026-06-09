@@ -1,6 +1,6 @@
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, inquiries, portfolioProjects, testimonials, InsertInquiry, nichePackages, customerSubscriptions, InsertNichePackage, InsertCustomerSubscription, orders, payments, InsertOrder, InsertPayment, brandMemories, InsertBrandMemory, agentSessions, InsertAgentSession, agentMessages, InsertAgentMessage } from "../drizzle/schema";
+import { InsertUser, users, inquiries, portfolioProjects, testimonials, InsertInquiry, nichePackages, customerSubscriptions, InsertNichePackage, InsertCustomerSubscription, orders, payments, InsertOrder, InsertPayment, brandMemories, BrandMemory, InsertBrandMemory, agentSessions, InsertAgentSession, agentMessages, InsertAgentMessage, projects, projectMilestones, InsertProject, InsertProjectMilestone } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -271,5 +271,59 @@ export async function getAgentMessages(sessionId: number) {
   return db.select().from(agentMessages)
     .where(eq(agentMessages.sessionId, sessionId))
     .orderBy(agentMessages.createdAt);
+}
+
+// ─── Projects ─────────────────────────────────────────────────────────────────
+
+export async function getAllProjects() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(projects).orderBy(desc(projects.createdAt));
+}
+
+export async function getProjectByOrderId(orderId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(projects).where(eq(projects.orderId, orderId)).limit(1);
+  return rows[0];
+}
+
+export async function getProjectsByOrderIds(orderIds: number[]) {
+  if (orderIds.length === 0) return [];
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(projects).where(inArray(projects.orderId, orderIds));
+}
+
+export async function createProject(data: InsertProject) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.insert(projects).values(data);
+}
+
+export async function updateProject(projectId: string, data: Partial<InsertProject>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.update(projects).set({ ...data, updatedAt: new Date() }).where(eq(projects.id, projectId));
+}
+
+export async function getProjectMilestones(projectId: string) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(projectMilestones)
+    .where(eq(projectMilestones.projectId, projectId))
+    .orderBy(projectMilestones.createdAt);
+}
+
+export async function createMilestone(data: InsertProjectMilestone) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.insert(projectMilestones).values(data);
+}
+
+export async function updateMilestone(milestoneId: string, data: Partial<InsertProjectMilestone>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.update(projectMilestones).set(data).where(eq(projectMilestones.id, milestoneId));
 }
 
