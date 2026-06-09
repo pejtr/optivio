@@ -477,49 +477,56 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left — cycle diagram */}
             <div className="flex justify-center">
-              <div className="relative w-64 h-64">
-                {/* Center text */}
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <div className="text-center">
-                    <p className="text-sm font-bold text-white leading-tight">Jak probíhá<br />vývoj MVP?</p>
-                  </div>
-                </div>
-                {/* Circular border */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 200">
-                  <circle cx="100" cy="100" r="72" fill="none" stroke="#F59E0B" strokeWidth="3" strokeDasharray="8 4" />
-                  {/* Arrows at cardinal points */}
-                  <polygon points="100,24 106,36 94,36" fill="#F59E0B" />
-                  <polygon points="176,100 164,94 164,106" fill="#F59E0B" />
-                  <polygon points="100,176 94,164 106,164" fill="#F59E0B" />
-                  <polygon points="24,100 36,106 36,94" fill="#F59E0B" />
+              {/* Container 320×320, center at 160,160, bubble radius 110 */}
+              <div className="relative" style={{ width: 320, height: 320 }}>
+                {/* SVG circle + directional arrows */}
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 320 320">
+                  <circle cx="160" cy="160" r="110" fill="none" stroke="#F59E0B" strokeWidth="3.5" />
+                  {/* Arrows at 45°, 135°, 225°, 315° — pointing clockwise (tangent +90°) */}
+                  {[45, 135, 225, 315].map(deg => {
+                    const rad = (deg * Math.PI) / 180;
+                    const ax = 160 + 110 * Math.cos(rad);
+                    const ay = 160 + 110 * Math.sin(rad);
+                    const rot = deg + 90;
+                    return (
+                      <g key={deg} transform={`translate(${ax},${ay}) rotate(${rot})`}>
+                        <polygon points="0,-9 7,5 -7,5" fill="#F59E0B" />
+                      </g>
+                    );
+                  })}
                 </svg>
-                {/* 4 bubbles */}
+                {/* Center label */}
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <p className="text-center text-sm font-bold text-white leading-snug pointer-events-none">
+                    Jak probíhá<br />vývoj MVP?
+                  </p>
+                </div>
+                {/* 4 step bubbles — center + 110px × unit vector */}
                 {[
-                  { label: "Vývoj", angle: -90, color: "#38BDF8" },
-                  { label: "Nasazení", angle: 0, color: "#38BDF8" },
-                  { label: "Zpětná\nvazba", angle: 90, color: "#38BDF8" },
-                  { label: "Analýza", angle: 180, color: "#38BDF8" },
+                  { label: "Vývoj", angle: -90 },
+                  { label: "Nasazení", angle: 0 },
+                  { label: "Zpětná\nvazba", angle: 90 },
+                  { label: "Analýza", angle: 180 },
                 ].map(({ label, angle }) => {
                   const rad = (angle * Math.PI) / 180;
-                  const r = 95;
-                  const cx = 128 + r * Math.cos(rad);
-                  const cy = 128 + r * Math.sin(rad);
+                  const bx = 160 + 110 * Math.cos(rad);
+                  const by = 160 + 110 * Math.sin(rad);
                   return (
                     <div
                       key={label}
                       className="absolute flex items-center justify-center"
                       style={{
-                        width: 68, height: 68,
+                        width: 72, height: 72,
                         borderRadius: "50%",
                         background: "linear-gradient(135deg,#38BDF8,#0EA5E9)",
                         color: "#fff",
                         fontWeight: 700,
                         fontSize: 13,
                         textAlign: "center",
-                        lineHeight: 1.25,
-                        left: cx - 34,
-                        top: cy - 34,
-                        boxShadow: "0 4px 20px rgba(56,189,248,0.35)",
+                        lineHeight: 1.3,
+                        left: bx - 36,
+                        top: by - 36,
+                        boxShadow: "0 0 24px rgba(56,189,248,0.4)",
                         whiteSpace: "pre-line",
                       }}
                     >
@@ -530,22 +537,39 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right — MoSCoW + plugin */}
+            {/* Right — steps detail + MoSCoW */}
             <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-bold mb-4 text-white/90">Co bude součástí vašeho projektu</h3>
-                <div className="space-y-3">
+              {/* Step cards */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { emoji: "🔍", step: "1. Analýza", desc: "Zmapujeme váš byznys, cíle a konkurenci. Navrhneme strukturu a obsah." },
+                  { emoji: "💻", step: "2. Vývoj", desc: "Píšeme kód, designujeme, integrujeme. Průběžné náhledy pro vaše schválení." },
+                  { emoji: "🚀", step: "3. Nasazení", desc: "Spustíme web live — hosting, SSL, rychlost, SEO. Vše nastaveno." },
+                  { emoji: "📊", step: "4. Zpětná vazba", desc: "Sledujeme výsledky a ladíme. Každá iterace je lepší než předchozí." },
+                ].map(({ emoji, step, desc }) => (
+                  <div key={step} className="bg-white/5 border border-white/10 rounded-2xl p-4 hover:border-sky-400/30 transition-colors">
+                    <div className="text-xl mb-2">{emoji}</div>
+                    <div className="font-bold text-sm text-sky-300 mb-1">{step}</div>
+                    <p className="text-xs text-white/50 leading-relaxed">{desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* MoSCoW */}
+              <div className="border border-white/10 bg-white/3 rounded-2xl p-5">
+                <h3 className="text-sm font-bold text-white/80 mb-3">Co bude součástí vašeho webu (MoSCoW)</h3>
+                <div className="space-y-2">
                   {[
-                    { dot: "bg-green-400", badge: "bg-green-400/10 text-green-400 border-green-400/30", label: "musíme mít", desc: "Budou součástí MVP — základní funkce, bez nichž web nefunguje." },
-                    { dot: "bg-blue-400", badge: "bg-blue-400/10 text-blue-400 border-blue-400/30", label: "bychom měli mít", desc: "Souvisí s inovací — zařazení zvážíme dle časových možností." },
-                    { dot: "bg-amber-400", badge: "bg-amber-400/10 text-amber-400 border-amber-400/30", label: "můžeme mít", desc: "Navyšují uživatelský zážitek, ale zatím je nepřidáme." },
-                    { dot: "bg-slate-400", badge: "bg-slate-400/10 text-slate-400 border-slate-400/30", label: "zatím nebudeme mít", desc: "Rozhodneme se pro ně až v dalších fázích vývoje." },
+                    { dot: "bg-green-400", badge: "bg-green-400/10 text-green-400 border-green-400/30", label: "musíme mít", desc: "Základ MVP — bez toho web nefunguje." },
+                    { dot: "bg-blue-400", badge: "bg-blue-400/10 text-blue-400 border-blue-400/30", label: "bychom měli mít", desc: "Přidáme dle časových možností." },
+                    { dot: "bg-amber-400", badge: "bg-amber-400/10 text-amber-400 border-amber-400/30", label: "můžeme mít", desc: "Zlepšují zážitek, v další iteraci." },
+                    { dot: "bg-slate-500", badge: "bg-slate-400/10 text-slate-400 border-slate-400/30", label: "zatím nebudeme mít", desc: "V pozdějších fázích." },
                   ].map(({ dot, badge, label, desc }) => (
                     <div key={label} className="flex gap-3 items-start">
                       <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${dot}`} />
-                      <p className="text-sm text-white/70 leading-relaxed">
-                        funkce, které <span className={`font-bold border rounded px-1.5 py-0.5 text-xs ${badge}`}>{label}</span>{" "}
-                        — {desc}
+                      <p className="text-xs text-white/60 leading-relaxed">
+                        <span className={`font-bold border rounded px-1.5 py-0.5 mr-1 ${badge}`}>{label}</span>
+                        {desc}
                       </p>
                     </div>
                   ))}
@@ -554,16 +578,16 @@ export default function Home() {
 
               {/* Plugin marketplace teaser */}
               <div className="border border-violet-400/20 bg-violet-400/5 rounded-2xl p-5">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">🧩</span>
-                  <h4 className="font-bold text-violet-300">Plugin marketplace</h4>
+                  <h4 className="font-bold text-violet-300 text-sm">Plugin marketplace</h4>
                   <span className="text-[10px] bg-violet-500/20 text-violet-300 border border-violet-400/30 rounded-full px-2 py-0.5 font-semibold">Brzy</span>
                 </div>
-                <p className="text-sm text-white/50 mb-3">Jako WordPress — dokupte si přesně ty funkce, které potřebujete. Přímo z vašeho ADMIN panelu, bez vývojáře.</p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  {["📅 Online booking", "🛒 Mini e-shop", "📧 Email marketing", "📊 Analytiky", "💬 Live chat", "🌍 Vícejazyčnost"].map(p => (
-                    <div key={p} className="flex items-center gap-1.5 text-white/40">
-                      <Check className="w-3 h-3 text-violet-400 shrink-0" /> {p}
+                <p className="text-xs text-white/50 mb-3">Dokupte si přesně ty funkce, které potřebujete — přímo z ADMIN panelu, bez vývojáře.</p>
+                <div className="grid grid-cols-3 gap-1.5 text-[11px]">
+                  {["📅 Booking", "🛒 E-shop", "📧 Emaily", "📊 Analytics", "💬 Live chat", "🌍 Multijazyčnost"].map(p => (
+                    <div key={p} className="flex items-center gap-1 text-white/40">
+                      <Check className="w-2.5 h-2.5 text-violet-400 shrink-0" /> {p}
                     </div>
                   ))}
                 </div>
