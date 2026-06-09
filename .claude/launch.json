@@ -4,7 +4,7 @@
     {
       "name": "OPTIVIO Dev (Express + Vite)",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["start-dev.cjs"],
+      "runtimeArgs": ["E:\\!CLAUDECODE\\OPTIVIO\\start-dev.cjs"],
       "port": 3000
     }
   ]
