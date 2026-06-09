@@ -38,7 +38,7 @@ type Props = {
 
 export default function BrandMemorySetup({ onComplete, initialData }: Props) {
   const [step, setStep] = useState(1);
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
     defaultValues: initialData || {},
   });
 
@@ -200,10 +200,7 @@ export default function BrandMemorySetup({ onComplete, initialData }: Props) {
                           <button
                             type="button"
                             key={v}
-                            onClick={() => {
-                              const input = document.getElementById("brandVoice") as HTMLInputElement;
-                              if (input) input.value = v;
-                            }}
+                            onClick={() => setValue("brandVoice", v)}
                             className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
                               current === v
                                 ? "bg-violet-600 text-white border-violet-600"

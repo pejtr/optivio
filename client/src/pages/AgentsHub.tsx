@@ -148,7 +148,7 @@ export default function AgentsHub() {
             <p className="text-slate-500">Přihlaste se a získejte přístup k virtuálnímu CMO a celé sadě marketingových agentů.</p>
             <Button
               className="w-full bg-violet-600 hover:bg-violet-700"
-              onClick={() => window.location.href = getLoginUrl("/agents")}
+              onClick={() => window.location.href = getLoginUrl()}
             >
               Přihlásit se
             </Button>
