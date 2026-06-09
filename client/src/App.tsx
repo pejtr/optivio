@@ -12,6 +12,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminProjects from "./pages/AdminProjects";
 import ClientDashboard from "./pages/ClientDashboard";
 import AgentsHub from "./pages/AgentsHub";
+import IBotsPage from "./pages/IBotsPage";
+import DemoPage from "./pages/DemoPage";
 import { useEffect, useState } from "react";
 import { getVariant } from "./lib/ab-test";
 
@@ -37,6 +39,8 @@ function Router() {
       <Route path="/admin/projects" component={AdminProjects} />
       <Route path="/dashboard" component={ClientDashboard} />
       <Route path="/agents" component={AgentsHub} />
+      <Route path="/ibots" component={IBotsPage} />
+      <Route path="/demo" component={DemoPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

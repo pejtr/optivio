@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Check, ArrowRight, Menu, X, ChevronDown, Star, Zap, Globe, BarChart3, Shield, TrendingUp, MessageSquare, LayoutDashboard } from "lucide-react";
+import { Check, ArrowRight, Menu, X, ChevronDown, Star, Zap, Globe, BarChart3, Shield, TrendingUp, MessageSquare, LayoutDashboard, Bot } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { SalesChatWidget } from "@/components/SalesChatWidget";
@@ -147,6 +147,9 @@ export default function Home() {
               <a key={item} href={`#${item === "Ceny" ? "pricing" : item === "Případové studie" ? "cases" : item === "Řešení" ? "niche" : "contact"}`}
                 className="text-white/80 hover:text-white text-sm font-medium transition-colors">{item}</a>
             ))}
+            <a href="/demo" className="text-emerald-300 hover:text-emerald-100 text-sm font-medium transition-colors flex items-center gap-1">
+              🎨 Demo
+            </a>
             <a href="/agents" className="text-violet-300 hover:text-violet-100 text-sm font-medium transition-colors flex items-center gap-1">
               ✨ AI Agenti
             </a>
@@ -222,9 +225,11 @@ export default function Home() {
               <Button size="lg" className="bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-bold px-8 rounded-full text-base shadow-lg shadow-violet-900/40 active:scale-95 transition-transform" onClick={scrollToContact}>
                 Domluvit konzultaci
               </Button>
-              <Button size="lg" variant="ghost" className="text-white/80 hover:text-white border border-white/20 hover:border-white/40 rounded-full text-base" onClick={scrollToContact}>
-                14 dní zkušební verze zdarma →
-              </Button>
+              <a href="/demo">
+                <Button size="lg" variant="ghost" className="text-white/80 hover:text-white border border-white/20 hover:border-white/40 rounded-full text-base">
+                  🎨 Vyzkoušet demo zdarma →
+                </Button>
+              </a>
             </div>
             {/* Trust badges */}
             <div className="flex flex-wrap gap-6 text-sm text-white/60">
@@ -458,6 +463,116 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── MVP PROCESS ── */}
+      <section className="py-20 bg-[#0f0628] text-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-violet-500/20 border border-violet-400/30 rounded-full px-4 py-1.5 text-sm text-violet-300 mb-4">
+              Transparentní vývoj
+            </div>
+            <h2 className="text-3xl lg:text-4xl font-extrabold mb-4">Jak probíhá vývoj MVP?</h2>
+            <p className="text-white/50 max-w-xl mx-auto">Pracujeme v krátkých iteracích. Každý krok je viditelný a vy máte vždy kontrolu nad tím, co se vyvíjí a proč.</p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left — cycle diagram */}
+            <div className="flex justify-center">
+              <div className="relative w-64 h-64">
+                {/* Center text */}
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-white leading-tight">Jak probíhá<br />vývoj MVP?</p>
+                  </div>
+                </div>
+                {/* Circular border */}
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 200">
+                  <circle cx="100" cy="100" r="72" fill="none" stroke="#F59E0B" strokeWidth="3" strokeDasharray="8 4" />
+                  {/* Arrows at cardinal points */}
+                  <polygon points="100,24 106,36 94,36" fill="#F59E0B" />
+                  <polygon points="176,100 164,94 164,106" fill="#F59E0B" />
+                  <polygon points="100,176 94,164 106,164" fill="#F59E0B" />
+                  <polygon points="24,100 36,106 36,94" fill="#F59E0B" />
+                </svg>
+                {/* 4 bubbles */}
+                {[
+                  { label: "Vývoj", angle: -90, color: "#38BDF8" },
+                  { label: "Nasazení", angle: 0, color: "#38BDF8" },
+                  { label: "Zpětná\nvazba", angle: 90, color: "#38BDF8" },
+                  { label: "Analýza", angle: 180, color: "#38BDF8" },
+                ].map(({ label, angle }) => {
+                  const rad = (angle * Math.PI) / 180;
+                  const r = 95;
+                  const cx = 128 + r * Math.cos(rad);
+                  const cy = 128 + r * Math.sin(rad);
+                  return (
+                    <div
+                      key={label}
+                      className="absolute flex items-center justify-center"
+                      style={{
+                        width: 68, height: 68,
+                        borderRadius: "50%",
+                        background: "linear-gradient(135deg,#38BDF8,#0EA5E9)",
+                        color: "#fff",
+                        fontWeight: 700,
+                        fontSize: 13,
+                        textAlign: "center",
+                        lineHeight: 1.25,
+                        left: cx - 34,
+                        top: cy - 34,
+                        boxShadow: "0 4px 20px rgba(56,189,248,0.35)",
+                        whiteSpace: "pre-line",
+                      }}
+                    >
+                      {label}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right — MoSCoW + plugin */}
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-bold mb-4 text-white/90">Co bude součástí vašeho projektu</h3>
+                <div className="space-y-3">
+                  {[
+                    { dot: "bg-green-400", badge: "bg-green-400/10 text-green-400 border-green-400/30", label: "musíme mít", desc: "Budou součástí MVP — základní funkce, bez nichž web nefunguje." },
+                    { dot: "bg-blue-400", badge: "bg-blue-400/10 text-blue-400 border-blue-400/30", label: "bychom měli mít", desc: "Souvisí s inovací — zařazení zvážíme dle časových možností." },
+                    { dot: "bg-amber-400", badge: "bg-amber-400/10 text-amber-400 border-amber-400/30", label: "můžeme mít", desc: "Navyšují uživatelský zážitek, ale zatím je nepřidáme." },
+                    { dot: "bg-slate-400", badge: "bg-slate-400/10 text-slate-400 border-slate-400/30", label: "zatím nebudeme mít", desc: "Rozhodneme se pro ně až v dalších fázích vývoje." },
+                  ].map(({ dot, badge, label, desc }) => (
+                    <div key={label} className="flex gap-3 items-start">
+                      <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${dot}`} />
+                      <p className="text-sm text-white/70 leading-relaxed">
+                        funkce, které <span className={`font-bold border rounded px-1.5 py-0.5 text-xs ${badge}`}>{label}</span>{" "}
+                        — {desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Plugin marketplace teaser */}
+              <div className="border border-violet-400/20 bg-violet-400/5 rounded-2xl p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xl">🧩</span>
+                  <h4 className="font-bold text-violet-300">Plugin marketplace</h4>
+                  <span className="text-[10px] bg-violet-500/20 text-violet-300 border border-violet-400/30 rounded-full px-2 py-0.5 font-semibold">Brzy</span>
+                </div>
+                <p className="text-sm text-white/50 mb-3">Jako WordPress — dokupte si přesně ty funkce, které potřebujete. Přímo z vašeho ADMIN panelu, bez vývojáře.</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {["📅 Online booking", "🛒 Mini e-shop", "📧 Email marketing", "📊 Analytiky", "💬 Live chat", "🌍 Vícejazyčnost"].map(p => (
+                    <div key={p} className="flex items-center gap-1.5 text-white/40">
+                      <Check className="w-3 h-3 text-violet-400 shrink-0" /> {p}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── PRICING ── */}
       <section id="pricing" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -580,6 +695,51 @@ export default function Home() {
             <a href="/agents">
               <Button className="bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-semibold px-8 py-4 text-base rounded-full shadow-lg shadow-violet-900/40">
                 Vyzkoušet AI Agenty zdarma →
+              </Button>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ── iBOTS PROMO ── */}
+      <section className="py-16 bg-[#0A0A0F] text-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 border border-amber-400/30 bg-amber-400/5 rounded-full px-4 py-1.5 text-sm text-amber-400 mb-4">
+              <Zap className="w-3.5 h-3.5" /> 77+ AI osobností
+            </div>
+            <h2 className="text-3xl lg:text-4xl font-extrabold mb-3">
+              AI chatboti, kteří <span className="text-amber-400">prodávají za vás</span>
+            </h2>
+            <p className="text-white/50 max-w-xl mx-auto">Nejlepší světoví marketéři jako AI asistenti pro váš web. Alex Hormozi, Russell Brunson, Dan Kennedy a desítky dalších.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {[
+              { avatar: "🚀", name: "Alex Hormozi", specialty: "$100M Offers" },
+              { avatar: "🎯", name: "Russell Brunson", specialty: "Funnels & Marketing" },
+              { avatar: "✉️", name: "Dan Kennedy", specialty: "Direct Response" },
+              { avatar: "📈", name: "Grant Cardone", specialty: "Sales Mastery" },
+              { avatar: "📱", name: "Gary Vaynerchuk", specialty: "Social Media" },
+              { avatar: "💼", name: "Sam Ovens", specialty: "Consulting" },
+              { avatar: "🧠", name: "Carl Jung", specialty: "Psychologie" },
+              { avatar: "💰", name: "Warren Buffett", specialty: "Investice" },
+            ].map(bot => (
+              <div key={bot.name} className="border border-white/10 rounded-xl p-4 bg-white/3 hover:border-amber-400/30 transition-all text-center">
+                <div className="text-2xl mb-2">{bot.avatar}</div>
+                <div className="text-sm font-semibold text-white">{bot.name}</div>
+                <div className="text-xs text-amber-400/70 mt-0.5">{bot.specialty}</div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center">
+            <a href="/ibots">
+              <Button className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-8 rounded-full mr-4">
+                Prohlédnout všech 77 botů →
+              </Button>
+            </a>
+            <a href="/agents">
+              <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-full">
+                ✨ Vyzkoušet AI Agenty
               </Button>
             </a>
           </div>
