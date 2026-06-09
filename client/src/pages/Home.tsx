@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Check, ArrowRight, Menu, X, ChevronDown, Star, Zap, Globe, BarChart3, Shield, TrendingUp, MessageSquare } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { SalesChatWidget } from "@/components/SalesChatWidget";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -718,6 +719,9 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* AI prodejní chatbot */}
+      <SalesChatWidget />
     </div>
   );
 }

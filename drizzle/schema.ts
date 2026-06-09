@@ -245,3 +245,31 @@ export const agentMessages = mysqlTable("agent_messages", {
 
 export type AgentMessage = typeof agentMessages.$inferSelect;
 export type InsertAgentMessage = typeof agentMessages.$inferInsert;
+
+// Sales Chat Conversations — customer-facing chatbot na landing page (lead capture)
+export const salesConversations = mysqlTable("sales_conversations", {
+  id: varchar("id", { length: 64 }).primaryKey(),       // client-generated session id
+  personaId: varchar("personaId", { length: 64 }).notNull().default("optivio-sales"),
+  visitorEmail: varchar("visitorEmail", { length: 255 }), // captured lead email
+  visitorName: varchar("visitorName", { length: 255 }),
+  visitorPhone: varchar("visitorPhone", { length: 64 }),
+  capturedLead: int("capturedLead").default(0).notNull(), // 0/1 — became a lead
+  inquiryId: int("inquiryId"),                            // linked inquiry if converted
+  messageCount: int("messageCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SalesConversation = typeof salesConversations.$inferSelect;
+export type InsertSalesConversation = typeof salesConversations.$inferInsert;
+
+export const salesMessages = mysqlTable("sales_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: varchar("conversationId", { length: 64 }).notNull().references(() => salesConversations.id),
+  role: mysqlEnum("role", ["user", "assistant", "system"]).notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type SalesMessage = typeof salesMessages.$inferSelect;
+export type InsertSalesMessage = typeof salesMessages.$inferInsert;

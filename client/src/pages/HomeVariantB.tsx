@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Check, ArrowRight, Menu, X } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { SalesChatWidget } from "@/components/SalesChatWidget";
 
 export default function HomeVariantB() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -248,6 +249,9 @@ export default function HomeVariantB() {
           </div>
         </div>
       </footer>
+
+      {/* AI prodejní chatbot */}
+      <SalesChatWidget />
     </div>
   );
 }

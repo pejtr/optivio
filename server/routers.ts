@@ -7,6 +7,8 @@ import { notifyOwner } from "./_core/notification";
 import { sendOrderConfirmationEmail, sendPaymentConfirmationEmail } from "./email-service";
 import { invokeLLM } from "./_core/llm";
 import { SKILLS, getSkill, buildSystemPrompt } from "./agent-skills";
+import { SALES_PERSONAS, getPersona, listPersonas, personaPublicInfo, buildPersonaSystemPrompt } from "./sales-personas";
+import { getSalesConversation, upsertSalesConversation, addSalesMessage, getSalesMessages, incrementSalesMessageCount, captureSalesLead, getAllSalesConversations } from "./db";
 import Stripe from "stripe";
 import { z } from "zod";
 import { OPTIVIO_PRODUCTS, calculateDeposit, calculateRemaining } from "./stripe-products";
@@ -551,6 +553,152 @@ export const appRouter = router({
           return { ok: true };
         }),
     }),
+  }),
+
+  // ─── Sales Chat — customer-facing prodejní chatbot na landing page ─────────────
+  salesChat: router({
+    // Send a message to the OPTIVIO sales bot. Public (visitors not logged in).
+    send: publicProcedure
+      .input(z.object({
+        conversationId: z.string().min(1),
+        personaId: z.string().default("optivio-sales"),
+        messages: z.array(z.object({
+          role: z.enum(["system", "user", "assistant"]),
+          content: z.string(),
+        })),
+      }))
+      .mutation(async ({ input }) => {
+        const persona = getPersona(input.personaId) ?? getPersona("optivio-sales")!;
+        const conversation = input.messages.filter(m => m.role !== "system");
+
+        const llmMessages = [
+          { role: "system" as const, content: persona.systemPrompt },
+          ...conversation.map(m => ({ role: m.role as "user" | "assistant", content: m.content })),
+        ];
+
+        let content = "Omlouvám se, zkuste to prosím znovu.";
+        try {
+          const response = await invokeLLM({ messages: llmMessages });
+          const raw = (response as any).choices?.[0]?.message?.content;
+          if (typeof raw === "string") content = raw;
+        } catch (error) {
+          console.error("[SalesChat] LLM error:", error);
+          content = "Momentálně mám technické potíže. Napište nám prosím e-mail na info@optivio.cz nebo vyplňte formulář — ozveme se do 48 hodin.";
+        }
+
+        // Persist conversation (best-effort, non-blocking on failure)
+        try {
+          await upsertSalesConversation({
+            id: input.conversationId,
+            personaId: persona.id,
+            messageCount: conversation.length + 1,
+          });
+          const lastUser = conversation[conversation.length - 1];
+          if (lastUser?.role === "user") {
+            await addSalesMessage({ conversationId: input.conversationId, role: "user", content: lastUser.content });
+          }
+          await addSalesMessage({ conversationId: input.conversationId, role: "assistant", content });
+        } catch (e) {
+          console.error("[SalesChat] persist error:", e);
+        }
+
+        return { role: "assistant" as const, content };
+      }),
+
+    // Capture a lead from the chat → creates an inquiry + notifies owner
+    captureLead: publicProcedure
+      .input(z.object({
+        conversationId: z.string().min(1),
+        name: z.string().min(1),
+        email: z.string().email(),
+        phone: z.string().optional(),
+        message: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const inquiry = await createInquiry({
+          name: input.name,
+          email: input.email,
+          phone: input.phone,
+          businessDescription: input.message || "Lead z prodejního chatbota (Viktor)",
+          packageType: "chat-lead",
+        });
+        const inquiryId = (inquiry as any).insertId || 0;
+
+        try {
+          await captureSalesLead(input.conversationId, {
+            visitorName: input.name,
+            visitorEmail: input.email,
+            visitorPhone: input.phone,
+            inquiryId,
+          });
+        } catch (e) {
+          console.error("[SalesChat] captureLead persist error:", e);
+        }
+
+        try {
+          await notifyOwner({
+            title: "🤖 Nový lead z prodejního chatbota",
+            content: `${input.name} (${input.email}${input.phone ? ", " + input.phone : ""})\n\nZpráva: ${input.message || "—"}\n\nKonverzace: ${input.conversationId}`,
+          });
+        } catch (e) {
+          console.error("[SalesChat] notify error:", e);
+        }
+
+        return { success: true, inquiryId };
+      }),
+
+    // Admin: list conversations
+    adminList: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
+      return getAllSalesConversations();
+    }),
+
+    adminTranscript: protectedProcedure
+      .input(z.object({ conversationId: z.string() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
+        const conversation = await getSalesConversation(input.conversationId);
+        const messages = await getSalesMessages(input.conversationId);
+        return { conversation, messages };
+      }),
+  }),
+
+  // ─── Sales Personas — knihovna prodejních person (pro AI Agents Hub) ───────────
+  personas: router({
+    // Public list (no system prompts leaked)
+    list: publicProcedure.query(() => SALES_PERSONAS.map(personaPublicInfo)),
+
+    // Chat with a sales-coach persona (logged-in users; uses Brand Memory)
+    chat: protectedProcedure
+      .input(z.object({
+        personaId: z.string(),
+        messages: z.array(z.object({
+          role: z.enum(["user", "assistant"]),
+          content: z.string(),
+        })),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new Error("Unauthorized");
+        const persona = getPersona(input.personaId);
+        if (!persona) throw new Error("Persona not found");
+
+        const brand = await getBrandMemory(ctx.user.id);
+        const systemPrompt = buildPersonaSystemPrompt(persona, brand);
+
+        const llmMessages = [
+          { role: "system" as const, content: systemPrompt },
+          ...input.messages.map(m => ({ role: m.role, content: m.content })),
+        ];
+
+        try {
+          const response = await invokeLLM({ messages: llmMessages });
+          const raw = (response as any).choices?.[0]?.message?.content;
+          return { content: typeof raw === "string" ? raw : "Omlouvám se, zkuste to prosím znovu." };
+        } catch (error) {
+          console.error("[Personas] LLM error:", error);
+          return { content: "Momentálně mám technické potíže. Zkuste to prosím za chvíli." };
+        }
+      }),
   }),
 
   ab: router({

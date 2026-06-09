@@ -1,6 +1,6 @@
 import { eq, desc, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, inquiries, portfolioProjects, testimonials, InsertInquiry, nichePackages, customerSubscriptions, InsertNichePackage, InsertCustomerSubscription, orders, payments, InsertOrder, InsertPayment, brandMemories, BrandMemory, InsertBrandMemory, agentSessions, InsertAgentSession, agentMessages, InsertAgentMessage, projects, projectMilestones, InsertProject, InsertProjectMilestone } from "../drizzle/schema";
+import { InsertUser, users, inquiries, portfolioProjects, testimonials, InsertInquiry, nichePackages, customerSubscriptions, InsertNichePackage, InsertCustomerSubscription, orders, payments, InsertOrder, InsertPayment, brandMemories, BrandMemory, InsertBrandMemory, agentSessions, InsertAgentSession, agentMessages, InsertAgentMessage, projects, projectMilestones, InsertProject, InsertProjectMilestone, salesConversations, InsertSalesConversation, salesMessages, InsertSalesMessage } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -325,5 +325,64 @@ export async function updateMilestone(milestoneId: string, data: Partial<InsertP
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   return db.update(projectMilestones).set(data).where(eq(projectMilestones.id, milestoneId));
+}
+
+// ─── Sales Chat (customer-facing chatbot) ───────────────────────────────────────
+
+export async function getSalesConversation(id: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(salesConversations).where(eq(salesConversations.id, id)).limit(1);
+  return rows[0];
+}
+
+export async function upsertSalesConversation(data: InsertSalesConversation) {
+  const db = await getDb();
+  if (!db) return; // gracefully degrade — chat still works without persistence
+  const existing = await getSalesConversation(data.id);
+  if (existing) {
+    return db.update(salesConversations)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(salesConversations.id, data.id));
+  }
+  return db.insert(salesConversations).values(data);
+}
+
+export async function incrementSalesMessageCount(id: string, by: number = 1) {
+  const db = await getDb();
+  if (!db) return;
+  const conv = await getSalesConversation(id);
+  if (!conv) return;
+  return db.update(salesConversations)
+    .set({ messageCount: (conv.messageCount ?? 0) + by, updatedAt: new Date() })
+    .where(eq(salesConversations.id, id));
+}
+
+export async function addSalesMessage(data: InsertSalesMessage) {
+  const db = await getDb();
+  if (!db) return;
+  return db.insert(salesMessages).values(data);
+}
+
+export async function getSalesMessages(conversationId: string) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(salesMessages)
+    .where(eq(salesMessages.conversationId, conversationId))
+    .orderBy(salesMessages.createdAt);
+}
+
+export async function getAllSalesConversations() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(salesConversations).orderBy(desc(salesConversations.updatedAt));
+}
+
+export async function captureSalesLead(id: string, lead: { visitorEmail?: string; visitorName?: string; visitorPhone?: string; inquiryId?: number }) {
+  const db = await getDb();
+  if (!db) return;
+  return db.update(salesConversations)
+    .set({ ...lead, capturedLead: 1, updatedAt: new Date() })
+    .where(eq(salesConversations.id, id));
 }
 

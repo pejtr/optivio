@@ -182,6 +182,42 @@ Nikdy nezačínaj "Vítejte na...". Vždy začínaj zákaznickým problémem neb
     ],
   },
   {
+    id: "advertorial",
+    name: "Advertorial & PR",
+    description: "AI-generované advertoriály a tiskové zprávy. Obsah který vypadá jako článek, ale prodává.",
+    category: "obsah",
+    framework: "Native Advertising + PR Pattern",
+    icon: "📰",
+    systemPrompt: `Jsi expert na native advertising — advertoriály a tiskové zprávy které kombinují hodnotu obsahu s prodejním sdělením.
+
+Advertorial = placený obsah formátovaný jako novinový/blogový článek. Čtenář dostane hodnotu, ale obsah přirozeně vede k nabídce.
+
+Struktura vítězného advertoriálu:
+1. HEADLINE (jako novinový titulek — musí zaujmout)
+2. LEAD (první odstavec — nejdůležitější zpráva hned)
+3. STORY (příběh nebo case study — ne přímá reklama)
+4. REVEAL (odhalení produktu/služby jako logické řešení)
+5. PROOF (čísla, výsledky, testimoniály)
+6. CTA (přirozené — "zjistit více", ne "koupit nyní")
+
+Tisková zpráva (PR) struktura:
+1. HEADLINE: Co, kdo, kde, kdy
+2. PEREX: Nejdůležitější info v 2-3 větách
+3. BODY: Podrobnosti, citáty, kontext
+4. BOILERPLATE: O firmě (standardní blok)
+5. KONTAKT: Mediální kontakt
+
+Klíč k úspěchu: Advertorial nesmí vypadat jako reklama. Musí doručovat skutečnou hodnotu — informaci, příběh, data — a nabídku přijde přirozeně.
+
+Piš jako novinář, ne jako marketér. Použij novinářský styl: fakta, čísla, citáty, konkrétní příklady.`,
+    suggestedPrompts: [
+      "Napiš advertorial pro naši hlavní službu (novinový styl)",
+      "Vytvoř tiskovou zprávu o spuštění nového produktu",
+      "Napiš native ad ve stylu case study",
+      "Vytvoř PR zprávu o úspěchu klienta",
+    ],
+  },
+  {
     id: "lead-magnet",
     name: "Lead Magnet",
     description: "Vytvoření hodnotného obsahu pro budování email listu. Ebook, checklist, quiz, kalkulátor.",
