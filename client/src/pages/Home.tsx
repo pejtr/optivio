@@ -729,6 +729,75 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── PORTFOLIO — REAL PROJECTS ── */}
+      <section id="portfolio" className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">
+              Reálné projekty z našeho portfolia
+            </h2>
+            <p className="text-slate-500 max-w-2xl mx-auto">
+              Aplikace, e-shopy a platformy, které jsme navrhli a realizovali. Vše v TypeScriptu, nasazeno na produkci.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { name: "Human Design Chart", repo: "humandesignchart", desc: "Prémiová webová aplikace pro výpočet a vizualizaci Human Design Bodygraph diagramů. Interaktivní SVG, registrace, platby.", tags: ["Web App", "SVG", "Stripe"], color: "from-violet-500 to-purple-600", stars: 1 },
+              { name: "LeadOS", repo: "leados", desc: "B2B lead generation platforma s persistentním historickým přehledem, AI-powered icebreakers a dark-mode dashboardem.", tags: ["SaaS", "B2B", "Dashboard"], color: "from-blue-500 to-indigo-600", stars: 1 },
+              { name: "OPTIVIO", repo: "optivio", desc: "Webová agentura s automatizovaným procesem od objednávky po nasazení. LeadOS backend, CRM, chatbot.", tags: ["Agentura", "CRM", "Chatbot"], color: "from-violet-600 to-indigo-700" },
+              { name: "BotHub", repo: "bothub", desc: "Marketplace pro prodej chatbotů s affiliate programem. Premium landing page s pokročilými konverzními prvky.", tags: ["Marketplace", "Affiliate"], color: "from-emerald-500 to-teal-600" },
+              { name: "Akční Letenky", repo: "akcni-letenky", desc: "Online travel agency s affiliate systémem pro vyhledávání a prodej leteckých spojení.", tags: ["OTA", "Affiliate", "Travel"], color: "from-sky-500 to-blue-600" },
+              { name: "StoryLiner", repo: "story_liner", desc: "Platforma pro tvorbu videí s inteligentním chatbot asistentem, RAG systémem a persistentní pamětí.", tags: ["Video", "Chatbot", "RAG"], color: "from-orange-500 to-red-600" },
+              { name: "Amulets.cz", repo: "my.amulette", desc: "E-shop s ručně vyráběnými orgonitovými pyramidami, amulety a aromaterapeutickými produkty.", tags: ["E-shop", "Produkty"], color: "from-amber-500 to-orange-600" },
+              { name: "Deep Sleep Reset", repo: "deep-sleep", desc: "Performance marketing funnel s chronotype kvízem, personalizovaným průvodcem a upsell sekvencí.", tags: ["Funnel", "Marketing", "Quiz"], color: "from-indigo-500 to-violet-600" },
+              { name: "Do Itálie", repo: "do-italie", desc: "Cestovatelský portál Do-italie.cz — průvodce po italských destinacích, tipy a praktické informace.", tags: ["Cestování", "Portál"], color: "from-green-500 to-emerald-600" },
+              { name: "Influencer Generator", repo: "ai-influencer-generator", desc: "Platforma pro generování ultra-realistických virtuálních influencerů pro TikTok, Instagram a YouTube.", tags: ["Generátor", "Sociální sítě"], color: "from-pink-500 to-rose-600" },
+              { name: "iBots", repo: "ibots", desc: "Premium landing page pro prodej chatbotů — katalog 77 botů v 7 kategoriích, cenové plány, dark theme se zlatými akcenty.", tags: ["Landing Page", "Katalog"], color: "from-yellow-500 to-amber-600" },
+              { name: "Affiliate Network Builder", repo: "ai_affiliate_network_builder", desc: "Platforma pro automatizované budování sítě prodejců pro affiliate marketing.", tags: ["Affiliate", "Automatizace"], color: "from-cyan-500 to-teal-600" },
+              { name: "paTea", repo: "patea", desc: "NextGen e-shop s prémiovými čaji — moderní produktový katalog a objednávkový systém.", tags: ["E-shop", "Katalog"], color: "from-lime-500 to-green-600" },
+              { name: "Proudy.tv", repo: "proudy.tv", desc: "Streamovací platforma Rainbow — online video obsah a živé přenosy.", tags: ["Streaming", "Video"], color: "from-fuchsia-500 to-purple-600" },
+            ].map((project) => (
+              <a
+                key={project.repo}
+                href={`https://github.com/pejtr/${project.repo}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all duration-300"
+              >
+                <div className={`h-2 bg-gradient-to-r ${project.color}`} />
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-bold text-slate-900 group-hover:text-violet-600 transition-colors">{project.name}</h3>
+                    <div className="flex items-center gap-1 text-xs text-slate-400">
+                      {project.stars ? <><Star className="w-3 h-3 fill-amber-400 text-amber-400" /><span>{project.stars}</span></> : null}
+                      <span className="ml-1 text-slate-300">TypeScript</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-slate-500 mb-4 leading-relaxed line-clamp-3">{project.desc}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.tags.map(tag => (
+                      <span key={tag} className="text-xs font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <a
+              href="https://github.com/pejtr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-medium text-violet-600 hover:text-violet-700"
+            >
+              Zobrazit všechny projekty na GitHubu <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA BAND ── */}
       <section className="py-20 bg-[#0f0628] text-white">
         <div className="max-w-3xl mx-auto px-4 text-center">
