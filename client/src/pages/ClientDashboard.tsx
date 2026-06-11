@@ -106,7 +106,7 @@ export default function ClientDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <a href="/agents" className="text-xs text-violet-600 hover:text-violet-800 font-medium flex items-center gap-1">
-              <Brain className="w-3.5 h-3.5" /> Asistenti
+              <Brain className="w-3.5 h-3.5" /> AI Asistenti
             </a>
             <div className="text-right hidden md:block">
               <p className="text-sm font-medium text-slate-900">{user.name || user.email}</p>

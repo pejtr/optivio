@@ -30,6 +30,20 @@ Pilíře: **Aukční engine** (příhozy, limity, dražby v reálném čase) · 
 
 Tagline use-case: „OPTIVIO propojuje salon s trhem umění."
 
+## Vizuální motivy infografik
+
+1. **Robot + pyramidy** (zlato-modrá, egyptský motiv) — původní verze.
+2. **Thoth** (bůh písma s tabletem, zlatá zbroj) — silnější varianta; slogan „Jedna inteligentní platforma. Nekonečné možnosti." + benefity: Jeden zdroj pravdy, Vyšší konverze, Data jako aktivum, Bezpečí & důvěra (audit logy, provenance).
+
+## LEADOS — domény a kanálová strategie
+
+Dostupné domény: crmleadsystem.cz / .com (+www), ai-lead-generation.com, ai-lead-gen.com.
+
+**Pozicování dle kanálu:**
+- **Sklik/Seznam (čeští podnikatelé)** → vést na *crmleadsystem.cz*. Jazyk: „CRM systém", „přehled o zákaznících", „víc poptávek bez práce navíc". Bez tech žargonu — OPTIVIO jako expert, který dodává hotovou službu.
+- **LinkedIn (B2B, agentury, SaaS)** → *ai-lead-generation.com* nebo OPTIVIO AI Core. Jazyk: outcomes — „−70 % času na rutině", „LTV insights", „AI asistenti v platformě".
+- Silné slovo pro CZ trh: **„CRM systém"** (vyhledávané, srozumitelné). „Lead generation" funguje jen na LinkedIn/EN publikum.
+
 ## Slogany
 
 - AI powered. Human centered. Spirit driven. *(jen interní / anglické materiály)*

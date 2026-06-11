@@ -152,7 +152,7 @@ export default function Home() {
               🎨 Demo
             </a>
             <a href="/agents" className="text-violet-300 hover:text-violet-100 text-sm font-medium transition-colors flex items-center gap-1">
-              ✨ AI Agenti
+              ✨ AI Asistenti
             </a>
           </div>
           <div className="hidden md:flex items-center gap-3">
@@ -183,7 +183,7 @@ export default function Home() {
                 {["Řešení", "Ceny", "Případové studie", "Kontakt"][i]}
               </a>
             ))}
-            <a href="/agents" className="text-violet-300 text-sm font-medium">✨ AI Agenti</a>
+            <a href="/agents" className="text-violet-300 text-sm font-medium">✨ AI Asistenti</a>
             {isAuthenticated ? (
               <a href={user?.role === "admin" ? "/admin" : "/dashboard"} className="flex items-center gap-1.5 text-sm font-semibold text-white bg-violet-600 px-4 py-2 rounded-full w-full justify-center">
                 <LayoutDashboard className="w-4 h-4" /> ADMIN
@@ -199,11 +199,54 @@ export default function Home() {
 
       {/* ── HERO ── */}
       <section className="relative bg-[#0f0628] text-white overflow-hidden min-h-[90vh] flex items-center">
-        {/* Background glow blobs */}
+        {/* Background — layered grid, beams, orbs, brand watermark */}
         <div className="absolute inset-0 pointer-events-none">
+          {/* base depth gradient */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#1d0f45_0%,#0f0628_55%,#0a041d_100%)]" />
+
+          {/* fine grid with radial fade */}
+          <svg className="absolute inset-0 w-full h-full" aria-hidden="true">
+            <defs>
+              <pattern id="hero-grid" width="52" height="52" patternUnits="userSpaceOnUse">
+                <path d="M52 0H0V52" fill="none" stroke="white" strokeWidth="0.6" />
+              </pattern>
+              <radialGradient id="hero-grid-fade" cx="50%" cy="35%" r="75%">
+                <stop offset="0%" stopColor="white" stopOpacity="0.09" />
+                <stop offset="60%" stopColor="white" stopOpacity="0.04" />
+                <stop offset="100%" stopColor="white" stopOpacity="0" />
+              </radialGradient>
+              <mask id="hero-grid-mask">
+                <rect width="100%" height="100%" fill="url(#hero-grid-fade)" />
+              </mask>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#hero-grid)" mask="url(#hero-grid-mask)" />
+          </svg>
+
+          {/* diagonal light beams */}
+          <div className="absolute -top-40 left-[18%] w-[30rem] h-[110%] rotate-[24deg] bg-gradient-to-b from-violet-400/10 via-violet-500/[0.03] to-transparent blur-2xl" />
+          <div className="absolute -top-52 right-[8%] w-[22rem] h-[110%] rotate-[-18deg] bg-gradient-to-b from-cyan-400/[0.07] via-transparent to-transparent blur-2xl" />
+
+          {/* glow orbs */}
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl" />
           <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/15 rounded-full blur-3xl" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-24 left-[12%] w-72 h-72 bg-cyan-500/[0.07] rounded-full blur-3xl" />
+
+          {/* brand V-mark watermark */}
+          <svg viewBox="0 0 100 100" className="absolute -right-28 top-1/2 -translate-y-1/2 w-[36rem] h-[36rem] opacity-[0.045]" aria-hidden="true">
+            <defs>
+              <linearGradient id="hero-mark" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#a78bfa" />
+                <stop offset="100%" stopColor="#60a5fa" />
+              </linearGradient>
+            </defs>
+            <path d="M6 14 L34 14 L57 86 L40 86 Z" fill="url(#hero-mark)" />
+            <path d="M94 6 L66 6 L43 86 L57 86 Z" fill="url(#hero-mark)" />
+          </svg>
+
+          {/* corner accents + bottom fade */}
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-violet-400/30 to-transparent" />
+          <div className="absolute bottom-0 inset-x-0 h-44 bg-gradient-to-t from-[#0f0628] to-transparent" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 grid lg:grid-cols-2 gap-16 items-center">
@@ -411,7 +454,7 @@ export default function Home() {
                 { icon: <Calendar className="w-6 h-6" />, title: "Booking", desc: "Inteligentní rezervace a správa kapacit v reálném čase." },
                 { icon: <Users className="w-6 h-6" />, title: "CRM", desc: "360° pohled na klienta, automatizace vztahů a komunikace." },
                 { icon: <BarChart3 className="w-6 h-6" />, title: "Data", desc: "Reporting a chytré predikce pro lepší rozhodování." },
-                { icon: <Bot className="w-6 h-6" />, title: "Automatizace", desc: "Asistenti pro obsah, reklamy, doporučení a optimalizace." },
+                { icon: <Bot className="w-6 h-6" />, title: "Automatizace", desc: "AI asistenti pro obsah, reklamy, doporučení a optimalizace." },
                 { icon: <Globe className="w-6 h-6" />, title: "MCP / API", desc: "Otevřené napojení na nástroje, partnery a marketplace." },
               ].map((p) => (
                 <div key={p.title} className="text-center">
@@ -442,7 +485,7 @@ export default function Home() {
               { icon: <Megaphone className="w-5 h-5" />, title: "Marketing", desc: "Meta Ads, Google Ads, retargeting, optimalizace kampaní." },
               { icon: <ShoppingBag className="w-5 h-5" />, title: "Prodej", desc: "E-shop, produkty, dárkové sety, předplatné, upsell." },
               { icon: <TrendingUp className="w-5 h-5" />, title: "Reporting", desc: "Dashboardy, predikce, tržby, klienti, LTV, insights." },
-              { icon: <Sparkles className="w-5 h-5" />, title: "Asistenti", desc: "Tvorba obsahu, doporučení, automatizace rutinních úkolů." },
+              { icon: <Sparkles className="w-5 h-5" />, title: "AI Asistenti", desc: "Tvorba obsahu, doporučení, automatizace rutinních úkolů." },
             ].map((m) => (
               <div key={m.title} className="bg-white/[0.03] border border-white/10 hover:border-amber-400/30 rounded-2xl p-4 text-center transition-colors">
                 <div className="w-11 h-11 mx-auto rounded-full bg-amber-400/10 flex items-center justify-center text-amber-300 mb-3">
@@ -455,7 +498,7 @@ export default function Home() {
           </div>
 
           {/* AI Core pricing */}
-          <div className="rounded-3xl border-2 border-amber-400/40 bg-gradient-to-r from-[#101a3d] to-[#0c1430] p-8 md:p-10 mb-16 relative overflow-hidden">
+          <div className="rounded-3xl border-2 border-amber-400/40 bg-gradient-to-r from-[#101a3d] to-[#0c1430] p-8 md:p-10 mb-16 mt-3 relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
               <span className="bg-amber-400 text-[#0a0f24] text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider">Tarif AI Core</span>
             </div>
@@ -472,7 +515,7 @@ export default function Home() {
                     "Booking systém + správa kapacit",
                     "CRM s 360° pohledem na klienta",
                     "Data, reporting a chytré predikce",
-                    "Asistenti — obsah, kampaně, rutina",
+                    "AI asistenti — obsah, kampaně, rutina",
                     "MCP/API napojení na vaše nástroje",
                     "2 napojené moduly dle výběru v ceně",
                     "Další modul +290 Kč/měs",
@@ -858,7 +901,7 @@ export default function Home() {
                   "Web na míru od profíků — žádná univerzální šablona",
                   "Postavíme a spravujeme za vás, vy jen schvalujete",
                   "Osobní podpora + AI asistent Alex 24/7",
-                  "AI chatbot, 9 AI agentů a Brand Memory v platformě",
+                  "AI chatbot, 9 AI asistentů a Brand Memory v platformě",
                 ].map(t => (
                   <li key={t} className="flex items-start gap-2.5 text-sm text-white/80">
                     <Check className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
@@ -981,7 +1024,7 @@ export default function Home() {
               <span className="text-violet-200">Nové — AI Marketing Suite</span>
             </div>
             <h2 className="text-3xl lg:text-4xl font-extrabold mb-4">
-              Váš tým AI agentů.<br />
+              Váš tým AI asistentů.<br />
               <span className="text-violet-300">Vždy připravených.</span>
             </h2>
             <p className="text-violet-200 text-lg max-w-xl mx-auto">
@@ -1016,7 +1059,7 @@ export default function Home() {
             </div>
             <a href="/agents">
               <Button className="bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-semibold px-8 py-4 text-base rounded-full shadow-lg shadow-violet-900/40">
-                Vyzkoušet AI Agenty zdarma →
+                Vyzkoušet AI Asistenty zdarma →
               </Button>
             </a>
           </div>
@@ -1061,7 +1104,7 @@ export default function Home() {
             </a>
             <a href="/agents">
               <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-full">
-                ✨ Vyzkoušet AI Agenty
+                ✨ Vyzkoušet AI Asistenty
               </Button>
             </a>
           </div>
