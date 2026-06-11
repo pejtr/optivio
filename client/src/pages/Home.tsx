@@ -8,6 +8,7 @@ import { Check, ArrowRight, Menu, X, ChevronDown, Star, Zap, Globe, BarChart3, S
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { SalesChatWidget } from "@/components/SalesChatWidget";
+import { OptivioLogo } from "@/components/OptivioLogo";
 import { useAuth } from "@/_core/hooks/useAuth";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -141,7 +142,7 @@ export default function Home() {
       {/* ── NAV ── */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-[#1a0a3c]/95 backdrop-blur-md shadow-lg" : "bg-transparent"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <span className="text-2xl font-extrabold text-white tracking-tight">OPTIVIO</span>
+          <a href="/" aria-label="OPTIVIO"><OptivioLogo className="h-9" light /></a>
           <div className="hidden md:flex items-center gap-8">
             {["Řešení", "Ceny", "Případové studie", "O nás"].map(item => (
               <a key={item} href={`#${item === "Ceny" ? "pricing" : item === "Případové studie" ? "cases" : item === "Řešení" ? "niche" : "contact"}`}
@@ -398,7 +399,7 @@ export default function Home() {
               Jeden systém · vše propojené
             </div>
             <h2 className="text-3xl lg:text-5xl font-extrabold mb-3 tracking-tight">
-              OPTIVIO <span className="text-amber-300">Core</span>
+              OPTIVIO <span className="text-amber-300">AI Core</span>
             </h2>
             <p className="text-white/50 text-sm tracking-wide">booking · CRM · data · automatizace · MCP/API</p>
           </div>
@@ -451,6 +452,50 @@ export default function Home() {
                 <p className="text-[11px] text-white/45 leading-relaxed">{m.desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* AI Core pricing */}
+          <div className="rounded-3xl border-2 border-amber-400/40 bg-gradient-to-r from-[#101a3d] to-[#0c1430] p-8 md:p-10 mb-16 relative overflow-hidden">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span className="bg-amber-400 text-[#0a0f24] text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider">Tarif AI Core</span>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8 items-center pt-2">
+              <div>
+                <p className="text-white/50 text-sm mb-1">Zavedení na míru</p>
+                <p className="text-4xl font-extrabold text-white mb-4">od 14 990 <span className="text-lg font-medium text-white/50">Kč</span></p>
+                <p className="text-white/50 text-sm mb-1">Provoz — vše v ceně</p>
+                <p className="text-3xl font-extrabold text-amber-300">990 <span className="text-base font-medium text-amber-300/60">Kč/měs</span></p>
+              </div>
+              <div className="md:col-span-2">
+                <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 mb-6">
+                  {[
+                    "Booking systém + správa kapacit",
+                    "CRM s 360° pohledem na klienta",
+                    "Data, reporting a chytré predikce",
+                    "Asistenti — obsah, kampaně, rutina",
+                    "MCP/API napojení na vaše nástroje",
+                    "2 napojené moduly dle výběru v ceně",
+                    "Další modul +290 Kč/měs",
+                    "Provoz, zálohy a podpora v ceně",
+                  ].map(f => (
+                    <div key={f} className="flex items-start gap-2 text-sm text-white/70">
+                      <Check className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" /> {f}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button className="bg-amber-400 hover:bg-amber-300 text-[#0a0f24] font-bold rounded-full px-8" onClick={scrollToContact}>
+                    Chci AI Core
+                  </Button>
+                  <Button variant="ghost" className="text-amber-200/80 hover:text-amber-100 border border-amber-400/30 hover:border-amber-400/60 rounded-full" onClick={scrollToContact}>
+                    Nezávazná konzultace →
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <p className="text-[11px] text-white/30 mt-6 text-center">
+              Funkce AI Core běží na platformě LeadOS. Krabicové platformy účtují za srovnatelné doplňky 800–1 500 Kč/měs — u nás je vše podstatné v jednom tarifu.
+            </p>
           </div>
 
           {/* Enchanté One spotlight */}
@@ -1128,9 +1173,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 mb-10">
             <div>
-              <div className="flex items-center gap-2">
-            <img src="/manus-storage/optivio-logo_d4a4757c.png" alt="OPTIVIO" className="h-8" />
-          </div>
+              <div className="flex items-center gap-2 mb-3">
+                <OptivioLogo className="h-8" light />
+              </div>
               <p className="text-sm leading-relaxed">Webová agentura zaměřená na české firmy a živnostníky. Weby, automatizace, LeadOS.</p>
               <div className="flex gap-3 mt-4">
                 {["LinkedIn", "Facebook", "Instagram"].map(s => (

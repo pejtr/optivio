@@ -10,6 +10,7 @@ import AdminSubscriptions from "./AdminSubscriptions";
 import AdminStats from "./AdminStats";
 import AdminProjects from "./AdminProjects";
 import AdminPayments from "./AdminPayments";
+import { OptivioLogo } from "@/components/OptivioLogo";
 
 export default function AdminDashboard() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -41,10 +42,8 @@ export default function AdminDashboard() {
       <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
-              O
-            </div>
-            <h1 className="text-2xl font-bold text-slate-900">OPTIVIO Admin</h1>
+            <OptivioLogo className="h-8" />
+            <span className="text-sm font-semibold text-slate-400 uppercase tracking-wider mt-1">Admin</span>
           </div>
 
           {/* Desktop Navigation */}

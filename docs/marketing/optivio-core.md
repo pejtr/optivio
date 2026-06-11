@@ -1,4 +1,4 @@
-# OPTIVIO Core — prezentační podklad
+# OPTIVIO AI Core — prezentační podklad
 
 Zdroj: infografika „OPTIVIO AI CORE" (zlato-modrý vizuál, egyptský motiv).
 Webová verze: sekce `#core` na landing page ([Home.tsx](../../client/src/pages/Home.tsx)).
@@ -36,6 +36,20 @@ Tagline use-case: „OPTIVIO propojuje salon s trhem umění."
 - „Kdo kontroluje informace, kontroluje budoucnost."
 - Inspirace minulostí. Automatizace přítomností. Inteligence budoucností.
 
+## Tarif AI Core
+
+Funkce běží na platformě **LeadOS** (interně), navenek prodáváno jako tarif **AI Core**.
+
+| Položka | Cena |
+|---|---|
+| Zavedení na míru | od 14 990 Kč jednorázově |
+| Provoz (vše v ceně) | 990 Kč/měs |
+| Napojené moduly | 2 v ceně, další +290 Kč/měs |
+
+V ceně provozu: booking + správa kapacit, CRM 360°, data/reporting/predikce, asistenti (obsah, kampaně, rutina), MCP/API napojení, zálohy a podpora.
+
+Pricing argument („více za méně"): krabicové platformy účtují za srovnatelné doplňky 800–1 500 Kč/měs jen na příplatcích.
+
 ## Pozn. k terminologii
 
-V zákaznickém UI webu nepoužíváme slovo „AI" — místo toho „asistent", „automatizace", „chytré predikce" (viz interní pravidlo). V tištěných/B2B materiálech lze „AI" ponechat.
+V zákaznickém UI webu nepoužíváme slovo „AI" pro generické funkce — místo toho „asistent", „automatizace", „chytré predikce". **Výjimka: „AI Core" jako název produktu/tarifu je schválený** (zní businessově). V tištěných/B2B materiálech lze „AI" ponechat.
