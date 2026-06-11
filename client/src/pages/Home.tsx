@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Check, ArrowRight, Menu, X, ChevronDown, Star, Zap, Globe, BarChart3, Shield, TrendingUp, MessageSquare, LayoutDashboard, Bot } from "lucide-react";
+import { Check, ArrowRight, Menu, X, ChevronDown, Star, Zap, Globe, BarChart3, Shield, TrendingUp, MessageSquare, LayoutDashboard, Bot, Calendar, Users, Megaphone, ShoppingBag, Sparkles, Gavel, Database } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { SalesChatWidget } from "@/components/SalesChatWidget";
@@ -382,6 +382,113 @@ export default function Home() {
                 <div className="text-xs text-white/50">{l}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── OPTIVIO CORE — system architecture ── */}
+      <section id="core" className="py-20 bg-[#080d1f] text-white relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/3 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-amber-400/5 rounded-full blur-3xl" />
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 border border-amber-400/30 bg-amber-400/5 px-4 py-1.5 rounded-full text-xs font-medium text-amber-200 tracking-widest uppercase mb-5">
+              Jeden systém · vše propojené
+            </div>
+            <h2 className="text-3xl lg:text-5xl font-extrabold mb-3 tracking-tight">
+              OPTIVIO <span className="text-amber-300">Core</span>
+            </h2>
+            <p className="text-white/50 text-sm tracking-wide">booking · CRM · data · automatizace · MCP/API</p>
+          </div>
+
+          {/* Core pillars */}
+          <div className="rounded-3xl border border-amber-400/20 bg-gradient-to-b from-[#0c1430] to-[#0a1026] p-6 md:p-10 mb-10 shadow-2xl shadow-black/40">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+              {[
+                { icon: <Calendar className="w-6 h-6" />, title: "Booking", desc: "Inteligentní rezervace a správa kapacit v reálném čase." },
+                { icon: <Users className="w-6 h-6" />, title: "CRM", desc: "360° pohled na klienta, automatizace vztahů a komunikace." },
+                { icon: <BarChart3 className="w-6 h-6" />, title: "Data", desc: "Reporting a chytré predikce pro lepší rozhodování." },
+                { icon: <Bot className="w-6 h-6" />, title: "Automatizace", desc: "Asistenti pro obsah, reklamy, doporučení a optimalizace." },
+                { icon: <Globe className="w-6 h-6" />, title: "MCP / API", desc: "Otevřené napojení na nástroje, partnery a marketplace." },
+              ].map((p) => (
+                <div key={p.title} className="text-center">
+                  <div className="w-16 h-16 mx-auto rounded-full border border-amber-400/40 bg-amber-400/5 flex items-center justify-center text-amber-300 mb-4">
+                    {p.icon}
+                  </div>
+                  <h3 className="font-bold text-sm tracking-wider uppercase text-amber-100 mb-2">{p.title}</h3>
+                  <p className="text-xs text-white/50 leading-relaxed">{p.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Connector label */}
+          <div className="flex items-center justify-center mb-10">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent to-amber-400/30" />
+            <span className="px-5 py-1.5 border border-amber-400/40 rounded-full text-xs font-semibold tracking-widest uppercase text-amber-200 bg-[#0c1430]">
+              Napojení Optivio
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-l from-transparent to-amber-400/30" />
+          </div>
+
+          {/* Connected modules */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-16">
+            {[
+              { icon: <Calendar className="w-5 h-5" />, title: "Rezervace", desc: "Online booking, připomínky, kalendáře, změny." },
+              { icon: <MessageSquare className="w-5 h-5" />, title: "Komunikace", desc: "E-maily, newslettery, Telegram, WhatsApp scénáře." },
+              { icon: <Megaphone className="w-5 h-5" />, title: "Marketing", desc: "Meta Ads, Google Ads, retargeting, optimalizace kampaní." },
+              { icon: <ShoppingBag className="w-5 h-5" />, title: "Prodej", desc: "E-shop, produkty, dárkové sety, předplatné, upsell." },
+              { icon: <TrendingUp className="w-5 h-5" />, title: "Reporting", desc: "Dashboardy, predikce, tržby, klienti, LTV, insights." },
+              { icon: <Sparkles className="w-5 h-5" />, title: "Asistenti", desc: "Tvorba obsahu, doporučení, automatizace rutinních úkolů." },
+            ].map((m) => (
+              <div key={m.title} className="bg-white/[0.03] border border-white/10 hover:border-amber-400/30 rounded-2xl p-4 text-center transition-colors">
+                <div className="w-11 h-11 mx-auto rounded-full bg-amber-400/10 flex items-center justify-center text-amber-300 mb-3">
+                  {m.icon}
+                </div>
+                <h4 className="font-semibold text-sm text-white mb-1.5">{m.title}</h4>
+                <p className="text-[11px] text-white/45 leading-relaxed">{m.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Enchanté One spotlight */}
+          <div className="rounded-3xl border border-amber-400/25 bg-gradient-to-br from-[#0e1535] via-[#0c1128] to-[#0a0e22] p-8 md:p-12 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="grid md:grid-cols-2 gap-10 items-center relative">
+              <div>
+                <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-medium text-amber-200 mb-5">
+                  <Sparkles className="w-3.5 h-3.5" /> Právě vyvíjíme
+                </div>
+                <h3 className="font-serif text-3xl lg:text-4xl font-bold mb-1 text-amber-50">Enchanté One</h3>
+                <p className="text-amber-300/80 text-xs tracking-widest uppercase mb-5">Galleries · Auctions · Data</p>
+                <p className="text-white/60 leading-relaxed mb-6">
+                  Vlastní aukční platforma pro galerie, aukce a distribuci uměleckých děl —
+                  napojená na světové marketplace. OPTIVIO propojuje salon s trhem umění.
+                </p>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/40">
+                  <span className="font-semibold text-orange-400">Aukro</span>
+                  <span className="font-semibold text-white/60">Invaluable</span>
+                  <span className="font-semibold text-emerald-400">LiveBid</span>
+                  <span className="text-white/30">a další…</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { icon: <Gavel className="w-5 h-5" />, title: "Aukční engine", desc: "Příhozy, limity a dražby v reálném čase." },
+                  { icon: <Globe className="w-5 h-5" />, title: "Distribuce & marketplace", desc: "Jedno dílo, publikace na více trzích najednou." },
+                  { icon: <Database className="w-5 h-5" />, title: "Data & historie", desc: "Provenience, výsledky aukcí, cenové trendy." },
+                  { icon: <Shield className="w-5 h-5" />, title: "Důvěra & autenticita", desc: "Ověření děl a transparentní záznamy prodejů." },
+                ].map((f) => (
+                  <div key={f.title} className="bg-[#0c1430]/80 border border-amber-400/15 rounded-2xl p-4">
+                    <div className="text-amber-300 mb-2">{f.icon}</div>
+                    <h4 className="font-semibold text-sm text-amber-50 mb-1">{f.title}</h4>
+                    <p className="text-[11px] text-white/45 leading-relaxed">{f.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
