@@ -541,43 +541,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Enchanté One spotlight */}
-          <div className="rounded-3xl border border-amber-400/25 bg-gradient-to-br from-[#0e1535] via-[#0c1128] to-[#0a0e22] p-8 md:p-12 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
-            <div className="grid md:grid-cols-2 gap-10 items-center relative">
-              <div>
-                <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-medium text-amber-200 mb-5">
-                  <Sparkles className="w-3.5 h-3.5" /> Právě vyvíjíme
-                </div>
-                <h3 className="font-serif text-3xl lg:text-4xl font-bold mb-1 text-amber-50">Enchanté One</h3>
-                <p className="text-amber-300/80 text-xs tracking-widest uppercase mb-5">Galleries · Auctions · Data</p>
-                <p className="text-white/60 leading-relaxed mb-6">
-                  Vlastní aukční platforma pro galerie, aukce a distribuci uměleckých děl —
-                  napojená na světové marketplace. OPTIVIO propojuje salon s trhem umění.
-                </p>
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/40">
-                  <span className="font-semibold text-orange-400">Aukro</span>
-                  <span className="font-semibold text-white/60">Invaluable</span>
-                  <span className="font-semibold text-emerald-400">LiveBid</span>
-                  <span className="text-white/30">a další…</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { icon: <Gavel className="w-5 h-5" />, title: "Aukční engine", desc: "Příhozy, limity a dražby v reálném čase." },
-                  { icon: <Globe className="w-5 h-5" />, title: "Distribuce & marketplace", desc: "Jedno dílo, publikace na více trzích najednou." },
-                  { icon: <Database className="w-5 h-5" />, title: "Data & historie", desc: "Provenience, výsledky aukcí, cenové trendy." },
-                  { icon: <Shield className="w-5 h-5" />, title: "Důvěra & autenticita", desc: "Ověření děl a transparentní záznamy prodejů." },
-                ].map((f) => (
-                  <div key={f.title} className="bg-[#0c1430]/80 border border-amber-400/15 rounded-2xl p-4">
-                    <div className="text-amber-300 mb-2">{f.icon}</div>
-                    <h4 className="font-semibold text-sm text-amber-50 mb-1">{f.title}</h4>
-                    <p className="text-[11px] text-white/45 leading-relaxed">{f.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -934,6 +897,52 @@ export default function Home() {
             <p className="text-slate-500 max-w-2xl mx-auto">
               Aplikace, e-shopy a platformy, které jsme navrhli a realizovali. Vše v TypeScriptu, nasazeno na produkci.
             </p>
+          </div>
+
+          {/* Premium projekty — Enchanté One spotlight */}
+          <div className="mb-12">
+            <div className="flex items-center gap-3 mb-5">
+              <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 border border-amber-200 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
+                <Star className="w-3 h-3 fill-amber-500 text-amber-500" /> Premium projekty
+              </span>
+              <div className="h-px flex-1 bg-gradient-to-r from-amber-200 to-transparent" />
+            </div>
+            <div className="rounded-3xl border border-amber-400/25 bg-gradient-to-br from-[#0e1535] via-[#0c1128] to-[#0a0e22] p-8 md:p-12 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
+              <div className="grid md:grid-cols-2 gap-10 items-center relative">
+                <div>
+                  <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-medium text-amber-200 mb-5">
+                    <Sparkles className="w-3.5 h-3.5" /> Právě vyvíjíme
+                  </div>
+                  <h3 className="font-serif text-3xl lg:text-4xl font-bold mb-1 text-amber-50">Enchanté One</h3>
+                  <p className="text-amber-300/80 text-xs tracking-widest uppercase mb-5">Galleries · Auctions · Data</p>
+                  <p className="text-white/60 leading-relaxed mb-6">
+                    Vlastní aukční platforma pro galerie, aukce a distribuci uměleckých děl —
+                    napojená na světové marketplace. OPTIVIO propojuje salon s trhem umění.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/40">
+                    <span className="font-semibold text-orange-400">Aukro</span>
+                    <span className="font-semibold text-white/60">Invaluable</span>
+                    <span className="font-semibold text-emerald-400">LiveBid</span>
+                    <span className="text-white/30">a další…</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { icon: <Gavel className="w-5 h-5" />, title: "Aukční engine", desc: "Příhozy, limity a dražby v reálném čase." },
+                    { icon: <Globe className="w-5 h-5" />, title: "Distribuce & marketplace", desc: "Jedno dílo, publikace na více trzích najednou." },
+                    { icon: <Database className="w-5 h-5" />, title: "Data & historie", desc: "Provenience, výsledky aukcí, cenové trendy." },
+                    { icon: <Shield className="w-5 h-5" />, title: "Důvěra & autenticita", desc: "Ověření děl a transparentní záznamy prodejů." },
+                  ].map((f) => (
+                    <div key={f.title} className="bg-[#0c1430]/80 border border-amber-400/15 rounded-2xl p-4">
+                      <div className="text-amber-300 mb-2">{f.icon}</div>
+                      <h4 className="font-semibold text-sm text-amber-50 mb-1">{f.title}</h4>
+                      <p className="text-[11px] text-white/45 leading-relaxed">{f.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
