@@ -583,7 +583,7 @@ export default function Home() {
                   <h4 className="font-bold text-violet-300 text-sm">Plugin marketplace</h4>
                   <span className="text-[10px] bg-violet-500/20 text-violet-300 border border-violet-400/30 rounded-full px-2 py-0.5 font-semibold">Brzy</span>
                 </div>
-                <p className="text-xs text-white/50 mb-3">Dokupte si přesně ty funkce, které potřebujete — přímo z ADMIN panelu, bez vývojáře.</p>
+                <p className="text-xs text-white/50 mb-3">Funkce navíc přímo z ADMIN panelu, bez vývojáře. Základní pluginy v ceně provozu — žádné měsíční příplatky za každý doplněk.</p>
                 <div className="grid grid-cols-3 gap-1.5 text-[11px]">
                   {["📅 Booking", "🛒 E-shop", "📧 Emaily", "📊 Analytics", "💬 Live chat", "🌍 Multijazyčnost"].map(p => (
                     <div key={p} className="flex items-center gap-1 text-white/40">
@@ -649,6 +649,83 @@ export default function Home() {
           </div>
 
           <p className="text-center text-xs text-slate-400 mt-6">Ceny jsou bez DPH. Roční provoz zahrnuje hosting, SSL, zálohy a technickou podporu.</p>
+        </div>
+      </section>
+
+      {/* ── PLATFORM COMPARISON ── */}
+      <section className="py-20 bg-slate-50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">
+              Znáte to z krabicových platforem?
+            </h2>
+            <p className="text-slate-500 max-w-2xl mx-auto">
+              Základní tarif vypadá levně — ale pak platíte za každý doplněk zvlášť.
+              Booking, e-maily, chat, analytika… a najednou jste na trojnásobku.
+              <span className="font-semibold text-slate-700"> U nás je to obráceně: vše podstatné v ceně.</span>
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Krabicová platforma */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="text-2xl">📦</span>
+                <h3 className="font-bold text-slate-700">Krabicová platforma</h3>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  "Základ od ~330 Kč/měs — reálně ale 800–1 500 Kč s doplňky",
+                  "Každý doplněk (booking, e-maily, chat) za příplatek 50–300 Kč/měs",
+                  "Šablona, kterou používá dalších 500 webů",
+                  "Vše si nastavujete a spravujete sami",
+                  "Podpora přes helpdesk a fórum",
+                  "AI funkce chybí, nebo jen draze přes třetí strany",
+                ].map(t => (
+                  <li key={t} className="flex items-start gap-2.5 text-sm text-slate-500">
+                    <X className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* OPTIVIO */}
+            <div className="bg-[#0f0628] border-2 border-violet-500 rounded-2xl p-6 relative shadow-xl shadow-violet-200">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-violet-600 text-white text-xs font-bold px-4 py-1 rounded-full">
+                Více za méně
+              </div>
+              <div className="flex items-center gap-2 mb-5">
+                <span className="text-2xl">⚡</span>
+                <h3 className="font-bold text-white">OPTIVIO</h3>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  "Provoz od 179 Kč/měs — žádné skryté příplatky",
+                  "Základní pluginy (booking, e-maily, analytika) v ceně",
+                  "Web na míru od profíků — žádná univerzální šablona",
+                  "Postavíme a spravujeme za vás, vy jen schvalujete",
+                  "Osobní podpora + AI asistent Alex 24/7",
+                  "AI chatbot, 9 AI agentů a Brand Memory v platformě",
+                ].map(t => (
+                  <li key={t} className="flex items-start gap-2.5 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+              <Button
+                className="w-full mt-6 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-full"
+                onClick={scrollToContact}
+              >
+                Chci víc za míň →
+              </Button>
+            </div>
+          </div>
+
+          <p className="text-center text-xs text-slate-400 mt-6">
+            Srovnání vychází z veřejných ceníků běžných českých krabicových řešení (e-shop a webové platformy) k datu zveřejnění.
+          </p>
         </div>
       </section>
 
