@@ -737,32 +737,42 @@ export default function DemoPage() {
 
       {/* Template gallery */}
       <section className="py-8 px-4 pb-20">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h2 className="text-center text-white/40 text-sm uppercase tracking-widest mb-10">Vyberte svůj obor</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {TEMPLATES.map(t => (
               <button
                 key={t.id}
                 onClick={() => selectTemplate(t)}
-                className="group relative rounded-2xl border border-white/10 bg-white/3 overflow-hidden text-left hover:border-white/25 hover:bg-white/6 transition-all hover:-translate-y-1"
+                className="group relative rounded-2xl border border-white/10 bg-[#0d0f1f] overflow-hidden text-left hover:border-violet-400/40 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] transition-all duration-300 hover:-translate-y-1.5"
               >
-                {/* Template color preview */}
-                <div
-                  className="h-40 relative overflow-hidden"
-                  style={{ background: t.bg }}
-                >
-                  {/* Thumbnail mockup */}
-                  <div className="absolute inset-2 rounded-lg overflow-hidden shadow-xl border border-white/15">
-                    <TemplateThumbnail id={t.id} bg={t.bg} accent={t.accent} d={t.defaults} />
+                {/* Browser chrome */}
+                <div className="flex items-center gap-1.5 px-3 py-2.5 bg-[#13152a] border-b border-white/8">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-400/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-400/60" />
+                  <div className="flex-1 ml-2 bg-white/8 rounded-full h-4 flex items-center justify-center">
+                    <span className="text-[9px] text-white/25 tracking-wide">optivio.cz/{t.id}</span>
                   </div>
                 </div>
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xl">{t.emoji}</span>
-                    <span className="font-bold text-white text-sm">{t.name}</span>
+                {/* Template preview */}
+                <div className="h-80 relative overflow-hidden" style={{ background: t.bg }}>
+                  <div style={{ width: 390, transform: "scale(0.97)", transformOrigin: "top left", pointerEvents: "none" }}>
+                    <TemplateThumbnail id={t.id} bg={t.bg} accent={t.accent} d={t.defaults} />
                   </div>
-                  <p className="text-white/40 text-xs mb-3">{t.niche} · {t.palette}</p>
-                  <div className="flex items-center gap-1.5 text-violet-400 text-xs font-semibold group-hover:gap-2.5 transition-all">
+                  {/* Soft fade so cropped previews end gracefully */}
+                  <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#0d0f1f]/90 to-transparent pointer-events-none" />
+                </div>
+                {/* Card footer */}
+                <div className="px-6 py-5 flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xl">{t.emoji}</span>
+                      <span className="font-bold text-white text-base">{t.name}</span>
+                    </div>
+                    <p className="text-white/35 text-sm">{t.niche} · {t.palette}</p>
+                  </div>
+                  <div className="flex items-center gap-1 text-violet-400 text-sm font-semibold bg-violet-500/10 border border-violet-500/25 rounded-full px-4 py-2 group-hover:bg-violet-500/20 transition-colors whitespace-nowrap">
                     Vyzkoušet <ChevronRight className="w-3.5 h-3.5" />
                   </div>
                 </div>

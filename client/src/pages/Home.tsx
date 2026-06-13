@@ -635,31 +635,31 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left — cycle diagram */}
             <div className="flex justify-center">
-              {/* Container 320×320, center at 160,160, bubble radius 110 */}
-              <div className="relative" style={{ width: 320, height: 320 }}>
-                {/* SVG circle + directional arrows */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 320 320">
-                  <circle cx="160" cy="160" r="110" fill="none" stroke="#F59E0B" strokeWidth="3.5" />
+              {/* Scales with viewport: ~full column width, capped at 460px */}
+              <div className="relative w-full max-w-[460px] aspect-square">
+                {/* SVG circle + directional arrows (viewBox 460, center 230, radius 158) */}
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 460 460">
+                  <circle cx="230" cy="230" r="158" fill="none" stroke="#F59E0B" strokeWidth="5" />
                   {/* Arrows at 45°, 135°, 225°, 315° — pointing clockwise (tangent +90°) */}
                   {[45, 135, 225, 315].map(deg => {
                     const rad = (deg * Math.PI) / 180;
-                    const ax = 160 + 110 * Math.cos(rad);
-                    const ay = 160 + 110 * Math.sin(rad);
+                    const ax = 230 + 158 * Math.cos(rad);
+                    const ay = 230 + 158 * Math.sin(rad);
                     const rot = deg + 90;
                     return (
                       <g key={deg} transform={`translate(${ax},${ay}) rotate(${rot})`}>
-                        <polygon points="0,-9 7,5 -7,5" fill="#F59E0B" />
+                        <polygon points="0,-13 10,7 -10,7" fill="#F59E0B" />
                       </g>
                     );
                   })}
                 </svg>
                 {/* Center label */}
                 <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <p className="text-center text-sm font-bold text-white leading-snug pointer-events-none">
+                  <p className="text-center text-lg sm:text-xl font-bold text-white leading-snug pointer-events-none">
                     Jak probíhá<br />vývoj MVP?
                   </p>
                 </div>
-                {/* 4 step bubbles — center + 110px × unit vector */}
+                {/* 4 step bubbles — positioned at % so they scale with the container */}
                 {[
                   { label: "Vývoj", angle: -90 },
                   { label: "Nasazení", angle: 0 },
@@ -667,24 +667,22 @@ export default function Home() {
                   { label: "Analýza", angle: 180 },
                 ].map(({ label, angle }) => {
                   const rad = (angle * Math.PI) / 180;
-                  const bx = 160 + 110 * Math.cos(rad);
-                  const by = 160 + 110 * Math.sin(rad);
+                  const cxPct = 50 + (158 / 460) * 100 * Math.cos(rad);
+                  const cyPct = 50 + (158 / 460) * 100 * Math.sin(rad);
                   return (
                     <div
                       key={label}
-                      className="absolute flex items-center justify-center"
+                      className="absolute flex items-center justify-center w-[24%] aspect-square text-sm sm:text-base"
                       style={{
-                        width: 72, height: 72,
                         borderRadius: "50%",
                         background: "linear-gradient(135deg,#38BDF8,#0EA5E9)",
                         color: "#fff",
                         fontWeight: 700,
-                        fontSize: 13,
                         textAlign: "center",
                         lineHeight: 1.3,
-                        left: bx - 36,
-                        top: by - 36,
-                        boxShadow: "0 0 24px rgba(56,189,248,0.4)",
+                        left: `${cxPct - 12}%`,
+                        top: `${cyPct - 12}%`,
+                        boxShadow: "0 0 36px rgba(56,189,248,0.45)",
                         whiteSpace: "pre-line",
                       }}
                     >
