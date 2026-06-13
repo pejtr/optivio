@@ -1,260 +1,227 @@
-import { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, Star, Menu, X, ArrowRight, Users, TrendingUp, Award } from "lucide-react";
+import { Check, ArrowRight, Menu, X, Shield, Zap, Users } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { trackEvent } from "@/lib/ab-test";
-import { SalesChatWidget } from "@/components/SalesChatWidget";
-
-// Variant C — Social Proof First, Green palette
-
-const testimonials = [
-  { name: "Petra Svobodová", role: "Kavárna Espresso Praha", text: "Web nám přinesl zákazníky, které bychom jinak nikdy nezískali. Vrátil se nám za 3 týdny.", stars: 5, metric: "+47% rezervací", initial: "P" },
-  { name: "Jiří Novák", role: "OSVČ elektrikář", text: "Investice 3 490 Kč se mi vrátila z první zakázky. Teď mám práci na 3 měsíce dopředu.", stars: 5, metric: "3× více zakázek", initial: "J" },
-  { name: "Monika Králová", role: "Beauty Salon", text: "Zákaznice si rezervují samy, já se mohu věnovat práci. Přesně to jsem potřebovala.", stars: 5, metric: "0h ztracených", initial: "M" },
-  { name: "Tomáš Veselý", role: "Autoservis Veselý", text: "Za 4 dny jsme měli hotový web. Profesionální přístup, férová cena.", stars: 5, metric: "+31% poptávek", initial: "T" },
-];
-
-const packages = [
-  { name: "Lite Web", price: "3 490", monthly: "179", features: ["Jednostránkový web", "Responzivní design", "SEO", "Kontaktní formulář", "SSL + Hosting"], popular: false },
-  { name: "Basic Web", price: "4 999", monthly: "179", features: ["Vícestrany (až 8)", "Blog", "Galerie", "Google Analytics", "Rychlostní opt."], popular: false },
-  { name: "Web + Lead Gen", price: "6 990", monthly: "299", features: ["Lead capture", "Automatické emaily", "CRM integrace", "Scoring leadů", "Měsíční report"], popular: true },
-  { name: "Web + Automatizace", price: "9 990", monthly: "499", features: ["AI chatbot 24/7", "Plná automatizace", "LeadOS dashboard", "Prioritní podpora", "Neomezené úpravy"], popular: false },
-];
 
 export default function HomeVariantC() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", phone: "", packageType: "" });
-  const [submitting, setSubmitting] = useState(false);
-  const contactRef = useRef<HTMLElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const contactRef = React.useRef<HTMLElement>(null);
+
+  React.useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const createInquiry = trpc.inquiries.create.useMutation();
 
-  const scrollToContact = () => {
-    trackEvent("hero_cta_click", { variant: "C" });
-    contactRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!form.name.trim()) return toast.error("Vyplňte jméno");
-    if (!form.email.includes("@")) return toast.error("Zadejte platný email");
-    setSubmitting(true);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const phone = formData.get("phone") as string;
+    const businessDescription = formData.get("business") as string;
+
+    if (!name || !email) {
+      toast.error("Vyplňte prosím jméno a email");
+      return;
+    }
+
     try {
-      await createInquiry.mutateAsync({ ...form, businessDescription: "", packageType: form.packageType || undefined, details: undefined, source: "web-variant-c" });
-      trackEvent("form_submit", { variant: "C" });
-      toast.success("Ozveme se do 24 hodin!");
-      setForm({ name: "", email: "", phone: "", packageType: "" });
-    } catch { toast.error("Chyba. Zkuste to znovu."); }
-    finally { setSubmitting(false); }
+      await createInquiry.mutateAsync({
+        name,
+        email,
+        phone,
+        businessDescription,
+        packageType: undefined,
+      });
+      toast.success("Poptávka odeslána! Brzy se vám ozveme.");
+      form.reset();
+    } catch (error) {
+      toast.error("Chyba při odesílání poptávky");
+    }
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-[Inter,sans-serif]">
-
-      {/* NAV */}
-      <nav className="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <span className="text-xl font-bold text-emerald-700">OPTIVIO</span>
-          <div className="hidden md:flex items-center gap-6 text-sm text-slate-600">
-            <a href="#proof" className="hover:text-emerald-600 transition-colors">Výsledky</a>
-            <a href="#pricing" className="hover:text-emerald-600 transition-colors">Ceny</a>
-            <a href="/agents" className="text-violet-600 hover:text-violet-800 font-medium">✨ AI Agenti</a>
+    <div className="min-h-screen bg-white text-slate-900">
+      {/* Navigation */}
+      <nav className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-white shadow-md' : 'bg-white/80 backdrop-blur-sm'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <img src="/manus-storage/optivio-logo_d4a4757c.png" alt="OPTIVIO" className="h-8" />
           </div>
-          <div className="hidden md:flex gap-2">
-            <Button variant="outline" size="sm" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={scrollToContact}>
-              Konzultace zdarma
-            </Button>
-            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={scrollToContact}>
-              Začít →
-            </Button>
+          <div className="hidden md:flex gap-8">
+            <a href="#comparison" className="text-sm font-medium hover:text-emerald-600 transition">Porovnání</a>
+            <a href="#trust" className="text-sm font-medium hover:text-emerald-600 transition">Proč nás</a>
+            <a href="#contact" className="text-sm font-medium hover:text-emerald-600 transition">Kontakt</a>
           </div>
-          <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          <Button className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => contactRef.current?.scrollIntoView({ behavior: 'smooth' })}>
+            Začít zdarma
+          </Button>
         </div>
-        {mobileOpen && (
-          <div className="md:hidden border-t px-4 py-3 flex flex-col gap-3 bg-white">
-            <a href="#proof" className="text-sm text-slate-600">Výsledky klientů</a>
-            <a href="#pricing" className="text-sm text-slate-600">Ceny</a>
-            <a href="/agents" className="text-sm text-violet-600">✨ AI Agenti</a>
-            <Button className="bg-emerald-600 text-white w-full" onClick={() => { setMobileOpen(false); scrollToContact(); }}>Začít →</Button>
-          </div>
-        )}
       </nav>
 
-      {/* HERO — social proof first */}
-      <section className="bg-gradient-to-b from-emerald-50 to-white py-16 lg:py-24">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          {/* Social proof bar */}
-          <div className="inline-flex items-center gap-3 bg-white border border-emerald-200 rounded-full px-5 py-2 mb-8 shadow-sm">
-            <div className="flex -space-x-2">
-              {["P", "J", "M", "T"].map(i => (
-                <div key={i} className="w-7 h-7 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center ring-2 ring-white">{i}</div>
-              ))}
-            </div>
-            <span className="text-sm text-slate-700 font-medium">
-              <span className="text-emerald-700 font-bold">150+ firem</span> už vydělává s OPTIVIO
-            </span>
-            <div className="flex text-amber-400">{"★★★★★".split("").map((s, i) => <span key={i}>{s}</span>)}</div>
-          </div>
-
-          <h1 className="text-4xl lg:text-6xl font-extrabold leading-tight mb-6 text-slate-900">
-            Web, který<br />
-            <span className="text-emerald-600">skutečně vydělává.</span>
+      {/* Hero */}
+      <section className="bg-gradient-to-br from-emerald-50 to-teal-50 py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-5xl font-bold mb-6 text-slate-900">
+            Důvěryhodné weby,<br />
+            <span className="text-emerald-600">které budují značku</span>
           </h1>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto mb-8">
-            Průměrný klient OPTIVIO zaznamenal <strong className="text-slate-800">+3× více poptávek</strong> do 60 dní.
-            Platíte až po schválení — bez rizika.
+          <p className="text-xl text-slate-600 mb-8">
+            Profesionální web za 3 490 Kč. Bez agentury. Bez dlouhého čekání. Bez skrytých poplatků.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
-            <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-4 rounded-full text-base shadow-lg shadow-emerald-200" onClick={scrollToContact}>
-              Chci výsledky jako oni →
+          <div className="flex gap-4 mb-12">
+            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-6 text-lg">
+              Chci nový web zdarma
             </Button>
-            <Button size="lg" variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 rounded-full" onClick={() => document.getElementById("proof")?.scrollIntoView({ behavior: "smooth" })}>
-              Zobrazit výsledky klientů
+            <Button variant="outline" className="px-8 py-6 text-lg border-emerald-600 text-emerald-600 hover:bg-emerald-50">
+              Podívat se na příklady
             </Button>
           </div>
 
-          <div className="flex flex-wrap gap-6 justify-center text-sm text-slate-500">
-            <span className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Návrh zdarma</span>
-            <span className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Platíte až po schválení</span>
-            <span className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Hotovo za 1–2 týdny</span>
+          {/* Trust Stats */}
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="text-3xl font-bold text-emerald-600">98%</p>
+              <p className="text-sm text-slate-600">spokojenosti klientů</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-emerald-600">150+</p>
+              <p className="text-sm text-slate-600">projektů ukončeno</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-emerald-600">5 let</p>
+              <p className="text-sm text-slate-600">zkušenosti</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* STATS */}
-      <section className="bg-emerald-700 text-white py-10">
-        <div className="max-w-4xl mx-auto px-4 grid grid-cols-3 gap-8 text-center">
-          {[["150+", "projektů dokončeno", Users], ["3×", "průměrný růst poptávek", TrendingUp], ["98%", "spokojenost klientů", Award]].map(([v, l, Icon]) => (
-            <div key={String(l)}>
-              <div className="text-3xl font-extrabold mb-1">{String(v)}</div>
-              <div className="text-emerald-200 text-sm">{String(l)}</div>
-            </div>
-          ))}
+      {/* Comparison Table */}
+      <section id="comparison" className="py-20 px-4 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold mb-12 text-center">Proč OPTIVIO?</h2>
+          <div className="overflow-x-auto rounded-lg border border-slate-200">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-emerald-50 border-b border-slate-200">
+                  <th className="text-left py-4 px-6 font-bold">Kritérium</th>
+                  <th className="text-center py-4 px-6 font-bold text-emerald-600">OPTIVIO</th>
+                  <th className="text-center py-4 px-6 font-bold text-slate-400">Tradiční agentura</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-slate-200 hover:bg-slate-50">
+                  <td className="py-4 px-6">Cena webu</td>
+                  <td className="text-center py-4 px-6"><span className="font-bold text-emerald-600">3 490 Kč</span></td>
+                  <td className="text-center py-4 px-6"><span className="text-slate-400">20 000+ Kč</span></td>
+                </tr>
+                <tr className="border-b border-slate-200 hover:bg-slate-50">
+                  <td className="py-4 px-6">Doba realizace</td>
+                  <td className="text-center py-4 px-6"><span className="font-bold text-emerald-600">1–3 týdny</span></td>
+                  <td className="text-center py-4 px-6"><span className="text-slate-400">1–3 měsíce</span></td>
+                </tr>
+                <tr className="border-b border-slate-200 hover:bg-slate-50">
+                  <td className="py-4 px-6">Originální design</td>
+                  <td className="text-center py-4 px-6"><Check className="w-5 h-5 text-emerald-600 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><Check className="w-5 h-5 text-emerald-600 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-200 hover:bg-slate-50">
+                  <td className="py-4 px-6">Podpora & údržba</td>
+                  <td className="text-center py-4 px-6"><span className="font-bold text-emerald-600">179 Kč/m</span></td>
+                  <td className="text-center py-4 px-6"><span className="text-slate-400">1 000+ Kč/m</span></td>
+                </tr>
+                <tr className="hover:bg-slate-50">
+                  <td className="py-4 px-6">Garance spokojenosti</td>
+                  <td className="text-center py-4 px-6"><Check className="w-5 h-5 text-emerald-600 mx-auto" /></td>
+                  <td className="text-center py-4 px-6">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
-      {/* SOCIAL PROOF — testimonials */}
-      <section id="proof" className="py-16 bg-slate-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 rounded-full px-4 py-1 text-sm font-medium mb-4">
-              <Star className="w-4 h-4 fill-emerald-500" /> Ověřené výsledky
+      {/* Trust Signals */}
+      <section id="trust" className="py-20 px-4 bg-emerald-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-12 text-center">Proč nám věřit?</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-emerald-200">
+              <Shield className="w-12 h-12 text-emerald-600 mb-4" />
+              <h3 className="font-bold text-lg mb-2">Bezpečný proces</h3>
+              <p className="text-slate-600">30% záloha, zbytek po spuštění. Vaše peníze jsou chráněny.</p>
             </div>
-            <h2 className="text-3xl font-extrabold text-slate-900 mb-3">Co říkají naši klienti</h2>
-            <p className="text-slate-500">Skutečné výsledky, skuteční lidé. Bez retušování.</p>
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-emerald-200">
+              <Zap className="w-12 h-12 text-emerald-600 mb-4" />
+              <h3 className="font-bold text-lg mb-2">Rychlost</h3>
+              <p className="text-slate-600">Váš web je hotov za 1–3 týdny. Bez čekání na agenturu.</p>
+            </div>
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-emerald-200">
+              <Users className="w-12 h-12 text-emerald-600 mb-4" />
+              <h3 className="font-bold text-lg mb-2">Podpora</h3>
+              <p className="text-slate-600">Technická podpora 24/7. Vždy jsme tu pro vás.</p>
+            </div>
           </div>
+        </div>
+      </section>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {testimonials.map(t => (
-              <div key={t.name} className="bg-white rounded-2xl p-6 border border-slate-200 hover:border-emerald-300 hover:shadow-md transition-all">
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="w-11 h-11 rounded-full bg-emerald-500 text-white font-bold flex items-center justify-center flex-shrink-0">
-                    {t.initial}
-                  </div>
-                  <div>
-                    <div className="font-semibold text-slate-900">{t.name}</div>
-                    <div className="text-sm text-slate-400">{t.role}</div>
-                  </div>
-                  <div className="ml-auto bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-1 text-sm font-bold text-emerald-700">
-                    {t.metric}
-                  </div>
-                </div>
-                <div className="flex mb-3">
-                  {Array(t.stars).fill(0).map((_, i) => <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />)}
-                </div>
-                <p className="text-slate-600 italic">"{t.text}"</p>
+      {/* Testimonials */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-12 text-center">Co říkají naši klienti</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { name: "Tomáš V.", company: "Autoservis", quote: "Za 4 dny jsme měli hotový web. Profesionální přístup, férová cena." },
+              { name: "Jana P.", company: "Jazyková škola", quote: "Přihlašování na kurzy přes web nám ušetřilo hodiny administrativy." },
+              { name: "Martin B.", company: "Malíř pokojů", quote: "Web mi přináší 5–8 poptávek měsíčně. Vrátil se mi za 2 měsíce." },
+            ].map((testimonial) => (
+              <div key={testimonial.name} className="bg-emerald-50 p-6 rounded-lg border border-emerald-200">
+                <p className="text-slate-600 mb-4">"{testimonial.quote}"</p>
+                <p className="font-bold text-slate-900">{testimonial.name}</p>
+                <p className="text-sm text-emerald-600 font-medium">{testimonial.company}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* PRICING */}
-      <section id="pricing" className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-slate-900 mb-3">Transparentní ceny</h2>
-            <p className="text-slate-500">Žádné skryté poplatky. Platíte jen to, co vidíte.</p>
-          </div>
-          <div className="grid md:grid-cols-4 gap-5">
-            {packages.map(pkg => (
-              <div key={pkg.name} className={`rounded-2xl border p-6 flex flex-col transition-all hover:shadow-lg ${pkg.popular ? "border-emerald-500 ring-1 ring-emerald-500 shadow-emerald-100 shadow-md" : "border-slate-200"}`}>
-                {pkg.popular && (
-                  <div className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 text-center w-fit mx-auto">
-                    Nejpopulárnější
-                  </div>
-                )}
-                <h3 className="font-bold text-slate-900 mb-1">{pkg.name}</h3>
-                <div className="text-3xl font-extrabold text-slate-900 mb-0.5">{pkg.price} <span className="text-base font-normal text-slate-400">Kč</span></div>
-                <div className="text-sm text-slate-400 mb-5">+ {pkg.monthly} Kč/měsíc</div>
-                <ul className="space-y-2 flex-1 mb-6">
-                  {pkg.features.map(f => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-slate-600">
-                      <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" /> {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  className={pkg.popular ? "bg-emerald-600 hover:bg-emerald-700 text-white w-full" : "w-full"}
-                  variant={pkg.popular ? "default" : "outline"}
-                  onClick={scrollToContact}
-                >
-                  Vybrat →
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CONTACT FORM */}
-      <section ref={contactRef} id="contact" className="py-16 bg-emerald-700 text-white">
-        <div className="max-w-xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-extrabold mb-3">Začněte zdarma</h2>
-          <p className="text-emerald-200 mb-8">Konzultace a návrh webu jsou zdarma. Platíte až po schválení.</p>
-          <form onSubmit={handleSubmit} className="space-y-4 text-left">
-            <input
-              placeholder="Vaše jméno *"
-              value={form.name}
-              onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-white"
-              required
-            />
-            <input
-              type="email"
-              placeholder="Email *"
-              value={form.email}
-              onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-white"
-              required
-            />
-            <input
-              placeholder="Telefon (volitelné)"
-              value={form.phone}
-              onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-white"
-            />
-            <Button
-              type="submit"
-              disabled={submitting}
-              className="w-full bg-white text-emerald-700 hover:bg-emerald-50 font-bold py-3 rounded-xl text-base"
-            >
-              {submitting ? "Odesílám..." : "Chci nezávaznou konzultaci →"}
+      {/* Contact Form */}
+      <section ref={contactRef} className="py-20 px-4 bg-gradient-to-br from-emerald-600 to-teal-600 text-white">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">Začněte s 14-denní verzí zdarma</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input type="text" name="name" placeholder="Vaše jméno" className="w-full px-4 py-3 rounded-lg text-slate-900" required />
+            <input type="email" name="email" placeholder="vas@email.cz" className="w-full px-4 py-3 rounded-lg text-slate-900" required />
+            <input type="tel" name="phone" placeholder="+420 123 456 789" className="w-full px-4 py-3 rounded-lg text-slate-900" />
+            <textarea name="business" placeholder="Čím se zabýváte?" className="w-full px-4 py-3 rounded-lg text-slate-900 h-24"></textarea>
+            <Button type="submit" className="w-full bg-white text-emerald-600 hover:bg-slate-100 py-6 text-lg font-bold">
+              Odeslat poptávku <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
-            <p className="text-xs text-emerald-300 text-center">Ozveme se do 24 hodin. Bez závazků.</p>
           </form>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="bg-slate-900 text-slate-400 py-8 text-center text-sm">
-        <p>© {new Date().getFullYear()} OPTIVIO · <a href="/agents" className="text-violet-400 hover:text-violet-300">AI Agenti</a></p>
+      {/* Footer */}
+      <footer className="bg-slate-900 text-white/60 py-12">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="mb-4">© 2026 OPTIVIO. Všechna práva vyhrazena.</p>
+          <div className="flex justify-center gap-6">
+            <a href="#" className="hover:text-white transition">Zásady ochrany</a>
+            <a href="#" className="hover:text-white transition">Obchodní podmínky</a>
+            <a href="#" className="hover:text-white transition">Kontakt</a>
+          </div>
+        </div>
       </footer>
-
-      <SalesChatWidget />
     </div>
   );
 }

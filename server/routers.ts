@@ -12,6 +12,7 @@ import { getSalesConversation, upsertSalesConversation, addSalesMessage, getSale
 import Stripe from "stripe";
 import { z } from "zod";
 import { OPTIVIO_PRODUCTS, calculateDeposit, calculateRemaining } from "./stripe-products";
+import { getABTestSummary, getABTestMetrics } from "./ab-analytics";
 
 export const appRouter = router({
   system: systemRouter,
@@ -28,7 +29,15 @@ export const appRouter = router({
 
   inquiries: router({
     create: publicProcedure
-      .input((data: unknown) => {
+      .input((data: unknown): {
+        name: string;
+        email: string;
+        phone?: string;
+        businessDescription?: string;
+        packageType?: string;
+        details?: Record<string, unknown>;
+        source?: string;
+      } => {
         const obj = data as Record<string, unknown>;
         return {
           name: String(obj.name || ""),
@@ -813,6 +822,16 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         console.log(`[AB Test] Variant ${input.variant} - Event: ${input.event}`, input.metadata);
         return { ok: true };
+      }),
+    getMetrics: publicProcedure
+      .query(async () => {
+        const metrics = await getABTestMetrics();
+        return metrics;
+      }),
+    getSummary: publicProcedure
+      .query(async () => {
+        const summary = await getABTestSummary();
+        return summary;
       }),
   }),
 

@@ -41,3 +41,19 @@ export async function trackEvent(event: string, metadata?: Record<string, any>) 
     console.error('Failed to track AB event:', error);
   }
 }
+
+
+export async function trackCTAClick(buttonText: string, location: string) {
+  return trackEvent('cta_click', {
+    buttonText,
+    location,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export async function trackFormSubmit(formName: string) {
+  return trackEvent('form_submit', {
+    formName,
+    timestamp: new Date().toISOString(),
+  });
+}
