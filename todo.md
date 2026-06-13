@@ -188,9 +188,9 @@
 
 
 ## Zbývající úkoly — Fáze 6
-- [ ] Napojit AB testing dashboard na reálná data přes tRPC router
-- [ ] Přidat persistence/backend agregaci pro AB test events
-- [ ] Doplnit loading, error a empty states pro AB testing dashboard
+- [x] Napojit AB testing dashboard na reálná data přes tRPC router (ab.getSummary, ab.getMetrics)
+- [x] Přidat persistence/backend agregaci pro AB test events (ab-analytics.ts)
+- [x] Doplnit loading, error a empty states pro AB testing dashboard
 - [ ] Google Analytics integration pro AB testing
 - [ ] Dokumentace pro spouštění AB testů
 - [ ] Production readiness checklist
