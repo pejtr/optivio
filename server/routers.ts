@@ -36,21 +36,34 @@ export const appRouter = router({
           phone: obj.phone ? String(obj.phone) : undefined,
           businessDescription: obj.businessDescription ? String(obj.businessDescription) : undefined,
           packageType: obj.packageType ? String(obj.packageType) : undefined,
+          // Free-form questionnaire answers (goals, pages, materials, budget, deadline…)
+          details: obj.details && typeof obj.details === "object" ? (obj.details as Record<string, unknown>) : undefined,
+          source: obj.source ? String(obj.source) : undefined,
         };
       })
       .mutation(async ({ input, ctx }) => {
+        const detailsJson = input.details ? JSON.stringify(input.details) : undefined;
+
         const inquiry = await createInquiry({
           name: input.name,
           email: input.email,
           phone: input.phone,
           businessDescription: input.businessDescription,
           packageType: input.packageType,
+          details: detailsJson,
+          source: input.source,
         });
 
         try {
+          const detailLines = input.details
+            ? Object.entries(input.details)
+                .filter(([, v]) => v !== undefined && v !== null && v !== "")
+                .map(([k, v]) => `• ${k}: ${Array.isArray(v) ? v.join(", ") : String(v)}`)
+                .join("\n")
+            : "";
           await notifyOwner({
             title: "Nová poptávka z webu",
-            content: `Nová poptávka od ${input.name} (${input.email}, ${input.phone || "bez telefonu"})\n\nBalíček: ${input.packageType || "neuvedeno"}\nPopis: ${input.businessDescription || "neuvedeno"}`,
+            content: `Nová poptávka od ${input.name} (${input.email}, ${input.phone || "bez telefonu"})\n\nBalíček: ${input.packageType || "neuvedeno"}\nObor/firma: ${input.businessDescription || "neuvedeno"}\nZdroj: ${input.source || "web"}${detailLines ? `\n\nDetaily:\n${detailLines}` : ""}`,
           });
         } catch (error) {
           console.error("Failed to notify owner:", error);

@@ -14,6 +14,7 @@ import ClientDashboard from "./pages/ClientDashboard";
 import AgentsHub from "./pages/AgentsHub";
 import IBotsPage from "./pages/IBotsPage";
 import DemoPage from "./pages/DemoPage";
+import DotaznikPage from "./pages/DotaznikPage";
 import { useEffect, useState } from "react";
 import { getVariant } from "./lib/ab-test";
 

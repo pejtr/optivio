@@ -40,7 +40,7 @@ export default function HomeVariantD() {
     if (!form.name.trim() || !form.email.includes("@")) return toast.error("Vyplňte jméno a email");
     setSubmitting(true);
     try {
-      await createInquiry.mutateAsync({ ...form, businessDescription: "", packageType: "variant-d" });
+      await createInquiry.mutateAsync({ ...form, businessDescription: "", packageType: "variant-d", details: undefined, source: "web-variant-d" });
       trackEvent("form_submit", { variant: "D" });
       toast.success("Perfektní! Ozveme se do 24h.");
       setForm({ name: "", email: "", phone: "" });

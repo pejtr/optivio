@@ -129,7 +129,7 @@ export default function Home() {
     if (!formData.packageType) return toast.error("Vyberte balíček");
     setIsSubmitting(true);
     try {
-      await createInquiry.mutateAsync(formData);
+      await createInquiry.mutateAsync({ ...formData, details: undefined, source: "web-form" });
       toast.success("Poptávka odeslána! Ozveme se do 24 hodin.");
       setFormData({ name: "", email: "", phone: "", businessDescription: "", packageType: "" });
     } catch { toast.error("Chyba při odesílání. Zkuste to znovu."); }

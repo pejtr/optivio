@@ -40,7 +40,7 @@ export default function HomeVariantC() {
     if (!form.email.includes("@")) return toast.error("Zadejte platný email");
     setSubmitting(true);
     try {
-      await createInquiry.mutateAsync({ ...form, businessDescription: "", packageType: form.packageType || undefined });
+      await createInquiry.mutateAsync({ ...form, businessDescription: "", packageType: form.packageType || undefined, details: undefined, source: "web-variant-c" });
       trackEvent("form_submit", { variant: "C" });
       toast.success("Ozveme se do 24 hodin!");
       setForm({ name: "", email: "", phone: "", packageType: "" });

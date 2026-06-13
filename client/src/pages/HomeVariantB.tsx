@@ -41,6 +41,8 @@ export default function HomeVariantB() {
         phone,
         businessDescription,
         packageType: undefined,
+        details: undefined,
+        source: "web-variant-b",
       });
       toast.success("Poptávka odeslána! Brzy se vám ozveme.");
       form.reset();

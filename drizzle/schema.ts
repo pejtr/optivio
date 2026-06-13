@@ -32,6 +32,10 @@ export const inquiries = mysqlTable("inquiries", {
   phone: varchar("phone", { length: 20 }),
   businessDescription: text("businessDescription"),
   packageType: varchar("packageType", { length: 50 }),
+  /** Questionnaire answers beyond the core fields, stored as JSON (goals, pages, materials, budget, deadline…). */
+  details: text("details"),
+  /** Where the lead came from — e.g. "dotaznik", "demo:kavarna", "chat". */
+  source: varchar("source", { length: 100 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   status: mysqlEnum("status", ["new", "contacted", "converted"]).default("new").notNull(),
   notes: text("notes"),
