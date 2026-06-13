@@ -4,10 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Clock, AlertCircle, Download, ChevronDown, ChevronUp, Target, Calendar, Brain, LayoutDashboard } from "lucide-react";
+import { CheckCircle, Clock, AlertCircle, Download, ChevronDown, ChevronUp, Target, Calendar, Brain, LayoutDashboard, Sparkles, TrendingUp, Wallet, ArrowRight, FolderKanban } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { TechSupportWidget } from "@/components/TechSupportWidget";
+import { OptivioLogo } from "@/components/OptivioLogo";
+
+function greetingForNow(): string {
+  const h = new Date().getHours();
+  if (h < 10) return "Dobré ráno";
+  if (h < 18) return "Dobrý den";
+  return "Dobrý večer";
+}
 
 export default function ClientDashboard() {
   const { user } = useAuth();
@@ -15,6 +23,7 @@ export default function ClientDashboard() {
 
   const { data: projects, isLoading: projectsLoading } = trpc.projects.myProjects.useQuery();
   const { data: payments } = trpc.payments.listByUser.useQuery();
+  const { data: brief } = trpc.dashboard.nowBrief.useQuery();
 
   if (!user) {
     return (
@@ -89,7 +98,7 @@ export default function ClientDashboard() {
       <div className="bg-white border-b border-slate-200 px-4 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-xl font-extrabold text-violet-700 tracking-tight hover:text-violet-900 transition-colors">OPTIVIO</a>
+            <a href="/" aria-label="OPTIVIO" className="hover:opacity-80 transition-opacity"><OptivioLogo className="h-7" /></a>
             <span className="text-slate-300">|</span>
             <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-700">
               <LayoutDashboard className="w-4 h-4 text-violet-600" /> ADMIN
@@ -97,7 +106,7 @@ export default function ClientDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <a href="/agents" className="text-xs text-violet-600 hover:text-violet-800 font-medium flex items-center gap-1">
-              <Brain className="w-3.5 h-3.5" /> AI Agenti
+              <Brain className="w-3.5 h-3.5" /> AI Asistenti
             </a>
             <div className="text-right hidden md:block">
               <p className="text-sm font-medium text-slate-900">{user.name || user.email}</p>
@@ -108,6 +117,72 @@ export default function ClientDashboard() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-8">
+        {/* ── Now Brief — přehled dne ── */}
+        <div className="mb-8 rounded-2xl bg-gradient-to-br from-violet-600 via-violet-700 to-indigo-800 text-white p-6 md:p-8 shadow-lg shadow-violet-200 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative">
+            <div className="flex items-center gap-2 text-violet-200 text-xs font-medium mb-2">
+              <Sparkles className="w-4 h-4" />
+              <span>{new Date().toLocaleDateString("cs-CZ", { weekday: "long", day: "numeric", month: "long" })}</span>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-extrabold mb-1">
+              {greetingForNow()}, {brief?.firstName || (user.name || "").split(" ")[0] || "vítejte"}!
+            </h2>
+            <p className="text-violet-100/80 text-sm mb-6">Tady je váš dnešní přehled.</p>
+
+            {/* Metric chips */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
+                <div className="flex items-center gap-1.5 text-violet-200 text-xs mb-1"><FolderKanban className="w-3.5 h-3.5" /> Projekty</div>
+                <div className="text-2xl font-bold">{brief?.counts.projects ?? 0}</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
+                <div className="flex items-center gap-1.5 text-violet-200 text-xs mb-1"><Clock className="w-3.5 h-3.5" /> Ve výrobě</div>
+                <div className="text-2xl font-bold">{brief?.counts.inProgress ?? 0}</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
+                <div className="flex items-center gap-1.5 text-violet-200 text-xs mb-1"><CheckCircle className="w-3.5 h-3.5" /> Dokončeno</div>
+                <div className="text-2xl font-bold">{brief?.counts.completed ?? 0}</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
+                <div className="flex items-center gap-1.5 text-violet-200 text-xs mb-1"><Wallet className="w-3.5 h-3.5" /> Doplatek</div>
+                <div className="text-2xl font-bold">{((brief?.outstanding ?? 0)).toLocaleString("cs-CZ")} Kč</div>
+              </div>
+            </div>
+
+            {/* Active project progress */}
+            {brief?.activeProject && (
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10 mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium flex items-center gap-1.5"><TrendingUp className="w-4 h-4 text-violet-200" /> {brief.activeProject.title}</span>
+                  <span className="text-sm font-bold">{brief.activeProject.completionPercentage}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-white/15 overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-violet-300 to-white rounded-full transition-all" style={{ width: `${brief.activeProject.completionPercentage}%` }} />
+                </div>
+              </div>
+            )}
+
+            {/* Recommended action */}
+            {brief?.recommendedAction && (
+              <div className="flex items-start gap-3 bg-white text-slate-800 rounded-xl px-4 py-3">
+                <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4 text-violet-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-violet-600 uppercase tracking-wide mb-0.5">Doporučení na dnešek</p>
+                  <p className="text-sm text-slate-700">{brief.recommendedAction}</p>
+                </div>
+                {brief.nextMilestone && (
+                  <a href="#projekty" className="hidden md:flex items-center self-center text-violet-600 hover:text-violet-800">
+                    <ArrowRight className="w-5 h-5" />
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Summary cards */}
         {projects && projects.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

@@ -181,6 +181,18 @@ export async function getOrder(orderId: number) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+export async function getAllOrders() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.select().from(orders).orderBy(desc(orders.createdAt));
+}
+
+export async function getAllPayments() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db.select().from(payments).orderBy(desc(payments.createdAt));
+}
+
 export async function updateOrder(orderId: number, data: Partial<InsertOrder>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

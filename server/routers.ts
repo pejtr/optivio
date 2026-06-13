@@ -2,7 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
-import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials, getNichePackages, createNichePackage, getCustomerSubscriptions, createCustomerSubscription, cancelCustomerSubscription, getAllNichePackages, updateNichePackage, deactivateNichePackage, getAllSubscriptions, createOrder, getOrder, updateOrder, createPayment, getPaymentsByOrder, getBrandMemory, upsertBrandMemory, createAgentSession, getAgentSessions, getAgentSession, updateAgentSession, addAgentMessage, getAgentMessages, getAllProjects, getProjectByOrderId, getProjectsByOrderIds, createProject, updateProject, getProjectMilestones, createMilestone, updateMilestone } from "./db";
+import { createInquiry, listInquiries, getPortfolioProjects, getTestimonials, getNichePackages, createNichePackage, getCustomerSubscriptions, createCustomerSubscription, cancelCustomerSubscription, getAllNichePackages, updateNichePackage, deactivateNichePackage, getAllSubscriptions, createOrder, getOrder, updateOrder, createPayment, getPaymentsByOrder, getAllOrders, getAllPayments, getBrandMemory, upsertBrandMemory, createAgentSession, getAgentSessions, getAgentSession, updateAgentSession, addAgentMessage, getAgentMessages, getAllProjects, getProjectByOrderId, getProjectsByOrderIds, createProject, updateProject, getProjectMilestones, createMilestone, updateMilestone } from "./db";
 import { notifyOwner } from "./_core/notification";
 import { sendOrderConfirmationEmail, sendPaymentConfirmationEmail } from "./email-service";
 import { invokeLLM } from "./_core/llm";
@@ -264,6 +264,85 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await getPaymentsByOrder(input.orderId);
       }),
+
+    // ─── ADMIN: platební přehled (Stripe plugin v ADMIN panelu) ────────────────
+    admin: router({
+      // Revenue & objednávky z DB + (best-effort) živý Stripe zůstatek
+      overview: protectedProcedure.query(async ({ ctx }) => {
+        if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
+
+        const [orders, payments, inquiries] = await Promise.all([
+          getAllOrders(),
+          getAllPayments(),
+          listInquiries(),
+        ]);
+        const inquiryById = new Map(inquiries.map(i => [i.id, i]));
+
+        const succeeded = payments.filter(p => p.status === "succeeded");
+        const paidRevenue = succeeded.reduce((s, p) => s + (p.type === "refund" ? -p.amount : p.amount), 0);
+        const pendingRevenue = orders
+          .filter(o => o.status === "pending")
+          .reduce((s, o) => s + o.depositAmount, 0);
+        const outstanding = orders
+          .filter(o => o.status === "deposit_paid")
+          .reduce((s, o) => s + o.remainingAmount, 0);
+
+        const byStatus = orders.reduce((acc: Record<string, number>, o) => {
+          acc[o.status] = (acc[o.status] || 0) + 1;
+          return acc;
+        }, {});
+
+        // Recent orders enriched with customer name/email from the inquiry
+        const recentOrders = orders.slice(0, 12).map(o => {
+          const inq = inquiryById.get(o.inquiryId);
+          return {
+            id: o.id,
+            packageType: o.packageType,
+            totalPrice: o.totalPrice,
+            depositAmount: o.depositAmount,
+            remainingAmount: o.remainingAmount,
+            status: o.status,
+            createdAt: o.createdAt,
+            customerName: inq?.name ?? "—",
+            customerEmail: inq?.email ?? "—",
+          };
+        });
+
+        // Best-effort live Stripe balance (won't fail the whole query)
+        let stripeBalance: { available: number; pending: number; currency: string } | null = null;
+        let stripeConnected = false;
+        if (process.env.STRIPE_SECRET_KEY) {
+          try {
+            const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+            const bal = await stripe.balance.retrieve();
+            const avail = bal.available.find(b => b.currency === "czk") ?? bal.available[0];
+            const pend = bal.pending.find(b => b.currency === "czk") ?? bal.pending[0];
+            stripeBalance = {
+              available: avail ? avail.amount : 0,
+              pending: pend ? pend.amount : 0,
+              currency: (avail?.currency || "czk").toUpperCase(),
+            };
+            stripeConnected = true;
+          } catch (e) {
+            console.error("[Stripe admin] balance error:", e);
+          }
+        }
+
+        return {
+          stripeConnected,
+          stripeBalance,
+          totals: {
+            paidRevenue,
+            pendingRevenue,
+            outstanding,
+            orderCount: orders.length,
+            paymentCount: succeeded.length,
+          },
+          byStatus,
+          recentOrders,
+        };
+      }),
+    }),
   }),
 
   orders: router({
@@ -873,6 +952,90 @@ export const appRouter = router({
         await updateAgentSession(input.sessionId, { title: "[smazáno]" });
         return { ok: true };
       }),
+  }),
+
+  // ─── Now Brief — personalizovaný přehled dne pro ADMIN panel klienta ───────────
+  dashboard: router({
+    nowBrief: protectedProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) throw new Error("Unauthorized");
+      const firstName = (ctx.user.name || "").trim().split(/\s+/)[0] || "vítejte";
+
+      // Najdi objednávky a projekty patřící uživateli (přes jeho e-mail v poptávkách)
+      const allInquiries = await listInquiries().catch(() => []);
+      const myInquiries = allInquiries.filter(i => i.email === ctx.user?.email);
+
+      type OrderRow = NonNullable<Awaited<ReturnType<typeof getOrder>>>;
+      const myOrders: OrderRow[] = [];
+      for (const inq of myInquiries) {
+        const o = await getOrder(inq.id).catch(() => null);
+        if (o) myOrders.push(o);
+      }
+
+      const projectList = myOrders.length
+        ? await getProjectsByOrderIds(myOrders.map(o => o.id)).catch(() => [])
+        : [];
+
+      // Sesbírej milníky napříč projekty
+      const projectsWithMilestones = await Promise.all(
+        projectList.map(async (p) => ({
+          project: p,
+          milestones: await getProjectMilestones(p.id).catch(() => []),
+        }))
+      );
+
+      const activeProject = projectList.find(p => p.status === "in_progress") || projectList[0] || null;
+
+      // Nejbližší nesplněný milník
+      const pendingMilestones = projectsWithMilestones
+        .flatMap(pm => pm.milestones)
+        .filter((m: any) => m.status !== "completed" && m.dueDate)
+        .sort((a: any, b: any) => a.dueDate - b.dueDate);
+      const nextMilestone = pendingMilestones[0]
+        ? {
+            title: (pendingMilestones[0] as any).title as string,
+            dueDate: (pendingMilestones[0] as any).dueDate as number,
+          }
+        : null;
+
+      const outstanding = myOrders
+        .filter(o => o.status === "deposit_paid")
+        .reduce((s, o) => s + o.remainingAmount, 0);
+
+      const counts = {
+        projects: projectList.length,
+        inProgress: projectList.filter(p => p.status === "in_progress").length,
+        completed: projectList.filter(p => p.status === "completed").length,
+        orders: myOrders.length,
+      };
+
+      // Doporučená akce dne — jednoduchá heuristika
+      let recommendedAction = "Vše vypadá v pořádku. Mrkněte na svůj web a sdílejte ho.";
+      if (counts.projects === 0 && counts.orders === 0) {
+        recommendedAction = "Zatím tu nemáte žádný projekt — vyzkoušejte demo nebo si domluvte konzultaci.";
+      } else if (outstanding > 0) {
+        recommendedAction = `Máte doplatek ${outstanding.toLocaleString("cs-CZ")} Kč po spuštění webu.`;
+      } else if (nextMilestone) {
+        recommendedAction = `Blíží se milník „${nextMilestone.title}". Připravte prosím podklady.`;
+      } else if (counts.inProgress > 0) {
+        recommendedAction = "Na vašem webu se pracuje — brzy vás budeme informovat o pokroku.";
+      }
+
+      return {
+        firstName,
+        counts,
+        outstanding,
+        nextMilestone,
+        recommendedAction,
+        activeProject: activeProject
+          ? {
+              id: activeProject.id,
+              title: activeProject.title,
+              status: activeProject.status,
+              completionPercentage: activeProject.completionPercentage ?? 0,
+            }
+          : null,
+      };
+    }),
   }),
 });
 

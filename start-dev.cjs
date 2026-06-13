@@ -9,7 +9,11 @@ const entryPoint = path.join(projectRoot, 'server', '_core', 'index.ts');
 
 const env = {
   ...process.env,
-  // Let .env file control NODE_ENV — don't override here
+  // This is the DEV launcher — force development so the server runs Vite
+  // middleware (live HMR from source) instead of serving the static prod
+  // build. dotenv won't override an already-set process.env value, so this
+  // wins over NODE_ENV in .env.
+  NODE_ENV: 'development',
   PWD: projectRoot,
 };
 
