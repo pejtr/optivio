@@ -6,9 +6,11 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import HomeVariantB from "./pages/HomeVariantB";
+import HomeVariantC from "./pages/HomeVariantC";
+import HomeVariantD from "./pages/HomeVariantD";
 import AdminDashboard from "./pages/AdminDashboard";
 import ClientDashboard from "./pages/ClientDashboard";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getVariant } from "./lib/ab-test";
 
 function Router() {
@@ -22,9 +24,32 @@ function Router() {
     });
   }, []);
 
-  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center">Loading...</div>;
+  useEffect(() => {
+    if (!loading) {
+      const trackVariantView = async () => {
+        try {
+          await fetch('/api/trpc/ab.trackConversion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              json: { variant, event: 'page_view', metadata: { path: '/' } },
+            }),
+          });
+        } catch (error) {
+          console.error('Failed to track variant view:', error);
+        }
+      };
+      trackVariantView();
+    }
+  }, [variant, loading]);
 
-  const HomeComponent = variant === 'B' ? HomeVariantB : Home;
+  if (loading) return <div className="min-h-screen bg-slate-900 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div></div>;
+
+  const HomeComponent = 
+    variant === 'B' ? HomeVariantB : 
+    variant === 'C' ? HomeVariantC : 
+    variant === 'D' ? HomeVariantD : 
+    Home;
 
   return (
     <Switch>

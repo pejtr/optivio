@@ -179,8 +179,8 @@
 - [x] Implementovat AB testing backend router (getVariant, trackConversion)
 - [x] Vytvořit ab-test.ts utility (getVariant, trackEvent)
 - [x] Vytvořit HomeVariantB.tsx (Benefits-focused)
-- [ ] Vytvořit HomeVariantC.tsx (Social proof — zelená, comparison table)
-- [ ] Vytvořit HomeVariantD.tsx (Bold neon — fialová/magenta)
+- [x] Vytvořit HomeVariantC.tsx (Social proof — zelená, comparison table)
+- [x] Vytvořit HomeVariantD.tsx (Bold neon — magenta/cyan glow)
 - [x] Přidat variant routing do App.tsx
 - [ ] Vytvořit AB testing analytics dashboard
 - [x] Vitest testy pro AB framework (43/43 passing)
