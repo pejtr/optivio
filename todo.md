@@ -182,5 +182,15 @@
 - [x] Vytvořit HomeVariantC.tsx (Social proof — zelená, comparison table)
 - [x] Vytvořit HomeVariantD.tsx (Bold neon — magenta/cyan glow)
 - [x] Přidat variant routing do App.tsx
-- [ ] Vytvořit AB testing analytics dashboard
+- [x] Vytvořit AB testing analytics dashboard
 - [x] Vitest testy pro AB framework (43/43 passing)
+- [x] Přidat conversion tracking na CTA buttons
+
+
+## Zbývající úkoly — Fáze 6
+- [ ] Napojit AB testing dashboard na reálná data přes tRPC router
+- [ ] Přidat persistence/backend agregaci pro AB test events
+- [ ] Doplnit loading, error a empty states pro AB testing dashboard
+- [ ] Google Analytics integration pro AB testing
+- [ ] Dokumentace pro spouštění AB testů
+- [ ] Production readiness checklist

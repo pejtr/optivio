@@ -10,6 +10,9 @@ import HomeVariantC from "./pages/HomeVariantC";
 import HomeVariantD from "./pages/HomeVariantD";
 import AdminDashboard from "./pages/AdminDashboard";
 import ClientDashboard from "./pages/ClientDashboard";
+import ABTestingDashboard from "./pages/ABTestingDashboard";
+
+// Add link to AB testing dashboard in admin nav (if available)
 import React, { useEffect, useState } from "react";
 import { getVariant } from "./lib/ab-test";
 
@@ -56,6 +59,7 @@ function Router() {
       <Route path="/" component={HomeComponent} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/dashboard" component={ClientDashboard} />
+      <Route path="/ab-testing" component={ABTestingDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
