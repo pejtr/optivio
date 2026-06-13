@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, ChevronRight, Phone, Mail, MapPin, Clock, Star, CheckCircle, ShoppingCart, Play, Zap } from "lucide-react";
+import { SalesChatWidget } from "@/components/SalesChatWidget";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -212,36 +213,48 @@ const TEMPLATES: Template[] = [
 
 // ─── Template preview components ──────────────────────────────────────────────
 
+// Shared building blocks for an elegant, consistent design language across templates.
+
+function Wordmark({ name, color, light }: { name: string; color: string; light?: boolean }) {
+  return (
+    <span className="font-semibold tracking-tight text-[15px] flex items-center gap-1.5" style={{ color: light ? "#fff" : color }}>
+      <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
+      {name}
+    </span>
+  );
+}
+
 function KavarnaTemplate({ d }: { d: DemoData }) {
   return (
-    <div className="bg-[#FFF8F0] min-h-screen font-sans text-[#1C1008]">
-      <nav className="bg-[#D97706] px-6 py-3 flex justify-between items-center">
-        <span className="font-extrabold text-white text-lg">☕ {d.businessName}</span>
-        <span className="text-amber-100 text-xs">{d.phone}</span>
+    <div className="bg-[#FBF7F1] min-h-screen font-sans text-[#2A1E12]">
+      <nav className="px-7 py-4 flex justify-between items-center">
+        <Wordmark name={d.businessName} color="#B45309" />
+        <span className="text-[11px] text-[#8B7355] tracking-wide">{d.phone}</span>
       </nav>
-      <div className="px-6 py-12 text-center bg-gradient-to-b from-[#FFF0D0] to-[#FFF8F0]">
-        <p className="text-amber-700 text-xs font-semibold tracking-widest uppercase mb-2">Vítejte</p>
-        <h1 className="text-3xl font-extrabold text-[#7C3400] mb-3">{d.businessName}</h1>
-        <p className="text-[#92400E] text-base italic mb-6">"{d.tagline}"</p>
-        <button className="bg-[#D97706] text-white rounded-full px-6 py-2.5 text-sm font-bold hover:bg-amber-600 transition-colors">{d.cta}</button>
+      <div className="px-7 pt-8 pb-12 text-center">
+        <p className="text-[#B45309] text-[10px] font-semibold tracking-[0.25em] uppercase mb-4">Kavárna & pražírna</p>
+        <h1 className="text-[32px] leading-[1.1] font-serif text-[#3D2817] mb-4">{d.businessName}</h1>
+        <p className="text-[#7A6450] text-[15px] leading-relaxed max-w-[280px] mx-auto mb-7">{d.tagline}</p>
+        <button className="bg-[#3D2817] text-[#FBF7F1] rounded-full px-7 py-3 text-[13px] font-medium tracking-wide hover:bg-[#2A1E12] transition-colors">{d.cta}</button>
       </div>
-      <div className="px-6 py-8 max-w-lg mx-auto">
-        <h2 className="text-center font-extrabold text-lg text-[#7C3400] mb-4">Nabídka</h2>
-        <div className="space-y-3">
+      <div className="px-7 py-8 bg-white">
+        <p className="text-[#B45309] text-[10px] font-semibold tracking-[0.2em] uppercase mb-5 text-center">Naše nabídka</p>
+        <div className="space-y-4 max-w-sm mx-auto">
           {[[d.service1, d.price1], [d.service2, d.price2], [d.service3, d.price3]].map(([s, p]) => (
-            <div key={s} className="flex justify-between items-center border-b border-amber-200 pb-3">
-              <span className="text-[#78350F] text-sm">{s}</span>
-              <span className="font-bold text-amber-700 text-sm">{p}</span>
+            <div key={s} className="flex justify-between items-baseline gap-4">
+              <span className="text-[#3D2817] text-[14px]">{s}</span>
+              <span className="flex-1 border-b border-dotted border-[#D6C4B0] mx-1 translate-y-[-3px]" />
+              <span className="text-[#B45309] text-[14px] font-medium whitespace-nowrap">{p}</span>
             </div>
           ))}
         </div>
-        <p className="mt-6 text-[#92400E] text-sm text-center leading-relaxed">{d.description}</p>
+        <p className="mt-8 text-[#7A6450] text-[13px] text-center leading-relaxed max-w-xs mx-auto">{d.description}</p>
       </div>
-      <div className="bg-[#7C3400] text-amber-100 px-6 py-6 text-center">
-        <div className="flex flex-col gap-1.5 text-sm">
-          <span className="flex items-center justify-center gap-2"><Clock className="w-4 h-4" />{d.hours}</span>
-          <span className="flex items-center justify-center gap-2"><MapPin className="w-4 h-4" />{d.address}</span>
-          <span className="flex items-center justify-center gap-2"><Phone className="w-4 h-4" />{d.phone}</span>
+      <div className="bg-[#3D2817] text-[#E8DCCB] px-7 py-7">
+        <div className="flex flex-col gap-2.5 text-[12px] max-w-sm mx-auto">
+          <span className="flex items-center gap-2.5"><Clock className="w-3.5 h-3.5 opacity-60" />{d.hours}</span>
+          <span className="flex items-center gap-2.5"><MapPin className="w-3.5 h-3.5 opacity-60" />{d.address}</span>
+          <span className="flex items-center gap-2.5"><Phone className="w-3.5 h-3.5 opacity-60" />{d.phone}</span>
         </div>
       </div>
     </div>
@@ -250,34 +263,36 @@ function KavarnaTemplate({ d }: { d: DemoData }) {
 
 function KadernictviTemplate({ d }: { d: DemoData }) {
   return (
-    <div className="bg-[#FFF0F5] min-h-screen font-sans">
-      <nav className="bg-white border-b border-pink-100 px-6 py-3 flex justify-between items-center">
-        <span className="font-extrabold text-[#DB2777] text-lg">✂️ {d.businessName}</span>
-        <button className="bg-[#DB2777] text-white rounded-full px-4 py-1.5 text-xs font-bold">{d.cta}</button>
+    <div className="bg-white min-h-screen font-sans text-[#3A2A33]">
+      <nav className="px-7 py-4 flex justify-between items-center border-b border-[#F2E8ED]">
+        <Wordmark name={d.businessName} color="#BE7B92" />
+        <button className="text-[#BE7B92] text-[11px] font-medium border border-[#E8D5DD] rounded-full px-4 py-1.5 hover:bg-[#FBF4F7] transition-colors">{d.cta}</button>
       </nav>
-      <div className="px-6 py-14 text-center">
-        <h1 className="text-3xl font-extrabold text-[#831843] mb-2">{d.businessName}</h1>
-        <p className="text-pink-500 text-sm mb-6 italic">{d.tagline}</p>
-        <div className="flex justify-center gap-1 mb-6">
-          {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 fill-[#DB2777] text-[#DB2777]" />)}
-          <span className="text-xs text-pink-400 ml-2 self-center">127 recenzí</span>
+      <div className="px-7 pt-12 pb-10 text-center bg-gradient-to-b from-[#FBF4F7] to-white">
+        <p className="text-[#BE7B92] text-[10px] font-semibold tracking-[0.25em] uppercase mb-4">Kadeřnický salon</p>
+        <h1 className="text-[30px] leading-tight font-serif text-[#3A2A33] mb-3">{d.businessName}</h1>
+        <p className="text-[#9C7E8A] text-[14px] mb-6 max-w-[260px] mx-auto leading-relaxed">{d.tagline}</p>
+        <div className="flex justify-center items-center gap-1.5">
+          <div className="flex gap-0.5">{[1,2,3,4,5].map(i => <Star key={i} className="w-3.5 h-3.5 fill-[#D9A5B5] text-[#D9A5B5]" />)}</div>
+          <span className="text-[11px] text-[#9C7E8A] ml-1">127 recenzí</span>
         </div>
-        <p className="text-[#9D174D] text-sm max-w-xs mx-auto">{d.description}</p>
       </div>
-      <div className="px-6 pb-8">
-        <h2 className="text-center font-extrabold text-[#831843] mb-4">Ceník</h2>
-        <div className="grid gap-3 max-w-sm mx-auto">
+      <div className="px-7 py-9">
+        <p className="text-[#BE7B92] text-[10px] font-semibold tracking-[0.2em] uppercase mb-5 text-center">Ceník služeb</p>
+        <div className="space-y-2.5 max-w-sm mx-auto">
           {[[d.service1, d.price1], [d.service2, d.price2], [d.service3, d.price3]].map(([s, p]) => (
-            <div key={s} className="bg-white rounded-2xl border border-pink-100 p-4 flex justify-between items-center shadow-sm">
-              <span className="text-[#9D174D] text-sm font-medium">{s}</span>
-              <span className="bg-[#FDF2F8] text-[#DB2777] font-bold text-sm px-2 py-0.5 rounded-full">{p}</span>
+            <div key={s} className="bg-[#FBF4F7] rounded-xl px-5 py-4 flex justify-between items-center">
+              <span className="text-[#3A2A33] text-[13.5px]">{s}</span>
+              <span className="text-[#BE7B92] text-[14px] font-semibold whitespace-nowrap">{p}</span>
             </div>
           ))}
         </div>
+        <p className="mt-7 text-[#9C7E8A] text-[12.5px] text-center leading-relaxed max-w-xs mx-auto">{d.description}</p>
       </div>
-      <div className="bg-[#DB2777] text-white px-6 py-5 text-center">
-        <p className="text-xs opacity-80 mb-1">{d.address} · {d.hours}</p>
-        <p className="text-sm font-bold">{d.phone}</p>
+      <div className="px-7 py-6 border-t border-[#F2E8ED] text-center">
+        <p className="text-[11px] text-[#9C7E8A] mb-1">{d.address}</p>
+        <p className="text-[11px] text-[#9C7E8A] mb-2">{d.hours}</p>
+        <p className="text-[14px] font-semibold text-[#BE7B92]">{d.phone}</p>
       </div>
     </div>
   );
@@ -285,34 +300,36 @@ function KadernictviTemplate({ d }: { d: DemoData }) {
 
 function ElektrikarTemplate({ d }: { d: DemoData }) {
   return (
-    <div className="bg-[#0F172A] min-h-screen font-sans text-white">
-      <nav className="bg-[#EA580C] px-6 py-3 flex justify-between items-center">
-        <span className="font-extrabold text-white text-lg">⚡ {d.businessName}</span>
-        <span className="text-orange-100 text-xs font-bold">{d.phone}</span>
+    <div className="bg-[#0E1525] min-h-screen font-sans text-white">
+      <nav className="px-7 py-4 flex justify-between items-center border-b border-white/8">
+        <Wordmark name={d.businessName} color="#F59E0B" light />
+        <span className="text-[11px] text-amber-400 font-semibold tracking-wide">{d.phone}</span>
       </nav>
-      <div className="px-6 py-12 text-center">
-        <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-1.5 text-xs text-orange-400 mb-4 font-semibold">
-          ⚡ HAVARIJNÍ LINKA 24/7
+      <div className="px-7 pt-10 pb-11">
+        <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/25 rounded-full px-3.5 py-1.5 text-[10px] text-amber-400 mb-5 font-semibold tracking-wide">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" /> NONSTOP HAVARIJNÍ LINKA
         </div>
-        <h1 className="text-3xl font-extrabold mb-2">{d.businessName}</h1>
-        <p className="text-orange-400 text-sm mb-6">{d.tagline}</p>
-        <button className="bg-[#EA580C] text-white rounded-xl px-6 py-3 font-bold text-sm hover:bg-orange-600 transition-colors">{d.cta}</button>
+        <h1 className="text-[30px] leading-[1.1] font-bold mb-3">{d.businessName}</h1>
+        <p className="text-white/55 text-[15px] leading-relaxed mb-7 max-w-[300px]">{d.tagline}</p>
+        <button className="bg-amber-400 text-[#0E1525] rounded-lg px-6 py-3.5 font-bold text-[13px] hover:bg-amber-300 transition-colors flex items-center gap-2">
+          <Phone className="w-4 h-4" /> {d.cta}
+        </button>
       </div>
-      <div className="px-6 pb-8 max-w-lg mx-auto">
-        <h2 className="font-extrabold text-orange-400 mb-4 text-sm uppercase tracking-widest">Služby</h2>
-        <div className="space-y-3">
+      <div className="px-7 pb-9">
+        <p className="text-amber-400/70 text-[10px] font-semibold tracking-[0.2em] uppercase mb-4">Co pro vás uděláme</p>
+        <div className="space-y-2.5">
           {[[d.service1, d.price1], [d.service2, d.price2], [d.service3, d.price3]].map(([s, p]) => (
-            <div key={s} className="bg-white/5 border border-white/10 rounded-xl p-4 flex justify-between items-center">
+            <div key={s} className="bg-white/[0.04] border border-white/8 rounded-xl px-4 py-3.5 flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <CheckCircle className="w-4 h-4 text-orange-500 shrink-0" />
-                <span className="text-sm text-white/80">{s}</span>
+                <CheckCircle className="w-4 h-4 text-amber-400/80 shrink-0" />
+                <span className="text-[13.5px] text-white/85">{s}</span>
               </div>
-              <span className="text-orange-400 font-bold text-sm">{p}</span>
+              <span className="text-amber-400 font-semibold text-[13.5px] whitespace-nowrap">{p}</span>
             </div>
           ))}
         </div>
-        <p className="mt-6 text-white/40 text-xs leading-relaxed text-center">{d.description}</p>
-        <p className="mt-3 text-white/30 text-xs text-center">{d.address} · {d.hours}</p>
+        <p className="mt-6 text-white/40 text-[12px] leading-relaxed">{d.description}</p>
+        <p className="mt-4 text-white/30 text-[11px] flex items-center gap-2"><MapPin className="w-3 h-3" />{d.address} · {d.hours}</p>
       </div>
     </div>
   );
@@ -320,31 +337,33 @@ function ElektrikarTemplate({ d }: { d: DemoData }) {
 
 function FitnessTemplate({ d }: { d: DemoData }) {
   return (
-    <div className="bg-[#050F05] min-h-screen font-sans text-white">
-      <nav className="border-b border-lime-900/30 px-6 py-3 flex justify-between items-center">
-        <span className="font-extrabold text-lime-400 text-lg">💪 {d.businessName}</span>
-        <button className="bg-lime-400 text-black rounded-full px-4 py-1.5 text-xs font-extrabold">{d.cta}</button>
+    <div className="bg-[#0A0F0A] min-h-screen font-sans text-white">
+      <nav className="px-7 py-4 flex justify-between items-center border-b border-white/8">
+        <Wordmark name={d.businessName} color="#A3E635" light />
+        <button className="bg-[#A3E635] text-black rounded-full px-4 py-1.5 text-[11px] font-bold">{d.cta}</button>
       </nav>
-      <div className="px-6 py-14 text-center">
-        <div className="inline-block bg-lime-400/10 border border-lime-400/30 rounded-full px-3 py-1 text-xs text-lime-400 mb-4 font-bold uppercase tracking-widest">
-          Garance výsledků
+      <div className="px-7 pt-11 pb-10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-[#A3E635]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative">
+          <div className="inline-block bg-[#A3E635]/10 border border-[#A3E635]/25 rounded-full px-3 py-1 text-[10px] text-[#A3E635] mb-5 font-semibold tracking-[0.15em] uppercase">
+            Garance výsledků
+          </div>
+          <h1 className="text-[32px] leading-[1.05] font-extrabold mb-4">{d.businessName}</h1>
+          <p className="text-[#A3E635] text-[15px] font-medium mb-4">{d.tagline}</p>
+          <p className="text-white/45 text-[13px] leading-relaxed max-w-[300px]">{d.description}</p>
         </div>
-        <h1 className="text-3xl font-extrabold text-white mb-3 leading-tight">{d.businessName}</h1>
-        <p className="text-lime-400 text-sm mb-4">{d.tagline}</p>
-        <p className="text-white/40 text-xs max-w-xs mx-auto mb-6">{d.description}</p>
       </div>
-      <div className="px-6 pb-8 max-w-sm mx-auto">
-        <div className="grid gap-3">
+      <div className="px-7 pb-9">
+        <p className="text-[#A3E635]/70 text-[10px] font-semibold tracking-[0.2em] uppercase mb-4">Programy</p>
+        <div className="space-y-2.5">
           {[[d.service1, d.price1], [d.service2, d.price2], [d.service3, d.price3]].map(([s, p], i) => (
-            <div key={s} className={`rounded-2xl p-4 border ${i === 1 ? "bg-lime-400/10 border-lime-400/40" : "bg-white/5 border-white/10"}`}>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-white/80">{s}</span>
-                <span className={`font-extrabold text-sm ${i === 1 ? "text-lime-400" : "text-white/60"}`}>{p}</span>
-              </div>
+            <div key={s} className={`rounded-xl px-5 py-4 flex justify-between items-center border ${i === 1 ? "bg-[#A3E635]/10 border-[#A3E635]/40" : "bg-white/[0.04] border-white/8"}`}>
+              <span className="text-[13.5px] text-white/85">{s}</span>
+              <span className={`font-bold text-[14px] whitespace-nowrap ${i === 1 ? "text-[#A3E635]" : "text-white/55"}`}>{p}</span>
             </div>
           ))}
         </div>
-        <p className="text-white/20 text-xs text-center mt-4">{d.hours} · {d.phone}</p>
+        <p className="text-white/25 text-[11px] mt-5">{d.hours} · {d.phone}</p>
       </div>
     </div>
   );
@@ -352,33 +371,36 @@ function FitnessTemplate({ d }: { d: DemoData }) {
 
 function RealityTemplate({ d }: { d: DemoData }) {
   return (
-    <div className="bg-[#F8F9FA] min-h-screen font-sans text-[#1A1A2E]">
-      <nav className="bg-[#1A1A2E] px-6 py-3 flex justify-between items-center">
-        <span className="font-extrabold text-white text-lg">🏠 {d.businessName}</span>
-        <span className="text-amber-400 text-xs font-semibold">{d.phone}</span>
+    <div className="bg-white min-h-screen font-sans text-[#1A1D29]">
+      <nav className="px-7 py-4 flex justify-between items-center">
+        <Wordmark name={d.businessName} color="#1A1D29" />
+        <span className="text-[11px] text-[#9CA3AF] tracking-wide">{d.phone}</span>
       </nav>
-      <div className="px-6 py-12 bg-gradient-to-r from-[#1A1A2E] to-[#2D2B55] text-white text-center">
-        <h1 className="text-2xl font-extrabold mb-2">{d.businessName}</h1>
-        <p className="text-amber-400 text-sm mb-4 italic">"{d.tagline}"</p>
-        <button className="bg-amber-500 text-white rounded-lg px-6 py-2.5 text-sm font-bold hover:bg-amber-600 transition-colors">{d.cta}</button>
+      <div className="mx-4 rounded-2xl bg-gradient-to-br from-[#1A1D29] to-[#2D3142] text-white px-7 py-12 text-center">
+        <p className="text-white/40 text-[10px] font-semibold tracking-[0.25em] uppercase mb-4">Realitní makléř</p>
+        <h1 className="text-[26px] leading-tight font-serif mb-4">{d.businessName}</h1>
+        <p className="text-white/65 text-[14px] leading-relaxed max-w-[280px] mx-auto mb-7">{d.tagline}</p>
+        <button className="bg-white text-[#1A1D29] rounded-lg px-7 py-3 text-[13px] font-semibold hover:bg-white/90 transition-colors">{d.cta}</button>
       </div>
-      <div className="px-6 py-8 max-w-lg mx-auto">
-        <div className="grid grid-cols-3 gap-4 mb-8 text-center">
-          {[["18 let", "praxe"], ["500+", "prodejů"], ["98%", "spokojenost"]].map(([v, l]) => (
-            <div key={l} className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
-              <div className="text-xl font-extrabold text-[#B45309]">{v}</div>
-              <div className="text-xs text-slate-400 mt-0.5">{l}</div>
+      <div className="px-7 py-9">
+        <div className="grid grid-cols-3 gap-3 mb-9">
+          {[["18", "let praxe"], ["500+", "prodejů"], ["98%", "spokojenost"]].map(([v, l]) => (
+            <div key={l} className="text-center">
+              <div className="text-[24px] font-bold text-[#1A1D29]">{v}</div>
+              <div className="text-[10px] text-[#9CA3AF] mt-1 leading-tight">{l}</div>
             </div>
           ))}
         </div>
-        <h2 className="font-extrabold text-[#1A1A2E] mb-3">Služby</h2>
-        {[[d.service1, d.price1], [d.service2, d.price2], [d.service3, d.price3]].map(([s, p]) => (
-          <div key={s} className="flex justify-between py-2.5 border-b border-slate-100">
-            <span className="text-sm text-slate-600">{s}</span>
-            <span className="text-sm font-bold text-[#B45309]">{p}</span>
-          </div>
-        ))}
-        <p className="mt-4 text-slate-400 text-xs">{d.address} · {d.hours}</p>
+        <p className="text-[#9CA3AF] text-[10px] font-semibold tracking-[0.2em] uppercase mb-4">Služby</p>
+        <div className="space-y-3 max-w-sm mx-auto">
+          {[[d.service1, d.price1], [d.service2, d.price2], [d.service3, d.price3]].map(([s, p]) => (
+            <div key={s} className="flex justify-between items-baseline gap-4 pb-3 border-b border-[#F1F2F4]">
+              <span className="text-[13.5px] text-[#4B5563]">{s}</span>
+              <span className="text-[13.5px] font-semibold text-[#1A1D29] whitespace-nowrap">{p}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mt-6 text-[#9CA3AF] text-[11.5px]">{d.address} · {d.hours}</p>
       </div>
     </div>
   );
@@ -386,68 +408,83 @@ function RealityTemplate({ d }: { d: DemoData }) {
 
 function LekarTemplate({ d }: { d: DemoData }) {
   return (
-    <div className="bg-[#F0FDFA] min-h-screen font-sans">
-      <nav className="bg-white border-b border-teal-100 px-6 py-3 flex justify-between items-center">
-        <span className="font-extrabold text-[#0D9488] text-base">🩺 {d.businessName}</span>
-        <button className="bg-[#0D9488] text-white rounded-lg px-4 py-1.5 text-xs font-bold">{d.cta}</button>
+    <div className="bg-white min-h-screen font-sans text-[#1F2A37]">
+      <nav className="px-7 py-4 flex justify-between items-center border-b border-[#EAF4F2]">
+        <Wordmark name={d.businessName} color="#0E9384" />
+        <button className="bg-[#0E9384] text-white rounded-lg px-4 py-2 text-[11px] font-medium hover:bg-[#0B7A6E] transition-colors">{d.cta}</button>
       </nav>
-      <div className="px-6 py-10 text-center bg-white border-b border-teal-50">
-        <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">🩺</div>
-        <h1 className="text-2xl font-extrabold text-[#134E4A] mb-1">{d.businessName}</h1>
-        <p className="text-teal-600 text-sm mb-1 italic">{d.tagline}</p>
-        <p className="text-slate-400 text-xs">{d.address}</p>
-      </div>
-      <div className="px-6 py-8 max-w-sm mx-auto">
-        <h2 className="font-extrabold text-[#134E4A] mb-4 text-sm uppercase tracking-wide">Ordinační hodiny</h2>
-        <div className="bg-white rounded-2xl border border-teal-100 p-4 mb-6 flex items-center gap-3 shadow-sm">
-          <Clock className="w-4 h-4 text-teal-500 shrink-0" />
-          <span className="text-xs text-slate-600">{d.hours}</span>
+      <div className="px-7 pt-11 pb-9 text-center bg-gradient-to-b from-[#F0FAF8] to-white">
+        <div className="w-14 h-14 bg-[#0E9384]/10 rounded-2xl flex items-center justify-center mx-auto mb-5">
+          <CheckCircle className="w-6 h-6 text-[#0E9384]" />
         </div>
-        <h2 className="font-extrabold text-[#134E4A] mb-3 text-sm uppercase tracking-wide">Ceník</h2>
-        {[[d.service1, d.price1], [d.service2, d.price2], [d.service3, d.price3]].map(([s, p]) => (
-          <div key={s} className="flex justify-between items-center py-3 border-b border-teal-50">
-            <span className="text-sm text-slate-600">{s}</span>
-            <span className="text-sm font-bold text-[#0D9488]">{p}</span>
+        <h1 className="text-[24px] leading-tight font-semibold text-[#0F3B36] mb-2">{d.businessName}</h1>
+        <p className="text-[#0E9384] text-[14px] mb-2">{d.tagline}</p>
+        <p className="text-[#9CA3AF] text-[12px] flex items-center justify-center gap-1.5"><MapPin className="w-3 h-3" />{d.address}</p>
+      </div>
+      <div className="px-7 py-8">
+        <div className="bg-[#F0FAF8] rounded-2xl px-5 py-4 mb-7 flex items-start gap-3">
+          <Clock className="w-4 h-4 text-[#0E9384] shrink-0 mt-0.5" />
+          <div>
+            <p className="text-[10px] font-semibold tracking-wide uppercase text-[#0E9384] mb-1">Ordinační hodiny</p>
+            <p className="text-[12.5px] text-[#4B5563] leading-relaxed">{d.hours}</p>
           </div>
-        ))}
-        <p className="mt-4 text-slate-400 text-xs leading-relaxed">{d.description}</p>
+        </div>
+        <p className="text-[#0E9384] text-[10px] font-semibold tracking-[0.2em] uppercase mb-4">Ceník výkonů</p>
+        <div className="space-y-3 max-w-sm mx-auto">
+          {[[d.service1, d.price1], [d.service2, d.price2], [d.service3, d.price3]].map(([s, p]) => (
+            <div key={s} className="flex justify-between items-baseline gap-4 pb-3 border-b border-[#EAF4F2]">
+              <span className="text-[13.5px] text-[#4B5563]">{s}</span>
+              <span className="text-[13.5px] font-semibold text-[#0E9384] whitespace-nowrap">{p}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mt-6 text-[#9CA3AF] text-[12px] leading-relaxed text-center max-w-xs mx-auto">{d.description}</p>
       </div>
     </div>
   );
 }
 
 function EshopTemplate({ d }: { d: DemoData }) {
+  const products = [
+    [d.service1, d.price1],
+    [d.service2, d.price2],
+    [d.service3, d.price3],
+  ];
+  const swatches = ["#E9F0E4", "#F3ECDC", "#E8E4F0"];
   return (
-    <div className="bg-[#FAF0FF] min-h-screen font-sans">
-      <nav className="bg-[#7C3AED] px-6 py-3 flex justify-between items-center">
-        <span className="font-extrabold text-white text-lg">🛒 {d.businessName}</span>
-        <div className="flex items-center gap-3">
-          <span className="text-purple-200 text-xs">{d.phone}</span>
-          <ShoppingCart className="w-5 h-5 text-white" />
+    <div className="bg-[#FAFAFA] min-h-screen font-sans text-[#1F2937]">
+      <nav className="px-7 py-4 flex justify-between items-center bg-white border-b border-[#F0F0F0]">
+        <Wordmark name={d.businessName} color="#6D5BD0" />
+        <div className="flex items-center gap-4">
+          <span className="text-[11px] text-[#9CA3AF]">{d.phone}</span>
+          <ShoppingCart className="w-4.5 h-4.5 text-[#6D5BD0]" />
         </div>
       </nav>
-      <div className="bg-gradient-to-r from-[#7C3AED] to-[#A855F7] px-6 py-10 text-white text-center">
-        <h1 className="text-2xl font-extrabold mb-2">{d.businessName}</h1>
-        <p className="text-purple-200 text-sm mb-4">{d.tagline}</p>
-        <button className="bg-white text-[#7C3AED] rounded-full px-6 py-2 text-sm font-extrabold">{d.cta}</button>
+      <div className="px-7 pt-10 pb-9 text-center bg-white">
+        <p className="text-[#6D5BD0] text-[10px] font-semibold tracking-[0.25em] uppercase mb-4">Přírodní produkty</p>
+        <h1 className="text-[28px] leading-tight font-semibold text-[#1F2937] mb-3">{d.businessName}</h1>
+        <p className="text-[#6B7280] text-[14px] leading-relaxed max-w-[270px] mx-auto mb-6">{d.tagline}</p>
+        <button className="bg-[#6D5BD0] text-white rounded-full px-7 py-3 text-[13px] font-medium hover:bg-[#5B4AB8] transition-colors">{d.cta}</button>
       </div>
-      <div className="px-6 py-8 max-w-lg mx-auto">
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          {[[d.service1, d.price1, "🌿"], [d.service2, d.price2, "💊"], [d.service3, d.price3, "🎁"]].map(([s, p, e]) => (
-            <div key={String(s)} className="bg-white rounded-2xl p-4 border border-purple-100 shadow-sm text-center">
-              <div className="text-2xl mb-2">{String(e)}</div>
-              <div className="text-xs text-slate-600 mb-1 font-medium leading-tight">{String(s)}</div>
-              <div className="text-[#7C3AED] font-extrabold text-sm">{String(p)}</div>
-              <button className="mt-2 w-full bg-[#7C3AED] text-white rounded-lg text-[10px] py-1 font-bold">Do košíku</button>
+      <div className="px-5 py-8">
+        <div className="space-y-3 max-w-sm mx-auto">
+          {products.map(([s, p], i) => (
+            <div key={String(s)} className="bg-white rounded-2xl border border-[#F0F0F0] p-3 flex items-center gap-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+              <div className="w-16 h-16 rounded-xl shrink-0" style={{ background: swatches[i] }} />
+              <div className="flex-1 min-w-0">
+                <div className="text-[14px] font-medium text-[#1F2937] truncate">{s}</div>
+                <div className="text-[#6D5BD0] font-semibold text-[15px] mt-0.5">{p}</div>
+              </div>
+              <button className="bg-[#F3F1FB] text-[#6D5BD0] rounded-lg text-[11px] px-3.5 py-2 font-medium whitespace-nowrap hover:bg-[#E9E5F7] transition-colors">Do košíku</button>
             </div>
           ))}
         </div>
-        <div className="flex justify-center gap-4 text-xs text-slate-400">
-          {["🚚 Doprava zdarma", "↩️ 30 dní vrácení", "🔒 Bezpečná platba"].map(t => (
-            <span key={t}>{t}</span>
+        <div className="flex justify-center gap-5 text-[11px] text-[#9CA3AF] mt-7">
+          {["Doprava zdarma", "30 dní na vrácení", "Bezpečná platba"].map(t => (
+            <span key={t} className="flex items-center gap-1"><CheckCircle className="w-3 h-3 text-[#6D5BD0]" />{t}</span>
           ))}
         </div>
-        <p className="mt-4 text-slate-400 text-xs text-center">{d.address}</p>
+        <p className="mt-4 text-[#9CA3AF] text-[11.5px] text-center">{d.address}</p>
       </div>
     </div>
   );
@@ -455,270 +492,49 @@ function EshopTemplate({ d }: { d: DemoData }) {
 
 function KurzymTemplate({ d }: { d: DemoData }) {
   return (
-    <div className="bg-[#F5F0FF] min-h-screen font-sans">
-      <nav className="bg-[#4F46E5] px-6 py-3 flex justify-between items-center">
-        <span className="font-extrabold text-white text-lg">🎓 {d.businessName}</span>
-        <button className="bg-yellow-400 text-black rounded-full px-4 py-1.5 text-xs font-extrabold">{d.cta}</button>
+    <div className="bg-white min-h-screen font-sans text-[#1E1B2E]">
+      <nav className="px-7 py-4 flex justify-between items-center">
+        <Wordmark name={d.businessName} color="#5B4AE0" />
+        <button className="bg-[#5B4AE0] text-white rounded-full px-4 py-1.5 text-[11px] font-medium">{d.cta}</button>
       </nav>
-      <div className="px-6 py-12 text-center bg-gradient-to-b from-[#EDE9FF] to-[#F5F0FF]">
-        <div className="inline-flex items-center gap-1.5 bg-yellow-100 border border-yellow-200 rounded-full px-3 py-1 text-xs text-yellow-800 font-semibold mb-4">
-          <Play className="w-3 h-3 fill-yellow-600 text-yellow-600" /> 30+ kurzů dostupných
+      <div className="px-7 pt-11 pb-10 text-center">
+        <div className="inline-flex items-center gap-1.5 bg-[#F4F2FE] rounded-full px-3.5 py-1.5 text-[11px] text-[#5B4AE0] font-medium mb-5">
+          <Play className="w-3 h-3 fill-[#5B4AE0] text-[#5B4AE0]" /> 30+ online kurzů
         </div>
-        <h1 className="text-3xl font-extrabold text-[#312E81] mb-2">{d.businessName}</h1>
-        <p className="text-indigo-600 text-sm mb-4 italic">{d.tagline}</p>
-        <p className="text-slate-500 text-xs max-w-xs mx-auto mb-6">{d.description}</p>
+        <h1 className="text-[30px] leading-tight font-bold text-[#1E1B2E] mb-3 max-w-[280px] mx-auto">{d.businessName}</h1>
+        <p className="text-[#6B6580] text-[14px] leading-relaxed max-w-[270px] mx-auto mb-2">{d.tagline}</p>
+        <p className="text-[#9893A8] text-[12px] max-w-[280px] mx-auto leading-relaxed">{d.description}</p>
       </div>
-      <div className="px-6 pb-8 max-w-sm mx-auto">
-        <div className="grid gap-3">
-          {[[d.service1, d.price1, "📊"], [d.service2, d.price2, "🚀"], [d.service3, d.price3, "🤖"]].map(([s, p, e], i) => (
-            <div key={String(s)} className={`rounded-2xl p-4 border ${i === 1 ? "bg-[#4F46E5] text-white border-[#4F46E5]" : "bg-white border-indigo-100"}`}>
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-lg mb-0.5">{String(e)}</div>
-                  <div className={`text-sm font-semibold ${i === 1 ? "text-white" : "text-[#312E81]"}`}>{String(s)}</div>
-                </div>
-                <div className={`text-right`}>
-                  <div className={`font-extrabold ${i === 1 ? "text-yellow-300" : "text-[#4F46E5]"}`}>{String(p)}</div>
-                  <div className={`text-xs ${i === 1 ? "text-indigo-200" : "text-slate-400"}`}>jednorázově</div>
-                </div>
+      <div className="px-7 pb-10">
+        <div className="space-y-3 max-w-sm mx-auto">
+          {[[d.service1, d.price1], [d.service2, d.price2], [d.service3, d.price3]].map(([s, p], i) => (
+            <div key={String(s)} className={`rounded-2xl px-5 py-4 flex justify-between items-center ${i === 1 ? "bg-[#5B4AE0] text-white" : "bg-[#F8F7FE] text-[#1E1B2E]"}`}>
+              <div>
+                <div className={`text-[14px] font-medium ${i === 1 ? "text-white" : "text-[#1E1B2E]"}`}>{s}</div>
+                <div className={`text-[11px] mt-0.5 ${i === 1 ? "text-white/70" : "text-[#9893A8]"}`}>jednorázová platba</div>
               </div>
+              <div className={`font-bold text-[16px] whitespace-nowrap ${i === 1 ? "text-white" : "text-[#5B4AE0]"}`}>{p}</div>
             </div>
           ))}
         </div>
-        <p className="text-slate-400 text-xs text-center mt-4">{d.hours}</p>
+        <p className="text-[#9893A8] text-[11.5px] text-center mt-6">{d.hours}</p>
       </div>
     </div>
   );
 }
 
-// ─── Thumbnail mockups ────────────────────────────────────────────────────────
-
-function TextBar({ w, h = 6, color = "rgba(0,0,0,0.12)" }: { w: string; h?: number; color?: string }) {
-  return <div style={{ width: w, height: h, borderRadius: 3, background: color, flexShrink: 0 }} />;
-}
-
-function Pill({ color, label }: { color: string; label: string }) {
+// Renders the real template scaled down, so the gallery thumbnail always
+// matches exactly what opens in the customizer — no separate mini-mockups to drift.
+function TemplateThumbnail({ id, bg, d }: { id: string; bg: string; accent: string; d: DemoData }) {
+  const Renderer = RENDERERS[id];
+  if (!Renderer) return <div style={{ background: bg, height: "100%" }} />;
   return (
-    <div style={{ background: color, borderRadius: 99, padding: "2px 8px", fontSize: 8, fontWeight: 700, color: "#fff", display: "inline-flex", whiteSpace: "nowrap" }}>
-      {label}
+    <div style={{ background: bg, height: "100%", overflow: "hidden" }}>
+      <div style={{ width: 390, transform: "scale(0.62)", transformOrigin: "top left", pointerEvents: "none" }}>
+        <Renderer d={d} />
+      </div>
     </div>
   );
-}
-
-const THUMBNAILS: Record<string, React.ComponentType<{ bg: string; accent: string; d: DemoData }>> = {
-  kavarna: ({ accent, d }) => (
-    <div style={{ background: "#FFF8F0", height: "100%", display: "flex", flexDirection: "column", fontFamily: "sans-serif" }}>
-      <div style={{ background: accent, padding: "6px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ color: "#fff", fontWeight: 800, fontSize: 10 }}>☕ {d.businessName}</span>
-        <div style={{ background: "rgba(255,255,255,0.25)", borderRadius: 6, padding: "2px 8px", fontSize: 8, color: "#fff" }}>Menu</div>
-      </div>
-      <div style={{ background: "linear-gradient(135deg,#FFF0D0,#FFDDA0)", padding: "14px 10px", textAlign: "center" }}>
-        <div style={{ fontSize: 12, fontWeight: 800, color: "#7C3400", marginBottom: 4 }}>{d.businessName}</div>
-        <div style={{ fontSize: 8, color: "#92400E", fontStyle: "italic", marginBottom: 8, opacity: 0.8 }}>{d.tagline}</div>
-        <Pill color={accent} label={d.cta} />
-      </div>
-      <div style={{ padding: "8px 10px", flex: 1 }}>
-        {[[d.service1, d.price1], [d.service2, d.price2]].map(([s, p]) => (
-          <div key={s as string} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid #F5E0C0", padding: "3px 0" }}>
-            <span style={{ fontSize: 8, color: "#78350F" }}>{s}</span>
-            <span style={{ fontSize: 8, fontWeight: 700, color: accent }}>{p}</span>
-          </div>
-        ))}
-      </div>
-      <div style={{ background: "#7C3400", padding: "5px 10px", display: "flex", gap: 6 }}>
-        <TextBar w="40%" h={5} color="rgba(255,255,255,0.3)" />
-        <TextBar w="30%" h={5} color="rgba(255,255,255,0.2)" />
-      </div>
-    </div>
-  ),
-  kadernictvi: ({ accent, d }) => (
-    <div style={{ background: "#FFF0F5", height: "100%", display: "flex", flexDirection: "column", fontFamily: "sans-serif" }}>
-      <div style={{ background: "#fff", borderBottom: "1px solid #FCE7F3", padding: "6px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ color: accent, fontWeight: 800, fontSize: 10 }}>✂️ {d.businessName}</span>
-        <Pill color={accent} label={d.cta} />
-      </div>
-      <div style={{ background: "linear-gradient(180deg,#FDF2F8,#FFF0F5)", padding: "16px 10px", textAlign: "center" }}>
-        <div style={{ fontSize: 12, fontWeight: 800, color: "#831843", marginBottom: 3 }}>{d.businessName}</div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 1, marginBottom: 6 }}>
-          {[1,2,3,4,5].map(i => <span key={i} style={{ color: accent, fontSize: 8 }}>★</span>)}
-        </div>
-        <TextBar w="70%" h={6} color="rgba(219,39,119,0.12)" />
-      </div>
-      <div style={{ padding: "8px 10px", flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
-        {[[d.service1, d.price1], [d.service2, d.price2]].map(([s, p]) => (
-          <div key={s as string} style={{ background: "#fff", borderRadius: 8, border: "1px solid #FCE7F3", padding: "4px 8px", display: "flex", justifyContent: "space-between" }}>
-            <span style={{ fontSize: 7.5, color: "#9D174D" }}>{s}</span>
-            <span style={{ fontSize: 7.5, fontWeight: 700, color: accent }}>{p}</span>
-          </div>
-        ))}
-      </div>
-      <div style={{ background: accent, padding: "5px 10px", textAlign: "center" }}>
-        <TextBar w="60%" h={5} color="rgba(255,255,255,0.4)" />
-      </div>
-    </div>
-  ),
-  elektrikar: ({ accent, d }) => (
-    <div style={{ background: "#0F172A", height: "100%", display: "flex", flexDirection: "column", fontFamily: "sans-serif" }}>
-      <div style={{ background: accent, padding: "6px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ color: "#fff", fontWeight: 800, fontSize: 10 }}>⚡ {d.businessName}</span>
-        <span style={{ fontSize: 8, color: "rgba(255,255,255,0.8)", fontWeight: 600 }}>{d.phone}</span>
-      </div>
-      <div style={{ padding: "14px 10px", textAlign: "center" }}>
-        <div style={{ background: "rgba(234,88,12,0.15)", border: "1px solid rgba(234,88,12,0.3)", borderRadius: 99, padding: "2px 8px", display: "inline-block", fontSize: 7, color: "#FB923C", fontWeight: 700, marginBottom: 6 }}>⚡ HAVARIJNÍ LINKA 24/7</div>
-        <div style={{ fontSize: 12, fontWeight: 800, color: "#fff", marginBottom: 3 }}>{d.businessName}</div>
-        <div style={{ fontSize: 8, color: "#FB923C", marginBottom: 8 }}>{d.tagline.slice(0, 32)}…</div>
-        <Pill color={accent} label={d.cta} />
-      </div>
-      <div style={{ padding: "0 10px", flex: 1, display: "flex", flexDirection: "column", gap: 3 }}>
-        {[[d.service1, d.price1], [d.service2, d.price2]].map(([s, p]) => (
-          <div key={s as string} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "4px 8px", display: "flex", justifyContent: "space-between" }}>
-            <span style={{ fontSize: 7.5, color: "rgba(255,255,255,0.7)" }}>{s}</span>
-            <span style={{ fontSize: 7.5, fontWeight: 700, color: "#FB923C" }}>{p}</span>
-          </div>
-        ))}
-      </div>
-      <div style={{ padding: "6px 10px" }}>
-        <TextBar w="50%" h={5} color="rgba(255,255,255,0.1)" />
-      </div>
-    </div>
-  ),
-  fitness: ({ accent, d }) => (
-    <div style={{ background: "#050F05", height: "100%", display: "flex", flexDirection: "column", fontFamily: "sans-serif" }}>
-      <div style={{ borderBottom: "1px solid rgba(132,204,22,0.2)", padding: "6px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ color: accent, fontWeight: 800, fontSize: 10 }}>💪 {d.businessName}</span>
-        <Pill color={accent} label={d.cta} />
-      </div>
-      <div style={{ padding: "14px 10px", textAlign: "center" }}>
-        <div style={{ background: "rgba(132,204,22,0.1)", border: "1px solid rgba(132,204,22,0.3)", borderRadius: 99, padding: "2px 8px", display: "inline-block", fontSize: 7, color: accent, fontWeight: 700, marginBottom: 6 }}>GARANCE VÝSLEDKŮ</div>
-        <div style={{ fontSize: 12, fontWeight: 800, color: "#fff", marginBottom: 3 }}>{d.businessName}</div>
-        <div style={{ fontSize: 8, color: accent, marginBottom: 8 }}>Výsledky za 90 dní</div>
-      </div>
-      <div style={{ padding: "0 10px", flex: 1, display: "flex", flexDirection: "column", gap: 3 }}>
-        {[[d.service1, d.price1, false], [d.service2, d.price2, true], [d.service3, d.price3, false]].map(([s, p, highlight]) => (
-          <div key={s as string} style={{ background: highlight ? "rgba(132,204,22,0.1)" : "rgba(255,255,255,0.04)", border: `1px solid ${highlight ? "rgba(132,204,22,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius: 8, padding: "3px 8px", display: "flex", justifyContent: "space-between" }}>
-            <span style={{ fontSize: 7.5, color: "rgba(255,255,255,0.7)" }}>{s}</span>
-            <span style={{ fontSize: 7.5, fontWeight: 700, color: highlight ? (accent) : "rgba(255,255,255,0.5)" }}>{p}</span>
-          </div>
-        ))}
-      </div>
-      <div style={{ padding: "6px 10px" }}>
-        <TextBar w="45%" h={5} color="rgba(255,255,255,0.08)" />
-      </div>
-    </div>
-  ),
-  reality: ({ accent, d }) => (
-    <div style={{ background: "#F8F9FA", height: "100%", display: "flex", flexDirection: "column", fontFamily: "sans-serif" }}>
-      <div style={{ background: "#1A1A2E", padding: "6px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ color: "#fff", fontWeight: 800, fontSize: 10 }}>🏠 {d.businessName}</span>
-        <Pill color={accent} label={d.cta} />
-      </div>
-      <div style={{ background: "linear-gradient(135deg,#1A1A2E,#2D2B55)", padding: "14px 10px", textAlign: "center" }}>
-        <div style={{ fontSize: 11, fontWeight: 800, color: "#fff", marginBottom: 2 }}>{d.businessName}</div>
-        <div style={{ fontSize: 8, color: "#FCD34D", marginBottom: 8, fontStyle: "italic" }}>{d.tagline.slice(0, 36)}…</div>
-        <Pill color={accent} label={d.cta} />
-      </div>
-      <div style={{ padding: "8px 10px", flex: 1 }}>
-        <div style={{ display: "flex", gap: 4, marginBottom: 6 }}>
-          {[["18 let","praxe"],["500+","prodejů"],["98%","spokojenost"]].map(([v, l]) => (
-            <div key={l} style={{ flex: 1, background: "#fff", border: "1px solid #e5e7eb", borderRadius: 6, padding: "4px 2px", textAlign: "center" }}>
-              <div style={{ fontSize: 9, fontWeight: 800, color: accent }}>{v}</div>
-              <div style={{ fontSize: 6, color: "#9ca3af" }}>{l}</div>
-            </div>
-          ))}
-        </div>
-        {[[d.service1, d.price1]].map(([s, p]) => (
-          <div key={s as string} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid #f1f5f9", padding: "3px 0" }}>
-            <span style={{ fontSize: 7.5, color: "#475569" }}>{s}</span>
-            <span style={{ fontSize: 7.5, fontWeight: 700, color: accent }}>{p}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  ),
-  lekar: ({ accent, d }) => (
-    <div style={{ background: "#F0FDFA", height: "100%", display: "flex", flexDirection: "column", fontFamily: "sans-serif" }}>
-      <div style={{ background: "#fff", borderBottom: "1px solid #CCFBF1", padding: "6px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ color: accent, fontWeight: 800, fontSize: 10 }}>🩺 {d.businessName.slice(0, 18)}</span>
-        <Pill color={accent} label={d.cta.slice(0, 14)} />
-      </div>
-      <div style={{ background: "#fff", borderBottom: "1px solid #CCFBF1", padding: "14px 10px", textAlign: "center" }}>
-        <div style={{ width: 32, height: 32, background: "#CCFBF1", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 6px", fontSize: 14 }}>🩺</div>
-        <div style={{ fontSize: 10, fontWeight: 800, color: "#134E4A", marginBottom: 2 }}>{d.businessName.slice(0, 20)}</div>
-        <TextBar w="60%" h={5} color="rgba(13,148,136,0.15)" />
-      </div>
-      <div style={{ padding: "8px 10px", flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
-        <div style={{ background: "#fff", border: "1px solid #CCFBF1", borderRadius: 8, padding: "4px 8px", display: "flex", gap: 6, alignItems: "center" }}>
-          <span style={{ fontSize: 10 }}>🕐</span>
-          <TextBar w="60%" h={5} color="rgba(13,148,136,0.15)" />
-        </div>
-        {[[d.service1, d.price1]].map(([s, p]) => (
-          <div key={s as string} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid #F0FDFA", padding: "3px 0" }}>
-            <span style={{ fontSize: 7.5, color: "#475569" }}>{s}</span>
-            <span style={{ fontSize: 7.5, fontWeight: 700, color: accent }}>{p}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  ),
-  eshop: ({ accent, d }) => (
-    <div style={{ background: "#FAF0FF", height: "100%", display: "flex", flexDirection: "column", fontFamily: "sans-serif" }}>
-      <div style={{ background: accent, padding: "6px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ color: "#fff", fontWeight: 800, fontSize: 10 }}>🛒 {d.businessName}</span>
-        <span style={{ fontSize: 14 }}>🛒</span>
-      </div>
-      <div style={{ background: `linear-gradient(135deg,${accent},#A855F7)`, padding: "14px 10px", textAlign: "center" }}>
-        <div style={{ fontSize: 12, fontWeight: 800, color: "#fff", marginBottom: 3 }}>{d.businessName}</div>
-        <div style={{ fontSize: 8, color: "rgba(255,255,255,0.75)", marginBottom: 8 }}>{d.tagline.slice(0, 30)}…</div>
-        <Pill color="rgba(255,255,255,0.25)" label={d.cta} />
-      </div>
-      <div style={{ padding: "8px 10px", flex: 1 }}>
-        <div style={{ display: "flex", gap: 4 }}>
-          {[[d.service1,"🌿"],[d.service2,"💊"],[d.service3,"🎁"]].map(([s, e]) => (
-            <div key={s as string} style={{ flex: 1, background: "#fff", border: "1px solid #EDE9FE", borderRadius: 8, padding: "6px 4px", textAlign: "center" }}>
-              <div style={{ fontSize: 12, marginBottom: 3 }}>{String(e)}</div>
-              <TextBar w="80%" h={5} color="rgba(124,58,237,0.12)" />
-              <div style={{ marginTop: 4 }}>
-                <div style={{ background: accent, borderRadius: 4, padding: "2px 0", fontSize: 7, color: "#fff", fontWeight: 700 }}>Do košíku</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={{ padding: "6px 10px", display: "flex", gap: 4, justifyContent: "center" }}>
-        {["🚚 Free doprava","↩️ 30 dní"].map(t => <span key={t} style={{ fontSize: 7, color: "#9ca3af" }}>{t}</span>)}
-      </div>
-    </div>
-  ),
-  kurzy: ({ accent, d }) => (
-    <div style={{ background: "#F5F0FF", height: "100%", display: "flex", flexDirection: "column", fontFamily: "sans-serif" }}>
-      <div style={{ background: accent, padding: "6px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ color: "#fff", fontWeight: 800, fontSize: 10 }}>🎓 {d.businessName}</span>
-        <Pill color="#FBBF24" label={d.cta} />
-      </div>
-      <div style={{ background: "linear-gradient(180deg,#EDE9FF,#F5F0FF)", padding: "12px 10px", textAlign: "center" }}>
-        <div style={{ background: "#FEF9C3", border: "1px solid #FDE68A", borderRadius: 99, padding: "2px 8px", display: "inline-block", fontSize: 7, color: "#92400E", fontWeight: 700, marginBottom: 6 }}>▶ 30+ kurzů dostupných</div>
-        <div style={{ fontSize: 12, fontWeight: 800, color: "#312E81", marginBottom: 2 }}>{d.businessName}</div>
-        <div style={{ fontSize: 8, color: "#6366F1", marginBottom: 6, fontStyle: "italic" }}>{d.tagline.slice(0, 32)}…</div>
-      </div>
-      <div style={{ padding: "8px 10px", flex: 1, display: "flex", flexDirection: "column", gap: 3 }}>
-        {[[d.service1, d.price1, false],[d.service2, d.price2, true],[d.service3, d.price3, false]].map(([s, p, hl]) => (
-          <div key={s as string} style={{ background: hl ? accent : "#fff", border: `1px solid ${hl ? accent : "#EDE9FE"}`, borderRadius: 8, padding: "3px 8px", display: "flex", justifyContent: "space-between" }}>
-            <span style={{ fontSize: 7.5, color: hl ? "#fff" : "#4338CA", fontWeight: hl ? 600 : 400 }}>{s}</span>
-            <span style={{ fontSize: 7.5, fontWeight: 700, color: hl ? "#FDE68A" : accent }}>{p}</span>
-          </div>
-        ))}
-      </div>
-      <div style={{ padding: "5px 10px" }}>
-        <TextBar w="50%" h={5} color="rgba(79,70,229,0.12)" />
-      </div>
-    </div>
-  ),
-};
-
-function TemplateThumbnail({ id, bg, accent, d }: { id: string; bg: string; accent: string; d: DemoData }) {
-  const Thumb = THUMBNAILS[id];
-  if (!Thumb) return <div style={{ background: bg, height: "100%" }} />;
-  return <Thumb bg={bg} accent={accent} d={d} />;
 }
 
 // ─── Full-page template renderers ────────────────────────────────────────────
@@ -887,7 +703,7 @@ export default function DemoPage() {
             <span className="text-violet-400">OPT</span>IVIO
           </a>
           <div className="flex items-center gap-4 text-sm">
-            <a href="/agents" className="text-violet-400 hover:text-violet-200">✨ AI Agenti</a>
+            <a href="/agents" className="text-violet-400 hover:text-violet-200">✨ Asistenti</a>
             <a href="/" className="text-white/50 hover:text-white">← Zpět</a>
           </div>
         </div>
@@ -921,32 +737,42 @@ export default function DemoPage() {
 
       {/* Template gallery */}
       <section className="py-8 px-4 pb-20">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h2 className="text-center text-white/40 text-sm uppercase tracking-widest mb-10">Vyberte svůj obor</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {TEMPLATES.map(t => (
               <button
                 key={t.id}
                 onClick={() => selectTemplate(t)}
-                className="group relative rounded-2xl border border-white/10 bg-white/3 overflow-hidden text-left hover:border-white/25 hover:bg-white/6 transition-all hover:-translate-y-1"
+                className="group relative rounded-2xl border border-white/10 bg-[#0d0f1f] overflow-hidden text-left hover:border-violet-400/40 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] transition-all duration-300 hover:-translate-y-1.5"
               >
-                {/* Template color preview */}
-                <div
-                  className="h-40 relative overflow-hidden"
-                  style={{ background: t.bg }}
-                >
-                  {/* Thumbnail mockup */}
-                  <div className="absolute inset-2 rounded-lg overflow-hidden shadow-xl border border-white/15">
-                    <TemplateThumbnail id={t.id} bg={t.bg} accent={t.accent} d={t.defaults} />
+                {/* Browser chrome */}
+                <div className="flex items-center gap-1.5 px-3 py-2.5 bg-[#13152a] border-b border-white/8">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-400/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-400/60" />
+                  <div className="flex-1 ml-2 bg-white/8 rounded-full h-4 flex items-center justify-center">
+                    <span className="text-[9px] text-white/25 tracking-wide">optivio.cz/{t.id}</span>
                   </div>
                 </div>
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xl">{t.emoji}</span>
-                    <span className="font-bold text-white text-sm">{t.name}</span>
+                {/* Template preview */}
+                <div className="h-80 relative overflow-hidden" style={{ background: t.bg }}>
+                  <div style={{ width: 390, transform: "scale(0.97)", transformOrigin: "top left", pointerEvents: "none" }}>
+                    <TemplateThumbnail id={t.id} bg={t.bg} accent={t.accent} d={t.defaults} />
                   </div>
-                  <p className="text-white/40 text-xs mb-3">{t.niche} · {t.palette}</p>
-                  <div className="flex items-center gap-1.5 text-violet-400 text-xs font-semibold group-hover:gap-2.5 transition-all">
+                  {/* Soft fade so cropped previews end gracefully */}
+                  <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#0d0f1f]/90 to-transparent pointer-events-none" />
+                </div>
+                {/* Card footer */}
+                <div className="px-6 py-5 flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xl">{t.emoji}</span>
+                      <span className="font-bold text-white text-base">{t.name}</span>
+                    </div>
+                    <p className="text-white/35 text-sm">{t.niche} · {t.palette}</p>
+                  </div>
+                  <div className="flex items-center gap-1 text-violet-400 text-sm font-semibold bg-violet-500/10 border border-violet-500/25 rounded-full px-4 py-2 group-hover:bg-violet-500/20 transition-colors whitespace-nowrap">
                     Vyzkoušet <ChevronRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
@@ -973,7 +799,7 @@ export default function DemoPage() {
             </a>
             <a href="/agents">
               <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-full px-8 py-3">
-                ✨ Vyzkoušet AI Agenty
+                ✨ Vyzkoušet asistenty
               </Button>
             </a>
           </div>
@@ -981,8 +807,11 @@ export default function DemoPage() {
       </section>
 
       <footer className="py-8 text-center text-white/20 text-sm border-t border-white/5">
-        © {new Date().getFullYear()} OPTIVIO · <a href="/" className="hover:text-white/40">Domů</a> · <a href="/agents" className="text-violet-400 hover:text-violet-300">AI Agenti</a>
+        © {new Date().getFullYear()} OPTIVIO · <a href="/" className="hover:text-white/40">Domů</a> · <a href="/agents" className="text-violet-400 hover:text-violet-300">Asistenti</a>
       </footer>
+
+      {/* Online advisor — pomáhá vybrat šablonu a odpovídá na dotazy */}
+      <SalesChatWidget />
     </div>
   );
 }

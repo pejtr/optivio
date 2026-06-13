@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Check, ArrowRight, Menu, X, ChevronDown, Star, Zap, Globe, BarChart3, Shield, TrendingUp, MessageSquare, LayoutDashboard, Bot } from "lucide-react";
+import { Check, ArrowRight, Menu, X, ChevronDown, Star, Zap, Globe, BarChart3, Shield, TrendingUp, MessageSquare, LayoutDashboard, Bot, Calendar, Users, Megaphone, ShoppingBag, Sparkles, Gavel, Database } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { SalesChatWidget } from "@/components/SalesChatWidget";
+import { OptivioLogo } from "@/components/OptivioLogo";
 import { useAuth } from "@/_core/hooks/useAuth";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -141,7 +142,7 @@ export default function Home() {
       {/* ── NAV ── */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-[#1a0a3c]/95 backdrop-blur-md shadow-lg" : "bg-transparent"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <span className="text-2xl font-extrabold text-white tracking-tight">OPTIVIO</span>
+          <a href="/" aria-label="OPTIVIO"><OptivioLogo className="h-9" light /></a>
           <div className="hidden md:flex items-center gap-8">
             {["Řešení", "Ceny", "Případové studie", "O nás"].map(item => (
               <a key={item} href={`#${item === "Ceny" ? "pricing" : item === "Případové studie" ? "cases" : item === "Řešení" ? "niche" : "contact"}`}
@@ -151,7 +152,7 @@ export default function Home() {
               🎨 Demo
             </a>
             <a href="/agents" className="text-violet-300 hover:text-violet-100 text-sm font-medium transition-colors flex items-center gap-1">
-              ✨ AI Agenti
+              ✨ AI Asistenti
             </a>
           </div>
           <div className="hidden md:flex items-center gap-3">
@@ -182,7 +183,7 @@ export default function Home() {
                 {["Řešení", "Ceny", "Případové studie", "Kontakt"][i]}
               </a>
             ))}
-            <a href="/agents" className="text-violet-300 text-sm font-medium">✨ AI Agenti</a>
+            <a href="/agents" className="text-violet-300 text-sm font-medium">✨ AI Asistenti</a>
             {isAuthenticated ? (
               <a href={user?.role === "admin" ? "/admin" : "/dashboard"} className="flex items-center gap-1.5 text-sm font-semibold text-white bg-violet-600 px-4 py-2 rounded-full w-full justify-center">
                 <LayoutDashboard className="w-4 h-4" /> ADMIN
@@ -198,11 +199,54 @@ export default function Home() {
 
       {/* ── HERO ── */}
       <section className="relative bg-[#0f0628] text-white overflow-hidden min-h-[90vh] flex items-center">
-        {/* Background glow blobs */}
+        {/* Background — layered grid, beams, orbs, brand watermark */}
         <div className="absolute inset-0 pointer-events-none">
+          {/* base depth gradient */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#1d0f45_0%,#0f0628_55%,#0a041d_100%)]" />
+
+          {/* fine grid with radial fade */}
+          <svg className="absolute inset-0 w-full h-full" aria-hidden="true">
+            <defs>
+              <pattern id="hero-grid" width="52" height="52" patternUnits="userSpaceOnUse">
+                <path d="M52 0H0V52" fill="none" stroke="white" strokeWidth="0.6" />
+              </pattern>
+              <radialGradient id="hero-grid-fade" cx="50%" cy="35%" r="75%">
+                <stop offset="0%" stopColor="white" stopOpacity="0.09" />
+                <stop offset="60%" stopColor="white" stopOpacity="0.04" />
+                <stop offset="100%" stopColor="white" stopOpacity="0" />
+              </radialGradient>
+              <mask id="hero-grid-mask">
+                <rect width="100%" height="100%" fill="url(#hero-grid-fade)" />
+              </mask>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#hero-grid)" mask="url(#hero-grid-mask)" />
+          </svg>
+
+          {/* diagonal light beams */}
+          <div className="absolute -top-40 left-[18%] w-[30rem] h-[110%] rotate-[24deg] bg-gradient-to-b from-violet-400/10 via-violet-500/[0.03] to-transparent blur-2xl" />
+          <div className="absolute -top-52 right-[8%] w-[22rem] h-[110%] rotate-[-18deg] bg-gradient-to-b from-cyan-400/[0.07] via-transparent to-transparent blur-2xl" />
+
+          {/* glow orbs */}
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl" />
           <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/15 rounded-full blur-3xl" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-24 left-[12%] w-72 h-72 bg-cyan-500/[0.07] rounded-full blur-3xl" />
+
+          {/* brand V-mark watermark */}
+          <svg viewBox="0 0 100 100" className="absolute -right-28 top-1/2 -translate-y-1/2 w-[36rem] h-[36rem] opacity-[0.045]" aria-hidden="true">
+            <defs>
+              <linearGradient id="hero-mark" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#a78bfa" />
+                <stop offset="100%" stopColor="#60a5fa" />
+              </linearGradient>
+            </defs>
+            <path d="M6 14 L34 14 L57 86 L40 86 Z" fill="url(#hero-mark)" />
+            <path d="M94 6 L66 6 L43 86 L57 86 Z" fill="url(#hero-mark)" />
+          </svg>
+
+          {/* corner accents + bottom fade */}
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-violet-400/30 to-transparent" />
+          <div className="absolute bottom-0 inset-x-0 h-44 bg-gradient-to-t from-[#0f0628] to-transparent" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 grid lg:grid-cols-2 gap-16 items-center">
@@ -386,6 +430,120 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── OPTIVIO CORE — system architecture ── */}
+      <section id="core" className="py-20 bg-[#080d1f] text-white relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/3 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-amber-400/5 rounded-full blur-3xl" />
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 border border-amber-400/30 bg-amber-400/5 px-4 py-1.5 rounded-full text-xs font-medium text-amber-200 tracking-widest uppercase mb-5">
+              Jeden systém · vše propojené
+            </div>
+            <h2 className="text-3xl lg:text-5xl font-extrabold mb-3 tracking-tight">
+              OPTIVIO <span className="text-amber-300">AI Core</span>
+            </h2>
+            <p className="text-white/50 text-sm tracking-wide">booking · CRM · data · automatizace · MCP/API</p>
+          </div>
+
+          {/* Core pillars */}
+          <div className="rounded-3xl border border-amber-400/20 bg-gradient-to-b from-[#0c1430] to-[#0a1026] p-6 md:p-10 mb-10 shadow-2xl shadow-black/40">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+              {[
+                { icon: <Calendar className="w-6 h-6" />, title: "Booking", desc: "Inteligentní rezervace a správa kapacit v reálném čase." },
+                { icon: <Users className="w-6 h-6" />, title: "CRM", desc: "360° pohled na klienta, automatizace vztahů a komunikace." },
+                { icon: <BarChart3 className="w-6 h-6" />, title: "Data", desc: "Reporting a chytré predikce pro lepší rozhodování." },
+                { icon: <Bot className="w-6 h-6" />, title: "Automatizace", desc: "AI asistenti pro obsah, reklamy, doporučení a optimalizace." },
+                { icon: <Globe className="w-6 h-6" />, title: "MCP / API", desc: "Otevřené napojení na nástroje, partnery a marketplace." },
+              ].map((p) => (
+                <div key={p.title} className="text-center">
+                  <div className="w-16 h-16 mx-auto rounded-full border border-amber-400/40 bg-amber-400/5 flex items-center justify-center text-amber-300 mb-4">
+                    {p.icon}
+                  </div>
+                  <h3 className="font-bold text-sm tracking-wider uppercase text-amber-100 mb-2">{p.title}</h3>
+                  <p className="text-xs text-white/50 leading-relaxed">{p.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Connector label */}
+          <div className="flex items-center justify-center mb-10">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent to-amber-400/30" />
+            <span className="px-5 py-1.5 border border-amber-400/40 rounded-full text-xs font-semibold tracking-widest uppercase text-amber-200 bg-[#0c1430]">
+              Napojení Optivio
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-l from-transparent to-amber-400/30" />
+          </div>
+
+          {/* Connected modules */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-16">
+            {[
+              { icon: <Calendar className="w-5 h-5" />, title: "Rezervace", desc: "Online booking, připomínky, kalendáře, změny." },
+              { icon: <MessageSquare className="w-5 h-5" />, title: "Komunikace", desc: "E-maily, newslettery, Telegram, WhatsApp scénáře." },
+              { icon: <Megaphone className="w-5 h-5" />, title: "Marketing", desc: "Meta Ads, Google Ads, retargeting, optimalizace kampaní." },
+              { icon: <ShoppingBag className="w-5 h-5" />, title: "Prodej", desc: "E-shop, produkty, dárkové sety, předplatné, upsell." },
+              { icon: <TrendingUp className="w-5 h-5" />, title: "Reporting", desc: "Dashboardy, predikce, tržby, klienti, LTV, insights." },
+              { icon: <Sparkles className="w-5 h-5" />, title: "AI Asistenti", desc: "Tvorba obsahu, doporučení, automatizace rutinních úkolů." },
+            ].map((m) => (
+              <div key={m.title} className="bg-white/[0.03] border border-white/10 hover:border-amber-400/30 rounded-2xl p-4 text-center transition-colors">
+                <div className="w-11 h-11 mx-auto rounded-full bg-amber-400/10 flex items-center justify-center text-amber-300 mb-3">
+                  {m.icon}
+                </div>
+                <h4 className="font-semibold text-sm text-white mb-1.5">{m.title}</h4>
+                <p className="text-[11px] text-white/45 leading-relaxed">{m.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* AI Core pricing */}
+          <div className="rounded-3xl border-2 border-amber-400/40 bg-gradient-to-r from-[#101a3d] to-[#0c1430] p-8 md:p-10 mb-16 mt-3 relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span className="bg-amber-400 text-[#0a0f24] text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider">Tarif AI Core</span>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8 items-center pt-2">
+              <div>
+                <p className="text-white/50 text-sm mb-1">Zavedení na míru</p>
+                <p className="text-4xl font-extrabold text-white mb-4">od 14 990 <span className="text-lg font-medium text-white/50">Kč</span></p>
+                <p className="text-white/50 text-sm mb-1">Provoz — vše v ceně</p>
+                <p className="text-3xl font-extrabold text-amber-300">990 <span className="text-base font-medium text-amber-300/60">Kč/měs</span></p>
+              </div>
+              <div className="md:col-span-2">
+                <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 mb-6">
+                  {[
+                    "Booking systém + správa kapacit",
+                    "CRM s 360° pohledem na klienta",
+                    "Data, reporting a chytré predikce",
+                    "AI asistenti — obsah, kampaně, rutina",
+                    "MCP/API napojení na vaše nástroje",
+                    "2 napojené moduly dle výběru v ceně",
+                    "Další modul +290 Kč/měs",
+                    "Provoz, zálohy a podpora v ceně",
+                  ].map(f => (
+                    <div key={f} className="flex items-start gap-2 text-sm text-white/70">
+                      <Check className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" /> {f}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button className="bg-amber-400 hover:bg-amber-300 text-[#0a0f24] font-bold rounded-full px-8" onClick={scrollToContact}>
+                    Chci AI Core
+                  </Button>
+                  <Button variant="ghost" className="text-amber-200/80 hover:text-amber-100 border border-amber-400/30 hover:border-amber-400/60 rounded-full" onClick={scrollToContact}>
+                    Nezávazná konzultace →
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <p className="text-[11px] text-white/30 mt-6 text-center">
+              Funkce AI Core běží na platformě LeadOS. Krabicové platformy účtují za srovnatelné doplňky 800–1 500 Kč/měs — u nás je vše podstatné v jednom tarifu.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
       {/* ── CASE STUDIES ── */}
       <section id="cases" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -477,31 +635,31 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left — cycle diagram */}
             <div className="flex justify-center">
-              {/* Container 320×320, center at 160,160, bubble radius 110 */}
-              <div className="relative" style={{ width: 320, height: 320 }}>
-                {/* SVG circle + directional arrows */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 320 320">
-                  <circle cx="160" cy="160" r="110" fill="none" stroke="#F59E0B" strokeWidth="3.5" />
+              {/* Scales with viewport: ~full column width, capped at 460px */}
+              <div className="relative w-full max-w-[460px] aspect-square">
+                {/* SVG circle + directional arrows (viewBox 460, center 230, radius 158) */}
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 460 460">
+                  <circle cx="230" cy="230" r="158" fill="none" stroke="#F59E0B" strokeWidth="5" />
                   {/* Arrows at 45°, 135°, 225°, 315° — pointing clockwise (tangent +90°) */}
                   {[45, 135, 225, 315].map(deg => {
                     const rad = (deg * Math.PI) / 180;
-                    const ax = 160 + 110 * Math.cos(rad);
-                    const ay = 160 + 110 * Math.sin(rad);
+                    const ax = 230 + 158 * Math.cos(rad);
+                    const ay = 230 + 158 * Math.sin(rad);
                     const rot = deg + 90;
                     return (
                       <g key={deg} transform={`translate(${ax},${ay}) rotate(${rot})`}>
-                        <polygon points="0,-9 7,5 -7,5" fill="#F59E0B" />
+                        <polygon points="0,-13 10,7 -10,7" fill="#F59E0B" />
                       </g>
                     );
                   })}
                 </svg>
                 {/* Center label */}
                 <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <p className="text-center text-sm font-bold text-white leading-snug pointer-events-none">
+                  <p className="text-center text-lg sm:text-xl font-bold text-white leading-snug pointer-events-none">
                     Jak probíhá<br />vývoj MVP?
                   </p>
                 </div>
-                {/* 4 step bubbles — center + 110px × unit vector */}
+                {/* 4 step bubbles — positioned at % so they scale with the container */}
                 {[
                   { label: "Vývoj", angle: -90 },
                   { label: "Nasazení", angle: 0 },
@@ -509,24 +667,22 @@ export default function Home() {
                   { label: "Analýza", angle: 180 },
                 ].map(({ label, angle }) => {
                   const rad = (angle * Math.PI) / 180;
-                  const bx = 160 + 110 * Math.cos(rad);
-                  const by = 160 + 110 * Math.sin(rad);
+                  const cxPct = 50 + (158 / 460) * 100 * Math.cos(rad);
+                  const cyPct = 50 + (158 / 460) * 100 * Math.sin(rad);
                   return (
                     <div
                       key={label}
-                      className="absolute flex items-center justify-center"
+                      className="absolute flex items-center justify-center w-[24%] aspect-square text-sm sm:text-base"
                       style={{
-                        width: 72, height: 72,
                         borderRadius: "50%",
                         background: "linear-gradient(135deg,#38BDF8,#0EA5E9)",
                         color: "#fff",
                         fontWeight: 700,
-                        fontSize: 13,
                         textAlign: "center",
                         lineHeight: 1.3,
-                        left: bx - 36,
-                        top: by - 36,
-                        boxShadow: "0 0 24px rgba(56,189,248,0.4)",
+                        left: `${cxPct - 12}%`,
+                        top: `${cyPct - 12}%`,
+                        boxShadow: "0 0 36px rgba(56,189,248,0.45)",
                         whiteSpace: "pre-line",
                       }}
                     >
@@ -706,7 +862,7 @@ export default function Home() {
                   "Web na míru od profíků — žádná univerzální šablona",
                   "Postavíme a spravujeme za vás, vy jen schvalujete",
                   "Osobní podpora + AI asistent Alex 24/7",
-                  "AI chatbot, 9 AI agentů a Brand Memory v platformě",
+                  "AI chatbot, 9 AI asistentů a Brand Memory v platformě",
                 ].map(t => (
                   <li key={t} className="flex items-start gap-2.5 text-sm text-white/80">
                     <Check className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
@@ -726,6 +882,105 @@ export default function Home() {
           <p className="text-center text-xs text-slate-400 mt-6">
             Srovnání vychází z veřejných ceníků běžných českých krabicových řešení (e-shop a webové platformy) k datu zveřejnění.
           </p>
+        </div>
+      </section>
+
+      {/* ── PORTFOLIO — REAL PROJECTS ── */}
+      <section id="portfolio" className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">
+              Reálné projekty z našeho portfolia
+            </h2>
+            <p className="text-slate-500 max-w-2xl mx-auto">
+              Aplikace, e-shopy a platformy, které jsme navrhli a realizovali. Vše v TypeScriptu, nasazeno na produkci.
+            </p>
+          </div>
+
+          {/* Premium projekty — Enchanté One spotlight */}
+          <div className="mb-12">
+            <div className="flex items-center gap-3 mb-5">
+              <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 border border-amber-200 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
+                <Star className="w-3 h-3 fill-amber-500 text-amber-500" /> Premium projekty
+              </span>
+              <div className="h-px flex-1 bg-gradient-to-r from-amber-200 to-transparent" />
+            </div>
+            <div className="rounded-3xl border border-amber-400/25 bg-gradient-to-br from-[#0e1535] via-[#0c1128] to-[#0a0e22] p-8 md:p-12 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
+              <div className="grid md:grid-cols-2 gap-10 items-center relative">
+                <div>
+                  <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-medium text-amber-200 mb-5">
+                    <Sparkles className="w-3.5 h-3.5" /> Právě vyvíjíme
+                  </div>
+                  <h3 className="font-serif text-3xl lg:text-4xl font-bold mb-1 text-amber-50">Enchanté One</h3>
+                  <p className="text-amber-300/80 text-xs tracking-widest uppercase mb-5">Galleries · Auctions · Data</p>
+                  <p className="text-white/60 leading-relaxed mb-6">
+                    Vlastní aukční platforma pro galerie, aukce a distribuci uměleckých děl —
+                    napojená na světové marketplace. OPTIVIO propojuje salon s trhem umění.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/40">
+                    <span className="font-semibold text-orange-400">Aukro</span>
+                    <span className="font-semibold text-white/60">Invaluable</span>
+                    <span className="font-semibold text-emerald-400">LiveBid</span>
+                    <span className="text-white/30">a další…</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { icon: <Gavel className="w-5 h-5" />, title: "Aukční engine", desc: "Příhozy, limity a dražby v reálném čase." },
+                    { icon: <Globe className="w-5 h-5" />, title: "Distribuce & marketplace", desc: "Jedno dílo, publikace na více trzích najednou." },
+                    { icon: <Database className="w-5 h-5" />, title: "Data & historie", desc: "Provenience, výsledky aukcí, cenové trendy." },
+                    { icon: <Shield className="w-5 h-5" />, title: "Důvěra & autenticita", desc: "Ověření děl a transparentní záznamy prodejů." },
+                  ].map((f) => (
+                    <div key={f.title} className="bg-[#0c1430]/80 border border-amber-400/15 rounded-2xl p-4">
+                      <div className="text-amber-300 mb-2">{f.icon}</div>
+                      <h4 className="font-semibold text-sm text-amber-50 mb-1">{f.title}</h4>
+                      <p className="text-[11px] text-white/45 leading-relaxed">{f.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { name: "Human Design Chart", repo: "humandesignchart", desc: "Prémiová webová aplikace pro výpočet a vizualizaci Human Design Bodygraph diagramů. Interaktivní SVG, registrace, platby.", tags: ["Web App", "SVG", "Stripe"], color: "from-violet-500 to-purple-600", stars: 1 },
+              { name: "LeadOS", repo: "leados", desc: "B2B lead generation platforma s persistentním historickým přehledem, AI-powered icebreakers a dark-mode dashboardem.", tags: ["SaaS", "B2B", "Dashboard"], color: "from-blue-500 to-indigo-600", stars: 1 },
+              { name: "OPTIVIO", repo: "optivio", desc: "Webová agentura s automatizovaným procesem od objednávky po nasazení. LeadOS backend, CRM, chatbot.", tags: ["Agentura", "CRM", "Chatbot"], color: "from-violet-600 to-indigo-700" },
+              { name: "BotHub", repo: "bothub", desc: "Marketplace pro prodej chatbotů s affiliate programem. Premium landing page s pokročilými konverzními prvky.", tags: ["Marketplace", "Affiliate"], color: "from-emerald-500 to-teal-600" },
+              { name: "Akční Letenky", repo: "akcni-letenky", desc: "Online travel agency s affiliate systémem pro vyhledávání a prodej leteckých spojení.", tags: ["OTA", "Affiliate", "Travel"], color: "from-sky-500 to-blue-600" },
+              { name: "StoryLiner", repo: "story_liner", desc: "Platforma pro tvorbu videí s inteligentním chatbot asistentem, RAG systémem a persistentní pamětí.", tags: ["Video", "Chatbot", "RAG"], color: "from-orange-500 to-red-600" },
+              { name: "Amulets.cz", repo: "my.amulette", desc: "E-shop s ručně vyráběnými orgonitovými pyramidami, amulety a aromaterapeutickými produkty.", tags: ["E-shop", "Produkty"], color: "from-amber-500 to-orange-600" },
+              { name: "Deep Sleep Reset", repo: "deep-sleep", desc: "Performance marketing funnel s chronotype kvízem, personalizovaným průvodcem a upsell sekvencí.", tags: ["Funnel", "Marketing", "Quiz"], color: "from-indigo-500 to-violet-600" },
+              { name: "Do Itálie", repo: "do-italie", desc: "Cestovatelský portál Do-italie.cz — průvodce po italských destinacích, tipy a praktické informace.", tags: ["Cestování", "Portál"], color: "from-green-500 to-emerald-600" },
+              { name: "Influencer Generator", repo: "ai-influencer-generator", desc: "Platforma pro generování ultra-realistických virtuálních influencerů pro TikTok, Instagram a YouTube.", tags: ["Generátor", "Sociální sítě"], color: "from-pink-500 to-rose-600" },
+              { name: "iBots", repo: "ibots", desc: "Premium landing page pro prodej chatbotů — katalog 77 botů v 7 kategoriích, cenové plány, dark theme se zlatými akcenty.", tags: ["Landing Page", "Katalog"], color: "from-yellow-500 to-amber-600" },
+              { name: "Affiliate Network Builder", repo: "ai_affiliate_network_builder", desc: "Platforma pro automatizované budování sítě prodejců pro affiliate marketing.", tags: ["Affiliate", "Automatizace"], color: "from-cyan-500 to-teal-600" },
+            ].map((project) => (
+              <div
+                key={project.repo}
+                className="group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all duration-300"
+              >
+                <div className={`h-2 bg-gradient-to-r ${project.color}`} />
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-bold text-slate-900">{project.name}</h3>
+                    <div className="flex items-center gap-1 text-xs text-slate-400">
+                      {project.stars ? <><Star className="w-3 h-3 fill-amber-400 text-amber-400" /><span>{project.stars}</span></> : null}
+                      <span className="ml-1 text-slate-300">TypeScript</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-slate-500 mb-4 leading-relaxed line-clamp-3">{project.desc}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.tags.map(tag => (
+                      <span key={tag} className="text-xs font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -760,7 +1015,7 @@ export default function Home() {
               <span className="text-violet-200">Nové — AI Marketing Suite</span>
             </div>
             <h2 className="text-3xl lg:text-4xl font-extrabold mb-4">
-              Váš tým AI agentů.<br />
+              Váš tým AI asistentů.<br />
               <span className="text-violet-300">Vždy připravených.</span>
             </h2>
             <p className="text-violet-200 text-lg max-w-xl mx-auto">
@@ -795,7 +1050,7 @@ export default function Home() {
             </div>
             <a href="/agents">
               <Button className="bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-semibold px-8 py-4 text-base rounded-full shadow-lg shadow-violet-900/40">
-                Vyzkoušet AI Agenty zdarma →
+                Vyzkoušet AI Asistenty zdarma →
               </Button>
             </a>
           </div>
@@ -840,7 +1095,7 @@ export default function Home() {
             </a>
             <a href="/agents">
               <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-full">
-                ✨ Vyzkoušet AI Agenty
+                ✨ Vyzkoušet AI Asistenty
               </Button>
             </a>
           </div>
@@ -952,9 +1207,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 mb-10">
             <div>
-              <div className="flex items-center gap-2">
-            <img src="/manus-storage/optivio-logo_d4a4757c.png" alt="OPTIVIO" className="h-8" />
-          </div>
+              <div className="flex items-center gap-2 mb-3">
+                <OptivioLogo className="h-8" light />
+              </div>
               <p className="text-sm leading-relaxed">Webová agentura zaměřená na české firmy a živnostníky. Weby, automatizace, LeadOS.</p>
               <div className="flex gap-3 mt-4">
                 {["LinkedIn", "Facebook", "Instagram"].map(s => (
